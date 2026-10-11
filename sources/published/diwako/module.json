@@ -1,0 +1,131 @@
+{
+    "title": "Diwako's Cyberpunk Red - Core Additions",
+    "description": "Adds small features to the system as a stop gap solution until similar and/or better functionality is added to the core system itself.",
+    "version": "0.10.1",
+    "authors": [
+        {
+            "name": "diwako",
+            "url": "https://github.com/diwako",
+            "discord": "diwako#7777",
+            "flags": {}
+        }
+    ],
+    "id": "diwako-cpred-additions",
+    "esmodules": [
+        "scripts/main.js"
+    ],
+    "languages": [
+        {
+            "lang": "en",
+            "name": "English",
+            "path": "languages/en.json",
+            "flags": {}
+        },
+        {
+            "lang": "de",
+            "name": "Deutsch",
+            "path": "languages/de.json",
+            "flags": {}
+        },
+        {
+            "lang": "fr",
+            "name": "Français",
+            "path": "languages/fr.json",
+            "flags": {}
+        },
+        {
+            "lang": "ja",
+            "name": "日本語",
+            "path": "languages/ja.json",
+            "flags": {}
+        }
+    ],
+    "relationships": {
+        "systems": [
+            {
+                "id": "cyberpunk-red-core",
+                "type": "system",
+                "compatibility": {
+                    "maximum": "v0.99.99",
+                    "minimum": "v0.89.1",
+                    "verified": "v0.89.2"
+                }
+            }
+        ],
+        "requires": [
+            {
+                "id": "lib-wrapper",
+                "type": "module",
+                "compatibility": {}
+            }
+        ],
+        "recommends": [
+            {
+                "id": "autoanimations",
+                "type": "module",
+                "compatibility": {}
+            },
+            {
+                "id": "df-active-lights",
+                "type": "module",
+                "compatibility": {}
+            },
+            {
+                "id": "item-piles",
+                "type": "module",
+                "compatibility": {}
+            },
+            {
+                "id": "JB2A_DnD5e",
+                "type": "module",
+                "compatibility": {}
+            },
+            {
+                "id": "portal-lib",
+                "type": "module",
+                "compatibility": {}
+            },
+            {
+                "id": "sequencer",
+                "type": "module",
+                "compatibility": {}
+            }
+        ]
+    },
+    "styles": [
+        "css/cpred-additions.css"
+    ],
+    "packFolders": [
+        {
+            "name": "CPR Additions",
+            "sorting": "m",
+            "packs": [
+                "cpr-additions-macros"
+            ],
+            "color": null,
+            "folders": []
+        }
+    ],
+    "packs": [
+        {
+            "name": "cpr-additions-macros",
+            "label": "CPR Additions: Macros",
+            "banner": "systems/cyberpunk-red-core/images/compendium-banner.webp",
+            "path": "packs/cpr-additions-macros",
+            "type": "Macro",
+            "system": "cyberpunk-red-core",
+            "ownership": {
+                "PLAYER": "OBSERVER",
+                "ASSISTANT": "OWNER"
+            }
+        }
+    ],
+    "compatibility": {
+        "maximum": "12.999",
+        "minimum": "12.343",
+        "verified": "12.343"
+    },
+    "url": "https://github.com/diwako/foundry-cyberpunk-red-core-additions",
+    "manifest": "https://github.com/diwako/foundry-cyberpunk-red-core-additions/releases/latest/download/module.json",
+    "download": "https://github.com/diwako/foundry-cyberpunk-red-core-additions/releases/download/0.10.1/module.zip"
+}

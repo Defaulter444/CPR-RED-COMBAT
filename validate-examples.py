@@ -1,0 +1,6 @@
+import os, shutil
+from playwright.sync_api import sync_playwright,expect
+BASE_URL=os.environ.get('REDLINE_BASE_URL','http://127.0.0.1:8765').rstrip('/')
+import json
+with sync_playwright() as p:
+ b=p.chromium.launch(executable_path=(os.environ.get('CHROMIUM_PATH') or shutil.which('chromium') or shutil.which('chromium-browser')),headless=True,args=['--no-sandbox']);q=b.new_page(viewport={'width':1440,'height':1000});errors=[];q.on('pageerror',lambda e:errors.append(str(e)));q.goto(BASE_URL+'/prototype/examples.html');q.locator('#journal').click();q.get_by_role('button',name='Подтвердить раскрытие (демо GM)').click();expect(q.locator('#journal-status')).to_contain_text('revealed');q.locator('#ship').click();expect(q.locator('#ship-status')).to_contain_text('Энергия: 5');q.get_by_role('button',name='Выполнить демо-ремонт').click();expect(q.locator('#ship-status')).to_contain_text('Энергия: 3');q.locator('#ship').click();expect(q.get_by_role('button',name='Выполнить демо-ремонт')).to_be_disabled();q.get_by_role('button',name='Закрыть',exact=True).click();expect(q.locator('dialog')).to_have_count(0);q.screenshot(path='renders/sdk-examples.png');q.goto(BASE_URL+'/gallery.html');assert q.locator('h2').count()>=10;assert not errors;print('Examples PASS / gallery PASS');b.close()

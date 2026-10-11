@@ -1,0 +1,317 @@
+<div id="cpr-combat-hud" style="--chud-scale: {{scale}}; --chud-bottom: {{bottomOffset}}px;">
+{{#if visible}}
+{{#if collapsed}}
+  <button type="button" class="chud-expand-tab" data-action="expand"
+          title="{{localize 'CPR-CHUD.bar.expand'}}">
+    <i class="fa-solid fa-chevron-up"></i> HUD
+  </button>
+{{else}}
+
+  {{!-- ============ Flyout panels ============ --}}
+  {{#if panels.skills}}
+  <div class="chud-panel chud-panel-skills">
+    <header class="chud-panel-header">
+      <span>{{localize "CPR-CHUD.panel.skills.title"}}</span>
+      <input type="text" class="chud-skill-search"
+             placeholder="{{localize 'CPR-CHUD.panel.skills.search'}}">
+    </header>
+    <div class="chud-panel-body">
+      {{#each skillCategories}}
+      <div class="chud-skill-group">
+        <h4>{{label}}</h4>
+        {{#each skills}}
+        <div class="chud-skill-row" data-action="skill-roll" data-item-id="{{id}}"
+             data-open-item="{{id}}" data-skill-name="{{name}}">
+          <button type="button" class="chud-fav-star {{#if favorite}}active{{/if}}"
+                  data-action="skill-favorite" data-item-id="{{id}}"
+                  title="{{localize 'CPR-CHUD.panel.skills.favorite'}}">
+            <i class="fa-solid fa-star"></i>
+          </button>
+          <span class="chud-skill-name">{{name}}</span>
+          <span class="chud-skill-detail">{{statAbbr}} {{statValue}} + {{level}}{{modsDisplay}}</span>
+          <span class="chud-skill-total">{{total}}</span>
+        </div>
+        {{/each}}
+      </div>
+      {{/each}}
+    </div>
+  </div>
+  {{/if}}
+
+  {{#if panels.roles}}
+  <div class="chud-panel chud-panel-roles">
+    <header class="chud-panel-header">
+      <span>{{localize "CPR-CHUD.panel.roles.title"}}</span>
+    </header>
+    <div class="chud-panel-body">
+      {{#each roleAbilities}}
+      <div class="chud-skill-row" data-action="role-roll" data-role-id="{{roleId}}"
+           data-sub-role-name="{{subRoleName}}" data-roll-sub-type="{{rollSubType}}"
+           data-open-item="{{roleId}}">
+        <span class="chud-skill-name">{{name}}</span>
+        <span class="chud-skill-detail">{{roleName}} &bull; {{localize "CPR-CHUD.panel.roles.rank"}} {{rank}}</span>
+        <span class="chud-skill-total"><i class="fa-solid fa-dice"></i></span>
+      </div>
+      {{/each}}
+    </div>
+  </div>
+  {{/if}}
+
+  {{#if panels.interface}}
+  <div class="chud-panel chud-panel-interface">
+    <header class="chud-panel-header">
+      <span>{{localize "CPR-CHUD.panel.interface.title"}}</span>
+    </header>
+    <div class="chud-panel-body chud-interface-grid">
+      {{#each interfaceAbilities}}
+      <button type="button" class="chud-btn chud-interface-btn"
+              data-action="interface-roll" data-ability="{{key}}">{{label}}</button>
+      {{/each}}
+    </div>
+  </div>
+  {{/if}}
+
+  {{#if panels.gear}}
+  <div class="chud-panel chud-panel-gear">
+    <header class="chud-panel-header">
+      <span>{{localize "CPR-CHUD.panel.gear.title"}}</span>
+    </header>
+    <div class="chud-panel-body">
+      {{#each allWeapons}}
+      <div class="chud-skill-row chud-gear-row" data-open-item="{{id}}">
+        <img class="chud-gear-img" src="{{img}}" alt="">
+        <span class="chud-skill-name">{{name}}</span>
+        <button type="button" class="chud-btn chud-equip-btn chud-equip-{{equipped}}"
+                data-action="equip-cycle" data-item-id="{{id}}"
+                title="{{localize 'CPR-CHUD.panel.gear.equipHint'}}">{{equipLabel}}</button>
+      </div>
+      {{/each}}
+    </div>
+  </div>
+  {{/if}}
+
+  {{!-- ============ Main bar ============ --}}
+  <div class="chud-bar wound-{{woundState.css}}">
+
+    {{!-- Identity --}}
+    <section class="chud-id">
+      <img class="chud-portrait" src="{{img}}" data-action="open-sheet"
+           title="{{localize 'CPR-CHUD.bar.openSheet'}}" alt="">
+      <div class="chud-id-text">
+        <span class="chud-name">{{name}}</span>
+        {{#if alias}}<span class="chud-alias">{{alias}}</span>{{/if}}
+        {{#if roleNames}}<span class="chud-roles">{{roleNames}}</span>{{/if}}
+        <span class="chud-wound {{woundState.css}}">{{woundState.label}}</span>
+      </div>
+    </section>
+
+    {{!-- Vitals --}}
+    <section class="chud-vitals">
+      <div class="chud-hp-row">
+        <button type="button" class="chud-btn chud-hp-btn" data-action="hp-delta" data-delta="-5">-5</button>
+        <button type="button" class="chud-btn chud-hp-btn" data-action="hp-delta" data-delta="-1">-1</button>
+        <div class="chud-hp-bar">
+          <div class="chud-hp-fill {{woundState.css}}" style="width: {{hp.pct}}%;"></div>
+          <div class="chud-hp-text">
+            <i class="fa-solid fa-heart"></i>
+            <input type="number" class="chud-hp-input" value="{{hp.value}}" min="0" max="{{hp.max}}">
+            <span class="chud-hp-max">/ {{hp.max}}</span>
+          </div>
+        </div>
+        <button type="button" class="chud-btn chud-hp-btn" data-action="hp-delta" data-delta="1">+1</button>
+        <button type="button" class="chud-btn chud-hp-btn" data-action="hp-delta" data-delta="5">+5</button>
+      </div>
+      <div class="chud-chips">
+        {{#if show.armor}}
+        <div class="chud-chip {{#unless armor.head.has}}chud-chip-empty{{/unless}}" title="{{localize 'CPR-CHUD.bar.armorHead'}}">
+          <i class="fa-solid fa-hard-hat"></i>
+          {{#if armor.head.has}}
+          <button type="button" class="chud-mini" data-action="armor-delta" data-location="head" data-delta="-1">&minus;</button>
+          <span class="chud-chip-value">{{armor.head.value}}<em>/{{armor.head.max}}</em></span>
+          <button type="button" class="chud-mini" data-action="armor-delta" data-location="head" data-delta="1">+</button>
+          {{else}}<span class="chud-chip-value">&ndash;</span>{{/if}}
+        </div>
+        <div class="chud-chip {{#unless armor.body.has}}chud-chip-empty{{/unless}}" title="{{localize 'CPR-CHUD.bar.armorBody'}}">
+          <i class="fa-solid fa-shield-halved"></i>
+          {{#if armor.body.has}}
+          <button type="button" class="chud-mini" data-action="armor-delta" data-location="body" data-delta="-1">&minus;</button>
+          <span class="chud-chip-value">{{armor.body.value}}<em>/{{armor.body.max}}</em></span>
+          <button type="button" class="chud-mini" data-action="armor-delta" data-location="body" data-delta="1">+</button>
+          {{else}}<span class="chud-chip-value">&ndash;</span>{{/if}}
+        </div>
+        {{#if armor.shield.has}}
+        <div class="chud-chip" title="{{localize 'CPR-CHUD.bar.armorShield'}}">
+          <i class="fa-solid fa-shield"></i>
+          <button type="button" class="chud-mini" data-action="armor-delta" data-location="shield" data-delta="-1">&minus;</button>
+          <span class="chud-chip-value">{{armor.shield.value}}<em>/{{armor.shield.max}}</em></span>
+          <button type="button" class="chud-mini" data-action="armor-delta" data-location="shield" data-delta="1">+</button>
+        </div>
+        {{/if}}
+        {{/if}}
+        {{#if show.humanity}}
+        <div class="chud-chip" title="{{localize 'CPR-CHUD.bar.humanity'}}">
+          <i class="fa-solid fa-brain"></i>
+          <span class="chud-chip-value">{{humanity.value}}<em>/{{humanity.max}}</em></span>
+        </div>
+        {{/if}}
+        {{#if show.luck}}
+        <div class="chud-chip" title="{{localize 'CPR-CHUD.bar.luck'}}">
+          <i class="fa-solid fa-clover"></i>
+          <button type="button" class="chud-mini" data-action="luck-delta" data-delta="-1">&minus;</button>
+          <span class="chud-chip-value">{{luck.value}}<em>/{{luck.max}}</em></span>
+          <button type="button" class="chud-mini" data-action="luck-delta" data-delta="1">+</button>
+        </div>
+        {{/if}}
+        {{#if show.deathSave}}
+        <div class="chud-chip chud-chip-death" data-action="deathsave-roll"
+             title="{{localize 'CPR-CHUD.bar.deathSavePenalty'}}">
+          <i class="fa-solid fa-skull"></i>
+          <span class="chud-chip-value">{{deathSave.total}}</span>
+        </div>
+        {{/if}}
+      </div>
+    </section>
+
+    {{!-- Stats --}}
+    <section class="chud-stats">
+      {{#each stats}}
+      <button type="button" class="chud-stat" data-action="stat-roll" data-stat="{{key}}"
+              title="{{localize 'CPR-CHUD.bar.rollStat' stat=label}}">
+        <span class="chud-stat-label">{{label}}</span>
+        <span class="chud-stat-value">{{value}}</span>
+      </button>
+      {{/each}}
+    </section>
+
+    {{!-- Weapons --}}
+    <section class="chud-weapons">
+      <div class="chud-weapons-header">
+        <span>{{localize "CPR.global.itemTypes.weapon"}}</span>
+        {{#if showAimLocation}}
+        <select class="chud-aim-location" title="{{localize 'CPR-CHUD.bar.aimLocation'}}">
+          {{#each aimedLocations}}
+          <option value="{{key}}" {{#if selected}}selected{{/if}}>{{label}}</option>
+          {{/each}}
+        </select>
+        {{/if}}
+        <button type="button" class="chud-mini chud-gear-toggle" data-action="toggle-panel"
+                data-panel="gear" title="{{localize 'CPR-CHUD.bar.gear'}}">
+          <i class="fa-solid fa-screwdriver-wrench"></i>
+        </button>
+      </div>
+      <div class="chud-weapon-list">
+        {{#each weapons}}
+        <div class="chud-weapon" data-open-item="{{id}}">
+          <img class="chud-weapon-img" src="{{img}}" alt="">
+          <div class="chud-weapon-info">
+            <span class="chud-weapon-name">{{name}}</span>
+            <span class="chud-weapon-sub">
+              {{damage}} &bull; ROF {{rof}}{{#if hasMagazine}} &bull;
+              <i class="fa-solid fa-box-archive"></i> {{magValue}}/{{magMax}}{{/if}}
+            </span>
+          </div>
+          <div class="chud-weapon-buttons">
+            {{#if canAutofire}}
+            <button type="button" class="chud-toggle {{#if isAutofire}}active{{/if}}"
+                    data-action="fire-mode" data-item-id="{{id}}" data-mode="autofire"
+                    title="{{localize 'CPR-CHUD.bar.autofire'}}"><i class="fa-solid fa-bars-staggered"></i></button>
+            {{/if}}
+            {{#if canSuppress}}
+            <button type="button" class="chud-toggle {{#if isSuppressive}}active{{/if}}"
+                    data-action="fire-mode" data-item-id="{{id}}" data-mode="suppressive"
+                    title="{{localize 'CPR-CHUD.bar.suppressive'}}"><i class="fa-solid fa-water"></i></button>
+            {{/if}}
+            <button type="button" class="chud-toggle {{#if isAimed}}active{{/if}}"
+                    data-action="fire-mode" data-item-id="{{id}}" data-mode="aimed"
+                    title="{{localize 'CPR-CHUD.bar.aimed'}}"><i class="fa-solid fa-crosshairs"></i></button>
+            {{#if hasMagazine}}
+            <button type="button" class="chud-toggle" data-action="reload" data-item-id="{{id}}"
+                    title="{{localize 'CPR-CHUD.bar.reload'}}"><i class="fa-solid fa-rotate"></i></button>
+            <button type="button" class="chud-toggle" data-action="change-ammo" data-item-id="{{id}}"
+                    title="{{localize 'CPR-CHUD.bar.changeAmmo'}}"><i class="fa-solid fa-boxes-stacked"></i></button>
+            {{/if}}
+            <button type="button" class="chud-btn chud-atk" data-action="attack" data-item-id="{{id}}">
+              {{localize "CPR-CHUD.bar.attack"}}</button>
+            <button type="button" class="chud-btn chud-dmg" data-action="damage" data-item-id="{{id}}">
+              {{localize "CPR-CHUD.bar.damage"}}</button>
+          </div>
+        </div>
+        {{/each}}
+        {{#unless hasWeapons}}
+        <div class="chud-empty">{{localize "CPR-CHUD.bar.noWeapons"}}</div>
+        {{/unless}}
+      </div>
+    </section>
+
+    {{!-- Actions --}}
+    <section class="chud-actions">
+      <button type="button" class="chud-action" data-action="initiative-roll"
+              title="{{localize 'CPR-CHUD.bar.initiative'}}">
+        <i class="fa-solid fa-bolt"></i>
+        <span>{{#if combat.initiative}}{{combat.initiative}}{{else}}{{localize "CPR.chat.initiative"}}{{/if}}</span>
+      </button>
+      {{#if combat.isMyTurn}}
+      <button type="button" class="chud-action chud-turn" data-action="end-turn"
+              title="{{localize 'CPR-CHUD.bar.endTurn'}}">
+        <i class="fa-solid fa-flag-checkered"></i>
+        <span>{{localize "CPR-CHUD.bar.endTurn"}}</span>
+      </button>
+      {{/if}}
+      <button type="button" class="chud-action" data-action="facedown-roll"
+              title="{{localize 'CPR.global.generic.facedown'}}">
+        <i class="fa-solid fa-user-ninja"></i>
+        <span>{{localize "CPR-CHUD.bar.facedown"}}</span>
+      </button>
+      <button type="button" class="chud-action {{#if panels.skills}}active{{/if}}"
+              data-action="toggle-panel" data-panel="skills"
+              title="{{localize 'CPR-CHUD.bar.skills'}}">
+        <i class="fa-solid fa-list-check"></i>
+        <span>{{localize "CPR-CHUD.bar.skills"}}</span>
+      </button>
+      {{#if hasRoles}}
+      <button type="button" class="chud-action {{#if panels.roles}}active{{/if}}"
+              data-action="toggle-panel" data-panel="roles"
+              title="{{localize 'CPR-CHUD.bar.roles'}}">
+        <i class="fa-solid fa-star"></i>
+        <span>{{localize "CPR-CHUD.bar.roles"}}</span>
+      </button>
+      {{/if}}
+      {{#if hasInterface}}
+      <button type="button" class="chud-action {{#if panels.interface}}active{{/if}}"
+              data-action="toggle-panel" data-panel="interface"
+              title="{{localize 'CPR-CHUD.bar.interface'}}">
+        <i class="fa-solid fa-network-wired"></i>
+        <span>{{localize "CPR-CHUD.bar.interface"}}</span>
+      </button>
+      {{/if}}
+      {{#if hasFavs}}
+      <button type="button" class="chud-action {{#if favsOpen}}active{{/if}}"
+              data-action="toggle-favs" title="{{localize 'CPR-CHUD.bar.favoritesHint'}}">
+        <i class="fa-solid fa-star"></i>
+        <span>{{localize "CPR-CHUD.bar.favorites"}}</span>
+      </button>
+      {{/if}}
+      <button type="button" class="chud-collapse" data-action="collapse"
+              title="{{localize 'CPR-CHUD.bar.collapse'}}">
+        <i class="fa-solid fa-chevron-down"></i>
+      </button>
+    </section>
+
+    {{!-- Favorite skills row (expandable) --}}
+    {{#if hasFavs}}{{#if favsOpen}}
+    <div class="chud-favs-row">
+      {{#each favSkills}}
+      <button type="button" class="chud-fav-pill" data-action="skill-roll"
+              data-item-id="{{id}}" data-open-item="{{id}}"
+              title="{{statAbbr}} {{statValue}} + {{level}}{{modsDisplay}}">
+        <i class="fa-solid fa-star"></i>
+        <span>{{name}}</span>
+        <b>{{total}}</b>
+      </button>
+      {{/each}}
+    </div>
+    {{/if}}{{/if}}
+  </div>
+{{/if}}
+{{/if}}
+</div>

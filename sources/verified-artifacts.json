@@ -1,0 +1,986 @@
+[
+  {
+    "name": "cpr-combat-hud",
+    "url": "https://github.com/Vec97/cpr-combat-hud/releases/latest/download/module.json",
+    "manifest": {
+      "id": "cpr-combat-hud",
+      "title": "Cyberpunk RED - Combat HUD",
+      "description": "A sleek, always-on combat HUD bar for Cyberpunk RED. Shows HP, armor, stats, weapons, skills (with favorites), role abilities and netrunner interface actions for the selected token - fully wired into the system's roll engine.",
+      "version": "1.1.3",
+      "authors": [
+        {
+          "name": "Vec97",
+          "url": "https://github.com/Vec97"
+        }
+      ],
+      "compatibility": {
+        "minimum": "12",
+        "verified": "12"
+      },
+      "relationships": {
+        "systems": [
+          {
+            "id": "cyberpunk-red-core",
+            "type": "system",
+            "compatibility": {}
+          }
+        ]
+      },
+      "esmodules": [
+        "scripts/main.js"
+      ],
+      "styles": [
+        "styles/combat-hud.css"
+      ],
+      "languages": [
+        {
+          "lang": "en",
+          "name": "English",
+          "path": "languages/en.json"
+        }
+      ],
+      "url": "https://github.com/Vec97/cpr-combat-hud",
+      "manifest": "https://github.com/Vec97/cpr-combat-hud/releases/latest/download/module.json",
+      "download": "https://github.com/Vec97/cpr-combat-hud/releases/download/v1.1.3/module.zip",
+      "readme": "https://github.com/Vec97/cpr-combat-hud/blob/main/README.md",
+      "changelog": "https://github.com/Vec97/cpr-combat-hud/blob/main/CHANGELOG.md",
+      "bugs": "https://github.com/Vec97/cpr-combat-hud/issues",
+      "license": "MIT"
+    },
+    "sha256": "57aa987686dd0eff702f53332bba621e21fde5d537788b7271cfec91043673de",
+    "zip_manifest": {
+      "id": "cpr-combat-hud",
+      "title": "Cyberpunk RED - Combat HUD",
+      "description": "A sleek, always-on combat HUD bar for Cyberpunk RED. Shows HP, armor, stats, weapons, skills (with favorites), role abilities and netrunner interface actions for the selected token - fully wired into the system's roll engine.",
+      "version": "1.1.3",
+      "authors": [
+        {
+          "name": "Vec97",
+          "url": "https://github.com/Vec97"
+        }
+      ],
+      "compatibility": {
+        "minimum": "12",
+        "verified": "12"
+      },
+      "relationships": {
+        "systems": [
+          {
+            "id": "cyberpunk-red-core",
+            "type": "system",
+            "compatibility": {}
+          }
+        ]
+      },
+      "esmodules": [
+        "scripts/main.js"
+      ],
+      "styles": [
+        "styles/combat-hud.css"
+      ],
+      "languages": [
+        {
+          "lang": "en",
+          "name": "English",
+          "path": "languages/en.json"
+        }
+      ],
+      "url": "https://github.com/Vec97/cpr-combat-hud",
+      "manifest": "https://github.com/Vec97/cpr-combat-hud/releases/latest/download/module.json",
+      "download": "https://github.com/Vec97/cpr-combat-hud/releases/download/v1.1.3/module.zip",
+      "readme": "https://github.com/Vec97/cpr-combat-hud/blob/main/README.md",
+      "changelog": "https://github.com/Vec97/cpr-combat-hud/blob/main/CHANGELOG.md",
+      "bugs": "https://github.com/Vec97/cpr-combat-hud/issues",
+      "license": "MIT"
+    },
+    "files": 16,
+    "checkout_commit": "91df778c76aefa52e6eadf84d2c5a06e5a298077",
+    "same_files": 11,
+    "different_files": [
+      "module.json"
+    ]
+  },
+  {
+    "name": "cpred-evasion-workflow",
+    "url": "https://github.com/Vec97/cpred-evasion-workflow/releases/latest/download/module.json",
+    "manifest": {
+      "id": "cpred-evasion-workflow",
+      "title": "Cyberpunk RED - Evasion Workflow",
+      "description": "Interactive Evasion/Dodge workflow for Cyberpunk RED. On a ranged attack the target's controlling user is prompted to Evade (Ausweichen) or Tank (Tanken) BEFORE hit/miss is revealed (blind decision), and Diwako's spoiler hit/miss line is optionally suppressed. Melee and thrown-in-melee attacks auto-resolve the opposed Evasion roll with no prompt. On a confirmed hit the module can optionally auto-roll AND apply the weapon damage via the system's own damage pipeline (GM-routed; grenades/rockets/thrown and autofire/aimed shots fall back to the manual Roll Damage button). Coexists with diwako-cpred-additions without modifying it.",
+      "version": "0.6.0",
+      "authors": [
+        {
+          "name": "yioxar",
+          "flags": {}
+        }
+      ],
+      "socket": true,
+      "esmodules": [
+        "scripts/main.js"
+      ],
+      "styles": [
+        "css/evasion.css"
+      ],
+      "languages": [
+        {
+          "lang": "en",
+          "name": "English",
+          "path": "languages/en.json",
+          "flags": {}
+        },
+        {
+          "lang": "de",
+          "name": "Deutsch",
+          "path": "languages/de.json",
+          "flags": {}
+        }
+      ],
+      "relationships": {
+        "systems": [
+          {
+            "id": "cyberpunk-red-core",
+            "type": "system",
+            "compatibility": {
+              "minimum": "v0.89.1",
+              "maximum": "v0.99.99",
+              "verified": "v0.92.4"
+            }
+          }
+        ],
+        "requires": [
+          {
+            "id": "socketlib",
+            "type": "module"
+          }
+        ],
+        "recommends": [
+          {
+            "id": "diwako-cpred-additions",
+            "type": "module",
+            "compatibility": {}
+          }
+        ]
+      },
+      "compatibility": {
+        "minimum": "12.343",
+        "maximum": "12.999",
+        "verified": "12.343"
+      },
+      "url": "https://github.com/Vec97/cpred-evasion-workflow",
+      "manifest": "https://github.com/Vec97/cpred-evasion-workflow/releases/latest/download/module.json",
+      "download": "https://github.com/Vec97/cpred-evasion-workflow/releases/download/v0.6.0/module.zip"
+    },
+    "sha256": "634b2f11bd9b76ee86aba03e19008c54bc87bdb78af7538d2dcd4b5897f4abbb",
+    "zip_manifest": {
+      "id": "cpred-evasion-workflow",
+      "title": "Cyberpunk RED - Evasion Workflow",
+      "description": "Interactive Evasion/Dodge workflow for Cyberpunk RED. On a ranged attack the target's controlling user is prompted to Evade (Ausweichen) or Tank (Tanken) BEFORE hit/miss is revealed (blind decision), and Diwako's spoiler hit/miss line is optionally suppressed. Melee and thrown-in-melee attacks auto-resolve the opposed Evasion roll with no prompt. On a confirmed hit the module can optionally auto-roll AND apply the weapon damage via the system's own damage pipeline (GM-routed; grenades/rockets/thrown and autofire/aimed shots fall back to the manual Roll Damage button). Coexists with diwako-cpred-additions without modifying it.",
+      "version": "0.6.0",
+      "authors": [
+        {
+          "name": "yioxar",
+          "flags": {}
+        }
+      ],
+      "socket": true,
+      "esmodules": [
+        "scripts/main.js"
+      ],
+      "styles": [
+        "css/evasion.css"
+      ],
+      "languages": [
+        {
+          "lang": "en",
+          "name": "English",
+          "path": "languages/en.json",
+          "flags": {}
+        },
+        {
+          "lang": "de",
+          "name": "Deutsch",
+          "path": "languages/de.json",
+          "flags": {}
+        }
+      ],
+      "relationships": {
+        "systems": [
+          {
+            "id": "cyberpunk-red-core",
+            "type": "system",
+            "compatibility": {
+              "minimum": "v0.89.1",
+              "maximum": "v0.99.99",
+              "verified": "v0.92.4"
+            }
+          }
+        ],
+        "requires": [
+          {
+            "id": "socketlib",
+            "type": "module"
+          }
+        ],
+        "recommends": [
+          {
+            "id": "diwako-cpred-additions",
+            "type": "module",
+            "compatibility": {}
+          }
+        ]
+      },
+      "compatibility": {
+        "minimum": "12.343",
+        "maximum": "12.999",
+        "verified": "12.343"
+      },
+      "url": "https://github.com/Vec97/cpred-evasion-workflow",
+      "manifest": "https://github.com/Vec97/cpred-evasion-workflow/releases/latest/download/module.json",
+      "download": "https://github.com/Vec97/cpred-evasion-workflow/releases/download/v0.6.0/module.zip"
+    },
+    "files": 20,
+    "checkout_commit": "93ccba60c6af3ee37ef7643fa1b557f5a8dd3f72",
+    "same_files": 0,
+    "different_files": [
+      "LICENSE",
+      "README.md",
+      "css/evasion.css",
+      "languages/de.json",
+      "languages/en.json",
+      "module.json",
+      "scripts/constants.js",
+      "scripts/cprSystem.js",
+      "scripts/critical.js",
+      "scripts/damage.js",
+      "scripts/detect.js",
+      "scripts/main.js",
+      "scripts/prompt.js",
+      "scripts/resolve.js",
+      "scripts/settings.js",
+      "scripts/sockets.js",
+      "scripts/utils.js"
+    ],
+    "different_files_after_CRLF_normalization": [],
+    "normalized_identical_common_files": 17
+  },
+  {
+    "name": "tah-core",
+    "url": "https://github.com/Larkinabout/fvtt-token-action-hud-core/releases/download/2.0.16/module.json",
+    "manifest": {
+      "id": "token-action-hud-core",
+      "title": "Token Action HUD Core",
+      "description": "Token Action HUD is a repositionable HUD of actions for a selected token",
+      "authors": [
+        {
+          "name": "Larkinabout",
+          "url": "https://github.com/Larkinabout"
+        },
+        {
+          "name": "Drental"
+        },
+        {
+          "name": "^ and stick"
+        }
+      ],
+      "url": "https://github.com/Larkinabout/fvtt-token-action-hud-core",
+      "flags": {},
+      "version": "2.0.16",
+      "compatibility": {
+        "minimum": "12.331",
+        "verified": "13.342"
+      },
+      "esmodules": [
+        "./dist/token-action-hud-core.min.mjs"
+      ],
+      "styles": [
+        "./styles/token-action-hud.css",
+        "./styles/tah-custom.css",
+        "./styles/tah-docked-left.css",
+        "./styles/tah-docked-left-v13.css",
+        "./styles/tah-docked-right.css",
+        "./styles/tah-docked-right-v13.css",
+        "./styles/tah-foundry-vtt-dark.css",
+        "./styles/tah-foundry-vtt-dark-compact.css",
+        "./styles/tah-foundry-vtt-light.css",
+        "./styles/tah-high-contrast.css",
+        "./styles/tah-pathfinder.css",
+        "./styles/lib/tagify/tagify.css",
+        "./styles/lib/dragsort/dragsort.css"
+      ],
+      "languages": [
+        {
+          "lang": "en",
+          "name": "English",
+          "path": "languages/en.json"
+        },
+        {
+          "lang": "ko",
+          "name": "Korean",
+          "path": "languages/ko.json"
+        },
+        {
+          "lang": "pt-BR",
+          "name": "Português (Brasil)",
+          "path": "languages/br.json"
+        },
+        {
+          "lang": "es",
+          "name": "Spanish",
+          "path": "languages/es.json"
+        },
+        {
+          "lang": "fr",
+          "name": "French",
+          "path": "languages/fr.json"
+        },
+        {
+          "lang": "pl",
+          "name": "Polish",
+          "path": "languages/pl.json"
+        },
+        {
+          "lang": "ja",
+          "name": "日本語",
+          "path": "languages/ja.json"
+        },
+        {
+          "lang": "cn",
+          "name": "中文",
+          "path": "languages/cn.json"
+        },
+        {
+          "lang": "it",
+          "name": "italiano",
+          "path": "languages/it.json"
+        },
+        {
+          "lang": "de",
+          "name": "Deutsch",
+          "path": "languages/de.json"
+        }
+      ],
+      "packs": [],
+      "relationships": {
+        "systems": [],
+        "requires": [
+          {
+            "id": "socketlib"
+          }
+        ],
+        "optional": [
+          {
+            "id": "color-picker",
+            "reason": "To enable color pickers in the module settings"
+          }
+        ],
+        "flags": {
+          "optional": [
+            {
+              "id": "color-picker",
+              "reason": "To enable color pickers in the module settings"
+            }
+          ]
+        }
+      },
+      "socket": true,
+      "manifest": "https://github.com/Larkinabout/fvtt-token-action-hud-core/releases/latest/download/module.json",
+      "download": "https://github.com/Larkinabout/fvtt-token-action-hud-core/releases/download/2.0.16/module.zip",
+      "protected": false,
+      "coreTranslation": false,
+      "library": true,
+      "persistentStorage": true
+    },
+    "sha256": "ca5796170ca40e188bc2c5a8fdeafe2bcc21fc1825f41809e9ada7cddbdb8e65",
+    "zip_manifest": {
+      "id": "token-action-hud-core",
+      "title": "Token Action HUD Core",
+      "description": "Token Action HUD is a repositionable HUD of actions for a selected token",
+      "authors": [
+        {
+          "name": "Larkinabout",
+          "url": "https://github.com/Larkinabout"
+        },
+        {
+          "name": "Drental"
+        },
+        {
+          "name": "^ and stick"
+        }
+      ],
+      "url": "https://github.com/Larkinabout/fvtt-token-action-hud-core",
+      "flags": {},
+      "version": "2.0.16",
+      "compatibility": {
+        "minimum": "12.331",
+        "verified": "13.342"
+      },
+      "esmodules": [
+        "./dist/token-action-hud-core.min.mjs"
+      ],
+      "styles": [
+        "./styles/token-action-hud.css",
+        "./styles/tah-custom.css",
+        "./styles/tah-docked-left.css",
+        "./styles/tah-docked-left-v13.css",
+        "./styles/tah-docked-right.css",
+        "./styles/tah-docked-right-v13.css",
+        "./styles/tah-foundry-vtt-dark.css",
+        "./styles/tah-foundry-vtt-dark-compact.css",
+        "./styles/tah-foundry-vtt-light.css",
+        "./styles/tah-high-contrast.css",
+        "./styles/tah-pathfinder.css",
+        "./styles/lib/tagify/tagify.css",
+        "./styles/lib/dragsort/dragsort.css"
+      ],
+      "languages": [
+        {
+          "lang": "en",
+          "name": "English",
+          "path": "languages/en.json"
+        },
+        {
+          "lang": "ko",
+          "name": "Korean",
+          "path": "languages/ko.json"
+        },
+        {
+          "lang": "pt-BR",
+          "name": "Português (Brasil)",
+          "path": "languages/br.json"
+        },
+        {
+          "lang": "es",
+          "name": "Spanish",
+          "path": "languages/es.json"
+        },
+        {
+          "lang": "fr",
+          "name": "French",
+          "path": "languages/fr.json"
+        },
+        {
+          "lang": "pl",
+          "name": "Polish",
+          "path": "languages/pl.json"
+        },
+        {
+          "lang": "ja",
+          "name": "日本語",
+          "path": "languages/ja.json"
+        },
+        {
+          "lang": "cn",
+          "name": "中文",
+          "path": "languages/cn.json"
+        },
+        {
+          "lang": "it",
+          "name": "italiano",
+          "path": "languages/it.json"
+        },
+        {
+          "lang": "de",
+          "name": "Deutsch",
+          "path": "languages/de.json"
+        }
+      ],
+      "packs": [],
+      "relationships": {
+        "systems": [],
+        "requires": [
+          {
+            "id": "socketlib"
+          }
+        ],
+        "optional": [
+          {
+            "id": "color-picker",
+            "reason": "To enable color pickers in the module settings"
+          }
+        ],
+        "flags": {
+          "optional": [
+            {
+              "id": "color-picker",
+              "reason": "To enable color pickers in the module settings"
+            }
+          ]
+        }
+      },
+      "socket": true,
+      "manifest": "https://github.com/Larkinabout/fvtt-token-action-hud-core/releases/latest/download/module.json",
+      "download": "https://github.com/Larkinabout/fvtt-token-action-hud-core/releases/download/2.0.16/module.zip",
+      "protected": false,
+      "coreTranslation": false,
+      "library": true,
+      "persistentStorage": true
+    },
+    "files": 44,
+    "checkout_commit": "50fff51a863cd8417dc7f8d87cb47ae2d4a4b643",
+    "same_files": 23,
+    "different_files": [
+      "module.json"
+    ]
+  },
+  {
+    "name": "tah-cpr",
+    "url": "https://github.com/rhlowe/token-action-hud-cyberpunk-red/releases/download/v1.0.5/module.json",
+    "manifest": {
+      "id": "token-action-hud-cyberpunk-red",
+      "title": "Token Action HUD for Cyberpunk RED",
+      "description": "Token Action HUD is a repositionable HUD of actions for a selected token",
+      "version": "1.0.5",
+      "compatibility": {
+        "maximum": "12.999",
+        "minimum": "12.343",
+        "verified": "12.343"
+      },
+      "relationships": {
+        "requires": [
+          {
+            "id": "token-action-hud-core",
+            "type": "module",
+            "compatibility": {
+              "maximum": "2.0.99",
+              "minimum": "2.0.11",
+              "verified": "2.0.16"
+            }
+          },
+          {
+            "id": "socketlib",
+            "type": "module",
+            "compatibility": {
+              "verified": "1.1.3"
+            }
+          }
+        ],
+        "systems": [
+          {
+            "id": "cyberpunk-red-core",
+            "type": "system",
+            "compatibility": {
+              "maximum": "v0.99.99",
+              "verified": "v0.89.2"
+            }
+          }
+        ],
+        "recommends": [
+          {
+            "id": "color-picker",
+            "type": "module",
+            "compatibility": {
+              "maximum": "1.7",
+              "minimum": "1.7",
+              "verified": "1.7"
+            }
+          },
+          {
+            "id": "condition-lab-triggler",
+            "type": "module",
+            "compatibility": {
+              "maximum": "2.1.0",
+              "minimum": "2.1.0",
+              "verified": "2.1.0"
+            }
+          }
+        ]
+      },
+      "authors": [
+        {
+          "name": "Rob Lowe",
+          "url": "https://github.com/rhlowe/token-action-hud-cyberpunk-red",
+          "discord": "rhlowe",
+          "flags": {}
+        }
+      ],
+      "url": "https://github.com/rhlowe/token-action-hud-cyberpunk-red",
+      "esmodules": [
+        "scripts/init.js"
+      ],
+      "styles": [
+        "styles/tah-template-style.css"
+      ],
+      "languages": [
+        {
+          "lang": "en",
+          "name": "English",
+          "path": "languages/en.json",
+          "flags": {}
+        }
+      ],
+      "download": "https://github.com/rhlowe/token-action-hud-cyberpunk-red/archive/refs/tags/v1.0.5.zip",
+      "manifest": "https://github.com/rhlowe/token-action-hud-cyberpunk-red/releases/download/v1.0.5/module.json",
+      "readme": "https://github.com/rhlowe/token-action-hud-cyberpunk-red/releases/tag/v1.0.5"
+    },
+    "sha256": "97d6db6db939bfc501b97a5b29d7915cfcefc02db766e964d1b3708588feeed0",
+    "zip_manifest": {
+      "id": "token-action-hud-cyberpunk-red",
+      "title": "Token Action HUD for Cyberpunk RED",
+      "description": "Token Action HUD is a repositionable HUD of actions for a selected token",
+      "version": "1.0.5",
+      "compatibility": {
+        "maximum": "12.999",
+        "minimum": "12.343",
+        "verified": "12.343"
+      },
+      "relationships": {
+        "requires": [
+          {
+            "id": "token-action-hud-core",
+            "type": "module",
+            "compatibility": {
+              "maximum": "2.0.99",
+              "minimum": "2.0.11",
+              "verified": "2.0.16"
+            }
+          },
+          {
+            "id": "socketlib",
+            "type": "module",
+            "compatibility": {
+              "verified": "1.1.3"
+            }
+          }
+        ],
+        "systems": [
+          {
+            "id": "cyberpunk-red-core",
+            "type": "system",
+            "compatibility": {
+              "maximum": "v0.99.99",
+              "verified": "v0.89.2"
+            }
+          }
+        ],
+        "recommends": [
+          {
+            "id": "color-picker",
+            "type": "module",
+            "compatibility": {
+              "maximum": "1.7",
+              "minimum": "1.7",
+              "verified": "1.7"
+            }
+          },
+          {
+            "id": "condition-lab-triggler",
+            "type": "module",
+            "compatibility": {
+              "maximum": "2.1.0",
+              "minimum": "2.1.0",
+              "verified": "2.1.0"
+            }
+          }
+        ]
+      },
+      "authors": [
+        {
+          "name": "Rob Lowe",
+          "url": "https://github.com/rhlowe/token-action-hud-cyberpunk-red",
+          "discord": "rhlowe",
+          "flags": {}
+        }
+      ],
+      "url": "https://github.com/rhlowe/token-action-hud-cyberpunk-red",
+      "esmodules": [
+        "scripts/init.js"
+      ],
+      "styles": [
+        "styles/tah-template-style.css"
+      ],
+      "languages": [
+        {
+          "lang": "en",
+          "name": "English",
+          "path": "languages/en.json",
+          "flags": {}
+        }
+      ],
+      "download": "https://github.com/rhlowe/token-action-hud-cyberpunk-red/archive/refs/tags/v1.0.5.zip",
+      "manifest": "https://github.com/rhlowe/token-action-hud-cyberpunk-red/releases/download/v1.0.5/module.json",
+      "readme": "https://github.com/rhlowe/token-action-hud-cyberpunk-red/releases/tag/v1.0.5"
+    },
+    "files": 53,
+    "checkout_commit": "3558337a696725bac63580c5f5c48e7df4dcc772",
+    "same_files": 40,
+    "different_files": [
+      ".gitignore",
+      "README.md",
+      "package-lock.json",
+      "package.json"
+    ]
+  },
+  {
+    "name": "diwako",
+    "url": "https://github.com/diwako/foundry-cyberpunk-red-core-additions/releases/latest/download/module.json",
+    "manifest": {
+      "title": "Diwako's Cyberpunk Red - Core Additions",
+      "description": "Adds small features to the system as a stop gap solution until similar and/or better functionality is added to the core system itself.",
+      "version": "0.10.1",
+      "authors": [
+        {
+          "name": "diwako",
+          "url": "https://github.com/diwako",
+          "discord": "diwako#7777",
+          "flags": {}
+        }
+      ],
+      "id": "diwako-cpred-additions",
+      "esmodules": [
+        "scripts/main.js"
+      ],
+      "languages": [
+        {
+          "lang": "en",
+          "name": "English",
+          "path": "languages/en.json",
+          "flags": {}
+        },
+        {
+          "lang": "de",
+          "name": "Deutsch",
+          "path": "languages/de.json",
+          "flags": {}
+        },
+        {
+          "lang": "fr",
+          "name": "Français",
+          "path": "languages/fr.json",
+          "flags": {}
+        },
+        {
+          "lang": "ja",
+          "name": "日本語",
+          "path": "languages/ja.json",
+          "flags": {}
+        }
+      ],
+      "relationships": {
+        "systems": [
+          {
+            "id": "cyberpunk-red-core",
+            "type": "system",
+            "compatibility": {
+              "maximum": "v0.99.99",
+              "minimum": "v0.89.1",
+              "verified": "v0.89.2"
+            }
+          }
+        ],
+        "requires": [
+          {
+            "id": "lib-wrapper",
+            "type": "module",
+            "compatibility": {}
+          }
+        ],
+        "recommends": [
+          {
+            "id": "autoanimations",
+            "type": "module",
+            "compatibility": {}
+          },
+          {
+            "id": "df-active-lights",
+            "type": "module",
+            "compatibility": {}
+          },
+          {
+            "id": "item-piles",
+            "type": "module",
+            "compatibility": {}
+          },
+          {
+            "id": "JB2A_DnD5e",
+            "type": "module",
+            "compatibility": {}
+          },
+          {
+            "id": "portal-lib",
+            "type": "module",
+            "compatibility": {}
+          },
+          {
+            "id": "sequencer",
+            "type": "module",
+            "compatibility": {}
+          }
+        ]
+      },
+      "styles": [
+        "css/cpred-additions.css"
+      ],
+      "packFolders": [
+        {
+          "name": "CPR Additions",
+          "sorting": "m",
+          "packs": [
+            "cpr-additions-macros"
+          ],
+          "color": null,
+          "folders": []
+        }
+      ],
+      "packs": [
+        {
+          "name": "cpr-additions-macros",
+          "label": "CPR Additions: Macros",
+          "banner": "systems/cyberpunk-red-core/images/compendium-banner.webp",
+          "path": "packs/cpr-additions-macros",
+          "type": "Macro",
+          "system": "cyberpunk-red-core",
+          "ownership": {
+            "PLAYER": "OBSERVER",
+            "ASSISTANT": "OWNER"
+          }
+        }
+      ],
+      "compatibility": {
+        "maximum": "12.999",
+        "minimum": "12.343",
+        "verified": "12.343"
+      },
+      "url": "https://github.com/diwako/foundry-cyberpunk-red-core-additions",
+      "manifest": "https://github.com/diwako/foundry-cyberpunk-red-core-additions/releases/latest/download/module.json",
+      "download": "https://github.com/diwako/foundry-cyberpunk-red-core-additions/releases/download/0.10.1/module.zip"
+    },
+    "sha256": "7dd91b68940f2c7c21752a63992b678089873dc60e190d3247c763204c5d71c2",
+    "zip_manifest": {
+      "title": "Diwako's Cyberpunk Red - Core Additions",
+      "description": "Adds small features to the system as a stop gap solution until similar and/or better functionality is added to the core system itself.",
+      "version": "0.10.1",
+      "authors": [
+        {
+          "name": "diwako",
+          "url": "https://github.com/diwako",
+          "discord": "diwako#7777",
+          "flags": {}
+        }
+      ],
+      "id": "diwako-cpred-additions",
+      "esmodules": [
+        "scripts/main.js"
+      ],
+      "languages": [
+        {
+          "lang": "en",
+          "name": "English",
+          "path": "languages/en.json",
+          "flags": {}
+        },
+        {
+          "lang": "de",
+          "name": "Deutsch",
+          "path": "languages/de.json",
+          "flags": {}
+        },
+        {
+          "lang": "fr",
+          "name": "Français",
+          "path": "languages/fr.json",
+          "flags": {}
+        },
+        {
+          "lang": "ja",
+          "name": "日本語",
+          "path": "languages/ja.json",
+          "flags": {}
+        }
+      ],
+      "relationships": {
+        "systems": [
+          {
+            "id": "cyberpunk-red-core",
+            "type": "system",
+            "compatibility": {
+              "maximum": "v0.99.99",
+              "minimum": "v0.89.1",
+              "verified": "v0.89.2"
+            }
+          }
+        ],
+        "requires": [
+          {
+            "id": "lib-wrapper",
+            "type": "module",
+            "compatibility": {}
+          }
+        ],
+        "recommends": [
+          {
+            "id": "autoanimations",
+            "type": "module",
+            "compatibility": {}
+          },
+          {
+            "id": "df-active-lights",
+            "type": "module",
+            "compatibility": {}
+          },
+          {
+            "id": "item-piles",
+            "type": "module",
+            "compatibility": {}
+          },
+          {
+            "id": "JB2A_DnD5e",
+            "type": "module",
+            "compatibility": {}
+          },
+          {
+            "id": "portal-lib",
+            "type": "module",
+            "compatibility": {}
+          },
+          {
+            "id": "sequencer",
+            "type": "module",
+            "compatibility": {}
+          }
+        ]
+      },
+      "styles": [
+        "css/cpred-additions.css"
+      ],
+      "packFolders": [
+        {
+          "name": "CPR Additions",
+          "sorting": "m",
+          "packs": [
+            "cpr-additions-macros"
+          ],
+          "color": null,
+          "folders": []
+        }
+      ],
+      "packs": [
+        {
+          "name": "cpr-additions-macros",
+          "label": "CPR Additions: Macros",
+          "banner": "systems/cyberpunk-red-core/images/compendium-banner.webp",
+          "path": "packs/cpr-additions-macros",
+          "type": "Macro",
+          "system": "cyberpunk-red-core",
+          "ownership": {
+            "PLAYER": "OBSERVER",
+            "ASSISTANT": "OWNER"
+          }
+        }
+      ],
+      "compatibility": {
+        "maximum": "12.999",
+        "minimum": "12.343",
+        "verified": "12.343"
+      },
+      "url": "https://github.com/diwako/foundry-cyberpunk-red-core-additions",
+      "manifest": "https://github.com/diwako/foundry-cyberpunk-red-core-additions/releases/latest/download/module.json",
+      "download": "https://github.com/diwako/foundry-cyberpunk-red-core-additions/releases/download/0.10.1/module.zip"
+    },
+    "files": 35,
+    "checkout_commit": "59eea7a464ead79a308dadb11957874ba29c3326",
+    "same_files": 28,
+    "different_files": [
+      "module.json"
+    ]
+  }
+]

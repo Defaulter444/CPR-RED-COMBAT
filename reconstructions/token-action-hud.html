@@ -1,0 +1,116 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Token Action HUD CPR 1.0.5 / Core 2.0.16</title><style>body{margin:0;color:#ddd;font:16px Arial,sans-serif;background:#222 url('../prototype/map.svg') center/cover;height:100vh}button,input,select{font:inherit;color:inherit;background:#24252c;border:1px solid #666}button{cursor:pointer}img{object-fit:cover}*{box-sizing:border-box}.caption{position:fixed;top:24px;left:24px;z-index:100;background:#141b24;padding:18px 24px;border-left:3px solid #8ae3df;max-width:780px;line-height:1.6}.caption b{display:block;font-size:20px}.caption small{color:#adb8c6}i.fa-solid:before,i.fas:before,i.fa:before{content:'◇';font-style:normal}.fa-heart:before{content:'♥'!important}.fa-star:before{content:'★'!important}.fa-shield-halved:before{content:'⬡'!important}.fa-crosshairs:before{content:'⊕'!important}</style><link rel="stylesheet" href="../sources/published/tah-core/extracted/styles/token-action-hud.css"><link rel="stylesheet" href="../sources/published/tah-core/extracted/styles/tah-foundry-vtt-dark.css"><style>:root{--font-size-12:12px;--font-size-13:13px;--font-size-14:14px;--font-size-16:16px;--font-primary:Arial;--color-text-primary:#eee;--color-border-light-primary:#777}#token-action-hud-app{top:220px!important;left:140px!important}.tah-subgroups-container{display:block!important}</style><div class="caption"><b>Token Action HUD CPR 1.0.5 / Core 2.0.16</b>Реконструкция по исходникам, не снимок работающего Foundry.<br><small>Демо-данные: Vega · HP 38/50 · SP 11 · Heavy Pistol 8/8. Сцена, портреты, системный фон и значки — замены. Шрифты — Arial, без ресурсов Foundry.</small></div><div id="token-action-hud-app" class="tah-style-foundry-vtt-dark">
+<div id="token-action-hud" class="" style="transform: scale(1); transform-origin: top left;"><div id="tah-character-name" data-part="characterName">Vega</div><div id="tah-collapse-expand" data-part="collapseExpandContainer">
+    <button id="tah-collapse-hud" class="tah-button-icon" data-part="collapseHudButton" data-action="collapseHud" data-tooltip="tokenActionHud.collapseHud">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+    <button id="tah-expand-hud" class="tah-button-box tah-hidden" data-part="expandHudButton" data-action="expandHud" data-tooltip="tokenActionHud.expandHud">
+        <i class="fas fa-chevron-down"></i>
+    </button>
+</div>
+<div class="tah-groups" data-part="groups">
+    <div id="tah-group-weapons" class="tah-tab-group" 
+    data-part="group" data-group-type="tab" data-nest-id="weapons" data-level="0" data-name="Weapons" data-type="custom">
+        <button class="tah-group-button tah-button-box" value="weapons" data-part="groupButton" data-action="clickGroup"><span class="tah-button-content"><div class="tah-button-text">Weapons</div></span>
+            <i class="tah-edit-group-icon fa fa-pen-to-square" aria-hidden="true"></i>
+        </button>
+        <div class="tah-subgroups-container" data-part="subgroupsContainer">
+            <div class="tah-subgroups" data-part="subgroups"><div class="tah-list-subgroups" data-part="listSubgroups">
+                    <div class="tah-subgroup tah-list-subgroup" data-nest-id="p" data-part="subgroup" data-has-actions="true" data-has-image="false" data-level="1" data-type="system" data-show-title="true"><div class="tah-list-subgroup" data-part="listSubgroup">
+                            <div class="tah-list-subgroup-title" data-action="clickSubgroup" data-part="listSubgroupTitle"><div class="tah-list-subgroup-title-text">Heavy Pistol</div>            <i class="tah-collapse-icon fa fa-chevron-down"></i>
+                                <i class="tah-expand-icon tah-hidden fa fa-chevron-up"></i>            <i class="tah-edit-icon fa fa-pen-to-square" aria-hidden="true"></i>
+                            </div>
+                            <div class="tah-subgroups" data-part="subgroups"><div class="tah-actions" data-part="actions">
+                                        <div class="tah-action" data-part="action">
+                                            <button class="tah-action-button tah-button-box" value=""
+                                                data-part="actionButton" data-action="clickAction" data-action-id="0"><span class="tah-button-content"><div class="tah-button-text">Attack</div><div class="tah-info-container"><div class="tah-info tah-info1" data-tooltip="14" data-tooltip-class="tah-tooltip">14</div></div>
+                                                </span>
+                                            </button>
+                                        </div>                    <div class="tah-action" data-part="action">
+                                            <button class="tah-action-button tah-button-box" value=""
+                                                data-part="actionButton" data-action="clickAction" data-action-id="1"><span class="tah-button-content"><div class="tah-button-text">Damage</div><div class="tah-info-container"><div class="tah-info tah-info1" data-tooltip="3d6" data-tooltip-class="tah-tooltip">3d6</div></div>
+                                                </span>
+                                            </button>
+                                        </div>                    <div class="tah-action" data-part="action">
+                                            <button class="tah-action-button tah-button-box" value=""
+                                                data-part="actionButton" data-action="clickAction" data-action-id="2"><span class="tah-button-content"><div class="tah-button-text">Reload</div><div class="tah-info-container"></div>
+                                                </span>
+                                            </button>
+                                        </div>                    <div class="tah-action" data-part="action">
+                                            <button class="tah-action-button tah-button-box" value=""
+                                                data-part="actionButton" data-action="clickAction" data-action-id="3"><span class="tah-button-content"><div class="tah-button-text">Change Ammo</div><div class="tah-info-container"></div>
+                                                </span>
+                                            </button>
+                                        </div>                    <div class="tah-action" data-part="action">
+                                            <button class="tah-action-button tah-button-box" value=""
+                                                data-part="actionButton" data-action="clickAction" data-action-id="4"><span class="tah-button-content"><div class="tah-button-text">Single</div><div class="tah-info-container"></div>
+                                                </span>
+                                            </button>
+                                        </div>                    <div class="tah-action" data-part="action">
+                                            <button class="tah-action-button tah-button-box" value=""
+                                                data-part="actionButton" data-action="clickAction" data-action-id="5"><span class="tah-button-content"><div class="tah-button-text">Aimed</div><div class="tah-info-container"></div>
+                                                </span>
+                                            </button>
+                                        </div>            </div></div>
+                        </div>
+                    </div>            </div></div>
+        </div>
+    </div>
+    <div id="tah-group-0" class="tah-tab-group" 
+    data-part="group" data-group-type="tab" data-nest-id="0" data-level="" data-name="Skills" data-type="custom">
+        <button class="tah-group-button tah-button-box" value="Skills" data-part="groupButton" data-action="clickGroup"><span class="tah-button-content"><div class="tah-button-text">Skills</div></span>
+            <i class="tah-edit-group-icon fa fa-pen-to-square" aria-hidden="true"></i>
+        </button>
+        <div class="tah-subgroups-container" data-part="subgroupsContainer">
+            <div class="tah-subgroups" data-part="subgroups"></div>
+        </div>
+    </div>
+    <div id="tah-group-1" class="tah-tab-group" 
+    data-part="group" data-group-type="tab" data-nest-id="1" data-level="" data-name="Stats" data-type="custom">
+        <button class="tah-group-button tah-button-box" value="Stats" data-part="groupButton" data-action="clickGroup"><span class="tah-button-content"><div class="tah-button-text">Stats</div></span>
+            <i class="tah-edit-group-icon fa fa-pen-to-square" aria-hidden="true"></i>
+        </button>
+        <div class="tah-subgroups-container" data-part="subgroupsContainer">
+            <div class="tah-subgroups" data-part="subgroups"></div>
+        </div>
+    </div>
+    <div id="tah-group-2" class="tah-tab-group" 
+    data-part="group" data-group-type="tab" data-nest-id="2" data-level="" data-name="Role Abilities" data-type="custom">
+        <button class="tah-group-button tah-button-box" value="Role Abilities" data-part="groupButton" data-action="clickGroup"><span class="tah-button-content"><div class="tah-button-text">Role Abilities</div></span>
+            <i class="tah-edit-group-icon fa fa-pen-to-square" aria-hidden="true"></i>
+        </button>
+        <div class="tah-subgroups-container" data-part="subgroupsContainer">
+            <div class="tah-subgroups" data-part="subgroups"></div>
+        </div>
+    </div>
+    <div id="tah-group-3" class="tah-tab-group" 
+    data-part="group" data-group-type="tab" data-nest-id="3" data-level="" data-name="Effects" data-type="custom">
+        <button class="tah-group-button tah-button-box" value="Effects" data-part="groupButton" data-action="clickGroup"><span class="tah-button-content"><div class="tah-button-text">Effects</div></span>
+            <i class="tah-edit-group-icon fa fa-pen-to-square" aria-hidden="true"></i>
+        </button>
+        <div class="tah-subgroups-container" data-part="subgroupsContainer">
+            <div class="tah-subgroups" data-part="subgroups"></div>
+        </div>
+    </div>
+    <div id="tah-group-4" class="tah-tab-group" 
+    data-part="group" data-group-type="tab" data-nest-id="4" data-level="" data-name="Utility" data-type="custom">
+        <button class="tah-group-button tah-button-box" value="Utility" data-part="groupButton" data-action="clickGroup"><span class="tah-button-content"><div class="tah-button-text">Utility</div></span>
+            <i class="tah-edit-group-icon fa fa-pen-to-square" aria-hidden="true"></i>
+        </button>
+        <div class="tah-subgroups-container" data-part="subgroupsContainer">
+            <div class="tah-subgroups" data-part="subgroups"></div>
+        </div>
+    </div>
+</div>
+<div id="tah-buttons" data-part="buttons">
+    <button id="tah-unlock" class="tah-button-icon" data-part="unlockHudButton" data-action="unlockHud" data-tooltip="tokenActionHud.unlockHud">
+        <i class="fa fa-lock"></i>
+    </button>
+    <button id="tah-lock" class="tah-button-icon tah-hidden" data-part="lockHudButton" data-action="lockHud" data-tooltip="tokenActionHud.lockHud">
+        <i class="fa fa-lock-open"></i>
+    </button>
+    <button id="tah-edit-hud" class="tah-button-icon tah-hidden" data-part="editHudButton" data-action="editHud" data-tooltip="tokenActionHud.editHud">
+        <i class="fa fa-pen-to-square"></i>
+    </button>
+</div>
+</div>
+</div></html>

@@ -1,0 +1,74 @@
+[
+  {
+    "folder": "argon",
+    "commit": "65f6d65ef7e410223307f65c65db686f9be565a6",
+    "status": "",
+    "remote": "https://github.com/theripper93/enhancedcombathud.git"
+  },
+  {
+    "folder": "automate-net-combat",
+    "commit": "26e7a1ab4f2dac5277bc43a8f90e270821795949",
+    "status": "",
+    "remote": "https://github.com/VebjornNyvoll/automate-net-combat.git"
+  },
+  {
+    "folder": "combat-carousel",
+    "commit": "cd1201323149ba268254fe6808211eb425a1328c",
+    "status": "",
+    "remote": "https://github.com/death-save/combat-carousel.git"
+  },
+  {
+    "folder": "cpr-combat-hud",
+    "commit": "91df778c76aefa52e6eadf84d2c5a06e5a298077",
+    "status": "",
+    "remote": "https://github.com/Vec97/cpr-combat-hud.git"
+  },
+  {
+    "folder": "cpred-evasion-workflow",
+    "commit": "93ccba60c6af3ee37ef7643fa1b557f5a8dd3f72",
+    "status": "",
+    "remote": "https://github.com/Vec97/cpred-evasion-workflow.git"
+  },
+  {
+    "folder": "cyberpunk-red-core",
+    "commit": "75b8c9d7cb76ed1ea2797a3404ce77172d424b6b",
+    "status": "",
+    "remote": "https://gitlab.com/cyberpunk-red-team/fvtt-cyberpunk-red-core.git"
+  },
+  {
+    "folder": "diwako-cpred-additions",
+    "commit": "59eea7a464ead79a308dadb11957874ba29c3326",
+    "status": "",
+    "remote": "https://github.com/diwako/foundry-cyberpunk-red-core-additions.git"
+  },
+  {
+    "folder": "monks-combat-details",
+    "commit": "311c490626d1fda5d63a367922f89a01e7ac7099",
+    "status": "",
+    "remote": "https://github.com/ironmonk88/monks-combat-details.git"
+  },
+  {
+    "folder": "sequencer",
+    "commit": "a2e041c4760cab25eac346d1a025b4ce0ffa3a0d",
+    "status": "",
+    "remote": "https://github.com/fantasycalendar/FoundryVTT-Sequencer.git"
+  },
+  {
+    "folder": "state-aware-tokens",
+    "commit": "ae044a3223afd0d23fdf6628643ee8219d6f8422",
+    "status": "",
+    "remote": "https://github.com/VebjornNyvoll/vebjorns-state-aware-tokens.git"
+  },
+  {
+    "folder": "token-action-hud-core",
+    "commit": "50fff51a863cd8417dc7f8d87cb47ae2d4a4b643",
+    "status": "",
+    "remote": "https://github.com/Larkinabout/fvtt-token-action-hud-core.git"
+  },
+  {
+    "folder": "token-action-hud-cyberpunk-red",
+    "commit": "3558337a696725bac63580c5f5c48e7df4dcc772",
+    "status": "",
+    "remote": "https://github.com/rhlowe/token-action-hud-cyberpunk-red.git"
+  }
+]

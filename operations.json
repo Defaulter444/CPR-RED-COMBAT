@@ -1,0 +1,444 @@
+{
+  "catalogVersion": 1,
+  "scope": "Future Foundry adapter contract, not implemented",
+  "operations": [
+    {
+      "id": "astra.cpr.prepareAttack",
+      "version": "0.1.0",
+      "status": "specification-adapter-unimplemented",
+      "permission": "owner",
+      "arguments": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "actorUuid",
+          "weaponUuid",
+          "targetUuid",
+          "mode"
+        ],
+        "properties": {
+          "actorUuid": {
+            "type": "string"
+          },
+          "weaponUuid": {
+            "type": "string"
+          },
+          "targetUuid": {
+            "type": "string"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "single",
+              "aimed",
+              "autofire",
+              "suppressive",
+              "melee"
+            ]
+          }
+        },
+        "$schema": "https://json-schema.org/draft/2020-12/schema"
+      },
+      "result": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "ok",
+              "value",
+              "receipt"
+            ],
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "value": {
+                "type": "object"
+              },
+              "receipt": {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "ok",
+              "code",
+              "message",
+              "recovery"
+            ],
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "recovery": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      },
+      "preview": true,
+      "mutatesDocuments": false,
+      "compensation": "cancel-preview",
+      "errors": [
+        "PERMISSION_DENIED",
+        "STALE_PLAN",
+        "ADAPTER_UNVERIFIED",
+        "GM_UNAVAILABLE",
+        "UNCERTAIN_COMMIT"
+      ],
+      "cleanup": "cancel subscriptions and presentation effects; do not undo game state implicitly"
+    },
+    {
+      "id": "astra.cpr.executeAttack",
+      "version": "0.1.0",
+      "status": "specification-adapter-unimplemented",
+      "permission": "owner",
+      "arguments": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "planId",
+          "requestId",
+          "revision"
+        ],
+        "properties": {
+          "planId": {
+            "type": "string"
+          },
+          "requestId": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer"
+          }
+        },
+        "$schema": "https://json-schema.org/draft/2020-12/schema"
+      },
+      "result": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "ok",
+              "value",
+              "receipt"
+            ],
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "value": {
+                "type": "object"
+              },
+              "receipt": {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "ok",
+              "code",
+              "message",
+              "recovery"
+            ],
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "recovery": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      },
+      "preview": false,
+      "mutatesDocuments": true,
+      "compensation": "not-supported",
+      "errors": [
+        "PERMISSION_DENIED",
+        "STALE_PLAN",
+        "ADAPTER_UNVERIFIED",
+        "GM_UNAVAILABLE",
+        "UNCERTAIN_COMMIT"
+      ],
+      "cleanup": "cancel subscriptions and presentation effects; do not undo game state implicitly"
+    },
+    {
+      "id": "astra.cpr.chooseDefense",
+      "version": "0.1.0",
+      "status": "specification-adapter-unimplemented",
+      "permission": "defender",
+      "arguments": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requestId",
+          "choice"
+        ],
+        "properties": {
+          "requestId": {
+            "type": "string"
+          },
+          "choice": {
+            "type": "string",
+            "enum": [
+              "evade",
+              "decline"
+            ]
+          }
+        },
+        "$schema": "https://json-schema.org/draft/2020-12/schema"
+      },
+      "result": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "ok",
+              "value",
+              "receipt"
+            ],
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "value": {
+                "type": "object"
+              },
+              "receipt": {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "ok",
+              "code",
+              "message",
+              "recovery"
+            ],
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "recovery": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      },
+      "preview": false,
+      "mutatesDocuments": true,
+      "compensation": "not-supported",
+      "errors": [
+        "PERMISSION_DENIED",
+        "STALE_PLAN",
+        "ADAPTER_UNVERIFIED",
+        "GM_UNAVAILABLE",
+        "UNCERTAIN_COMMIT"
+      ],
+      "cleanup": "cancel subscriptions and presentation effects; do not undo game state implicitly"
+    },
+    {
+      "id": "astra.cpr.applyDamage",
+      "version": "0.1.0",
+      "status": "specification-adapter-unimplemented",
+      "permission": "gm",
+      "arguments": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "planId",
+          "requestId"
+        ],
+        "properties": {
+          "planId": {
+            "type": "string"
+          },
+          "requestId": {
+            "type": "string"
+          }
+        },
+        "$schema": "https://json-schema.org/draft/2020-12/schema"
+      },
+      "result": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "ok",
+              "value",
+              "receipt"
+            ],
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "value": {
+                "type": "object"
+              },
+              "receipt": {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "ok",
+              "code",
+              "message",
+              "recovery"
+            ],
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "recovery": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      },
+      "preview": true,
+      "mutatesDocuments": true,
+      "compensation": "reviewed-plan-only",
+      "errors": [
+        "PERMISSION_DENIED",
+        "STALE_PLAN",
+        "ADAPTER_UNVERIFIED",
+        "GM_UNAVAILABLE",
+        "UNCERTAIN_COMMIT"
+      ],
+      "cleanup": "cancel subscriptions and presentation effects; do not undo game state implicitly"
+    },
+    {
+      "id": "astra.cpr.nextTurn",
+      "version": "0.1.0",
+      "status": "specification-adapter-unimplemented",
+      "permission": "combat-owner-or-gm",
+      "arguments": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "combatUuid",
+          "revision"
+        ],
+        "properties": {
+          "combatUuid": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer"
+          }
+        },
+        "$schema": "https://json-schema.org/draft/2020-12/schema"
+      },
+      "result": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "ok",
+              "value",
+              "receipt"
+            ],
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "value": {
+                "type": "object"
+              },
+              "receipt": {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "ok",
+              "code",
+              "message",
+              "recovery"
+            ],
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "recovery": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      },
+      "preview": false,
+      "mutatesDocuments": true,
+      "compensation": "manual-review",
+      "errors": [
+        "PERMISSION_DENIED",
+        "STALE_PLAN",
+        "ADAPTER_UNVERIFIED",
+        "GM_UNAVAILABLE",
+        "UNCERTAIN_COMMIT"
+      ],
+      "cleanup": "cancel subscriptions and presentation effects; do not undo game state implicitly"
+    }
+  ]
+}

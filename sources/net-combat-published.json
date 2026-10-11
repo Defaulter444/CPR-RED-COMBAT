@@ -1,0 +1,82 @@
+{
+    "id": "automate-net-combat",
+    "title": "Automate Net Combat",
+    "description": "Automate Black ICE netrunning combat — spawn fully-statted Black ICE from a compendium, link them to a target netrunner, and apply attack damage to programs or HP automatically.",
+    "version": "v0.1.6",
+    "authors": [
+        {
+            "name": "Vebjørn Nyvoll",
+            "url": "https://github.com/VebjornNyvoll"
+        }
+    ],
+    "compatibility": {
+        "minimum": "12",
+        "verified": "12",
+        "maximum": "13"
+    },
+    "esmodules": [
+        "scripts/main.mjs"
+    ],
+    "styles": [
+        "styles/module.css"
+    ],
+    "languages": [
+        {
+            "lang": "en",
+            "name": "English",
+            "path": "languages/en.json"
+        }
+    ],
+    "packs": [
+        {
+            "name": "black-ice-actors",
+            "label": "Black ICE Actors",
+            "path": "packs/black-ice-actors",
+            "type": "Actor",
+            "system": "cyberpunk-red-core",
+            "ownership": {
+                "PLAYER": "NONE",
+                "ASSISTANT": "OWNER"
+            }
+        },
+        {
+            "name": "black-ice-programs",
+            "label": "Black ICE Programs",
+            "path": "packs/black-ice-programs",
+            "type": "Item",
+            "system": "cyberpunk-red-core",
+            "ownership": {
+                "PLAYER": "NONE",
+                "ASSISTANT": "OWNER"
+            }
+        }
+    ],
+    "relationships": {
+        "systems": [
+            {
+                "id": "cyberpunk-red-core",
+                "type": "system",
+                "compatibility": {
+                    "minimum": "0.89.1",
+                    "verified": "0.89.2"
+                }
+            }
+        ],
+        "recommends": [
+            {
+                "id": "cpr-netrunning-architect",
+                "type": "module",
+                "reason": "Tile-based NET architecture — this module auto-detects Black ICE tiles placed by the architect."
+            },
+            {
+                "id": "lib-wrapper",
+                "type": "module",
+                "reason": "Safer coexistence with other modules that touch the same hooks."
+            }
+        ]
+    },
+    "url": "https://github.com/VebjornNyvoll/automate-net-combat",
+    "manifest": "https://github.com/VebjornNyvoll/automate-net-combat/releases/latest/download/module.json",
+    "download": "https://github.com/VebjornNyvoll/automate-net-combat/releases/download/v0.1.6/module.zip",
+    "bugs": "https://github.com/VebjornNyvoll/automate-net-combat/issues"
+}

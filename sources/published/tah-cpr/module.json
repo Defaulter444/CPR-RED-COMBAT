@@ -1,0 +1,87 @@
+{
+  "id": "token-action-hud-cyberpunk-red",
+  "title": "Token Action HUD for Cyberpunk RED",
+  "description": "Token Action HUD is a repositionable HUD of actions for a selected token",
+  "version": "1.0.5",
+  "compatibility": {
+    "maximum": "12.999",
+    "minimum": "12.343",
+    "verified": "12.343"
+  },
+  "relationships": {
+    "requires": [
+      {
+        "id": "token-action-hud-core",
+        "type": "module",
+        "compatibility": {
+          "maximum": "2.0.99",
+          "minimum": "2.0.11",
+          "verified": "2.0.16"
+        }
+      },
+      {
+        "id": "socketlib",
+        "type": "module",
+        "compatibility": {
+          "verified": "1.1.3"
+        }
+      }
+    ],
+    "systems": [
+      {
+        "id": "cyberpunk-red-core",
+        "type": "system",
+        "compatibility": {
+          "maximum": "v0.99.99",
+          "verified": "v0.89.2"
+        }
+      }
+    ],
+    "recommends": [
+      {
+        "id": "color-picker",
+        "type": "module",
+        "compatibility": {
+          "maximum": "1.7",
+          "minimum": "1.7",
+          "verified": "1.7"
+        }
+      },
+      {
+        "id": "condition-lab-triggler",
+        "type": "module",
+        "compatibility": {
+          "maximum": "2.1.0",
+          "minimum": "2.1.0",
+          "verified": "2.1.0"
+        }
+      }
+    ]
+  },
+  "authors": [
+    {
+      "name": "Rob Lowe",
+      "url": "https://github.com/rhlowe/token-action-hud-cyberpunk-red",
+      "discord": "rhlowe",
+      "flags": {}
+    }
+  ],
+  "url": "https://github.com/rhlowe/token-action-hud-cyberpunk-red",
+  "esmodules": [
+    "scripts/init.js"
+  ],
+  "styles": [
+    "styles/tah-template-style.css"
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "languages/en.json",
+      "flags": {}
+    }
+  ],
+  "download": "https://github.com/rhlowe/token-action-hud-cyberpunk-red/archive/refs/tags/v1.0.5.zip",
+  "manifest": "https://github.com/rhlowe/token-action-hud-cyberpunk-red/releases/download/v1.0.5/module.json",
+  "readme": "https://github.com/rhlowe/token-action-hud-cyberpunk-red/releases/tag/v1.0.5"
+}

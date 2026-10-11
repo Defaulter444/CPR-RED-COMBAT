@@ -1,0 +1,249 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Combat HUD / Skills</title><style>body{margin:0;color:#ddd;font:16px Arial,sans-serif;background:#222 url('../prototype/map.svg') center/cover;height:100vh}button,input,select{font:inherit;color:inherit;background:#24252c;border:1px solid #666}button{cursor:pointer}img{object-fit:cover}*{box-sizing:border-box}.caption{position:fixed;top:24px;left:24px;z-index:100;background:#141b24;padding:18px 24px;border-left:3px solid #8ae3df;max-width:780px;line-height:1.6}.caption b{display:block;font-size:20px}.caption small{color:#adb8c6}i.fa-solid:before,i.fas:before,i.fa:before{content:'◇';font-style:normal}.fa-heart:before{content:'♥'!important}.fa-star:before{content:'★'!important}.fa-shield-halved:before{content:'⬡'!important}.fa-crosshairs:before{content:'⊕'!important}</style><link rel="stylesheet" href="../sources/cpr-combat-hud/styles/combat-hud.css"><div class="caption"><b>Combat HUD / Skills</b>Реконструкция по исходникам, не снимок работающего Foundry.<br><small>Демо-данные: Vega · HP 38/50 · SP 11 · Heavy Pistol 8/8. Сцена, портреты, системный фон и значки — замены. Шрифты — Arial, без ресурсов Foundry.</small></div><div id="cpr-combat-hud" style="--chud-scale: 1; --chud-bottom: 78px;">
+
+  <div class="chud-panel chud-panel-skills">
+    <header class="chud-panel-header">
+      <span>Skills</span>
+      <input type="text" class="chud-skill-search"
+             placeholder="Search skills...">
+    </header>
+    <div class="chud-panel-body">
+      <div class="chud-skill-group">
+        <h4>Fighting Skills</h4>
+        <div class="chud-skill-row" data-action="skill-roll" data-item-id="s"
+             data-open-item="s" data-skill-name="Handgun">
+          <button type="button" class="chud-fav-star active"
+                  data-action="skill-favorite" data-item-id="s"
+                  title="Toggle favorite (shown in the favorites row of the HUD bar)">
+            <i class="fa-solid fa-star"></i>
+          </button>
+          <span class="chud-skill-name">Handgun</span>
+          <span class="chud-skill-detail">REF 8 + 6</span>
+          <span class="chud-skill-total">14</span>
+        </div>
+        <div class="chud-skill-row" data-action="skill-roll" data-item-id="e"
+             data-open-item="e" data-skill-name="Evasion">
+          <button type="button" class="chud-fav-star active"
+                  data-action="skill-favorite" data-item-id="e"
+                  title="Toggle favorite (shown in the favorites row of the HUD bar)">
+            <i class="fa-solid fa-star"></i>
+          </button>
+          <span class="chud-skill-name">Evasion</span>
+          <span class="chud-skill-detail">DEX 8 + 6</span>
+          <span class="chud-skill-total">14</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <div class="chud-bar wound-light">
+
+    <section class="chud-id">
+      <img class="chud-portrait" src="../prototype/vega.svg" data-action="open-sheet"
+           title="Open character sheet" alt="">
+      <div class="chud-id-text">
+        <span class="chud-name">Vega</span>
+        <span class="chud-alias">Street name / Vega</span>
+        <span class="chud-roles">Solo · Rank 4</span>
+        <span class="chud-wound light">Lightly Wounded</span>
+      </div>
+    </section>
+
+    <section class="chud-vitals">
+      <div class="chud-hp-row">
+        <button type="button" class="chud-btn chud-hp-btn" data-action="hp-delta" data-delta="-5">-5</button>
+        <button type="button" class="chud-btn chud-hp-btn" data-action="hp-delta" data-delta="-1">-1</button>
+        <div class="chud-hp-bar">
+          <div class="chud-hp-fill light" style="width: 76%;"></div>
+          <div class="chud-hp-text">
+            <i class="fa-solid fa-heart"></i>
+            <input type="number" class="chud-hp-input" value="38" min="0" max="50">
+            <span class="chud-hp-max">/ 50</span>
+          </div>
+        </div>
+        <button type="button" class="chud-btn chud-hp-btn" data-action="hp-delta" data-delta="1">+1</button>
+        <button type="button" class="chud-btn chud-hp-btn" data-action="hp-delta" data-delta="5">+5</button>
+      </div>
+      <div class="chud-chips">
+        <div class="chud-chip " title="Head SP">
+          <i class="fa-solid fa-hard-hat"></i>
+          <button type="button" class="chud-mini" data-action="armor-delta" data-location="head" data-delta="-1">&minus;</button>
+          <span class="chud-chip-value">11<em>/11</em></span>
+          <button type="button" class="chud-mini" data-action="armor-delta" data-location="head" data-delta="1">+</button>
+          
+        </div>
+        <div class="chud-chip " title="Body SP">
+          <i class="fa-solid fa-shield-halved"></i>
+          <button type="button" class="chud-mini" data-action="armor-delta" data-location="body" data-delta="-1">&minus;</button>
+          <span class="chud-chip-value">11<em>/11</em></span>
+          <button type="button" class="chud-mini" data-action="armor-delta" data-location="body" data-delta="1">+</button>
+          
+        </div>
+        <div class="chud-chip" title="HUM">
+          <i class="fa-solid fa-brain"></i>
+          <span class="chud-chip-value">42<em>/60</em></span>
+        </div>
+        <div class="chud-chip" title="LUCK">
+          <i class="fa-solid fa-clover"></i>
+          <button type="button" class="chud-mini" data-action="luck-delta" data-delta="-1">&minus;</button>
+          <span class="chud-chip-value">6<em>/6</em></span>
+          <button type="button" class="chud-mini" data-action="luck-delta" data-delta="1">+</button>
+        </div>
+        <div class="chud-chip chud-chip-death" data-action="deathsave-roll"
+             title="Death save penalty (click to roll, right-click to reset penalty)">
+          <i class="fa-solid fa-skull"></i>
+          <span class="chud-chip-value">0</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="chud-stats">
+      <button type="button" class="chud-stat" data-action="stat-roll" data-stat="int"
+              title="Roll {stat}">
+        <span class="chud-stat-label">INT</span>
+        <span class="chud-stat-value">6</span>
+      </button>
+      <button type="button" class="chud-stat" data-action="stat-roll" data-stat="ref"
+              title="Roll {stat}">
+        <span class="chud-stat-label">REF</span>
+        <span class="chud-stat-value">8</span>
+      </button>
+      <button type="button" class="chud-stat" data-action="stat-roll" data-stat="dex"
+              title="Roll {stat}">
+        <span class="chud-stat-label">DEX</span>
+        <span class="chud-stat-value">8</span>
+      </button>
+      <button type="button" class="chud-stat" data-action="stat-roll" data-stat="tech"
+              title="Roll {stat}">
+        <span class="chud-stat-label">TECH</span>
+        <span class="chud-stat-value">5</span>
+      </button>
+      <button type="button" class="chud-stat" data-action="stat-roll" data-stat="cool"
+              title="Roll {stat}">
+        <span class="chud-stat-label">COOL</span>
+        <span class="chud-stat-value">7</span>
+      </button>
+      <button type="button" class="chud-stat" data-action="stat-roll" data-stat="will"
+              title="Roll {stat}">
+        <span class="chud-stat-label">WILL</span>
+        <span class="chud-stat-value">6</span>
+      </button>
+      <button type="button" class="chud-stat" data-action="stat-roll" data-stat="luck"
+              title="Roll {stat}">
+        <span class="chud-stat-label">LUCK</span>
+        <span class="chud-stat-value">6</span>
+      </button>
+      <button type="button" class="chud-stat" data-action="stat-roll" data-stat="move"
+              title="Roll {stat}">
+        <span class="chud-stat-label">MOVE</span>
+        <span class="chud-stat-value">6</span>
+      </button>
+      <button type="button" class="chud-stat" data-action="stat-roll" data-stat="body"
+              title="Roll {stat}">
+        <span class="chud-stat-label">BODY</span>
+        <span class="chud-stat-value">6</span>
+      </button>
+      <button type="button" class="chud-stat" data-action="stat-roll" data-stat="emp"
+              title="Roll {stat}">
+        <span class="chud-stat-label">EMP</span>
+        <span class="chud-stat-value">4</span>
+      </button>
+    </section>
+
+    <section class="chud-weapons">
+      <div class="chud-weapons-header">
+        <span>Weapons</span>
+        <button type="button" class="chud-mini chud-gear-toggle" data-action="toggle-panel"
+                data-panel="gear" title="Manage weapons">
+          <i class="fa-solid fa-screwdriver-wrench"></i>
+        </button>
+      </div>
+      <div class="chud-weapon-list">
+        <div class="chud-weapon" data-open-item="p">
+          <img class="chud-weapon-img" src="../prototype/weapon.svg" alt="">
+          <div class="chud-weapon-info">
+            <span class="chud-weapon-name">Heavy Pistol</span>
+            <span class="chud-weapon-sub">
+              3d6 &bull; ROF 2 &bull;
+              <i class="fa-solid fa-box-archive"></i> 8/8
+            </span>
+          </div>
+          <div class="chud-weapon-buttons">
+            <button type="button" class="chud-toggle "
+                    data-action="fire-mode" data-item-id="p" data-mode="aimed"
+                    title="Aimed shot"><i class="fa-solid fa-crosshairs"></i></button>
+            <button type="button" class="chud-toggle" data-action="reload" data-item-id="p"
+                    title="Reload"><i class="fa-solid fa-rotate"></i></button>
+            <button type="button" class="chud-toggle" data-action="change-ammo" data-item-id="p"
+                    title="Change ammo type"><i class="fa-solid fa-boxes-stacked"></i></button>
+            <button type="button" class="chud-btn chud-atk" data-action="attack" data-item-id="p">
+              ATK</button>
+            <button type="button" class="chud-btn chud-dmg" data-action="damage" data-item-id="p">
+              DMG</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="chud-actions">
+      <button type="button" class="chud-action" data-action="initiative-roll"
+              title="Roll initiative">
+        <i class="fa-solid fa-bolt"></i>
+        <span>22</span>
+      </button>
+      <button type="button" class="chud-action chud-turn" data-action="end-turn"
+              title="End turn">
+        <i class="fa-solid fa-flag-checkered"></i>
+        <span>End turn</span>
+      </button>
+      <button type="button" class="chud-action" data-action="facedown-roll"
+              title="CPR.global.generic.facedown">
+        <i class="fa-solid fa-user-ninja"></i>
+        <span>Facedown</span>
+      </button>
+      <button type="button" class="chud-action active"
+              data-action="toggle-panel" data-panel="skills"
+              title="Skills">
+        <i class="fa-solid fa-list-check"></i>
+        <span>Skills</span>
+      </button>
+      <button type="button" class="chud-action "
+              data-action="toggle-panel" data-panel="roles"
+              title="Role Abilities">
+        <i class="fa-solid fa-star"></i>
+        <span>Role Abilities</span>
+      </button>
+      <button type="button" class="chud-action active"
+              data-action="toggle-favs" title="Show/hide the favorite skills row">
+        <i class="fa-solid fa-star"></i>
+        <span>Favs</span>
+      </button>
+      <button type="button" class="chud-collapse" data-action="collapse"
+              title="Collapse HUD">
+        <i class="fa-solid fa-chevron-down"></i>
+      </button>
+    </section>
+
+    
+    <div class="chud-favs-row">
+      <button type="button" class="chud-fav-pill" data-action="skill-roll"
+              data-item-id="s" data-open-item="s"
+              title="REF 8 + 6">
+        <i class="fa-solid fa-star"></i>
+        <span>Handgun</span>
+        <b>14</b>
+      </button>
+      <button type="button" class="chud-fav-pill" data-action="skill-roll"
+              data-item-id="e" data-open-item="e"
+              title="DEX 8 + 6">
+        <i class="fa-solid fa-star"></i>
+        <span>Evasion</span>
+        <b>14</b>
+      </button>
+    </div>
+    
+  </div>
+</div>
+</html>

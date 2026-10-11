@@ -1,0 +1,131 @@
+{
+  "checks": [
+    {
+      "check": "Preview does not consume ammunition",
+      "status": "passed"
+    },
+    {
+      "check": "Cancel preview does not consume ammunition",
+      "status": "passed"
+    },
+    {
+      "check": "Double execution consumes one cartridge",
+      "status": "passed"
+    },
+    {
+      "check": "Public projection omits totals and DV",
+      "status": "passed"
+    },
+    {
+      "check": "Reload restores pending request",
+      "status": "passed"
+    },
+    {
+      "check": "Decline leads to resolved demo result",
+      "status": "passed"
+    },
+    {
+      "check": "Player cannot apply target changes",
+      "status": "passed"
+    },
+    {
+      "check": "Repeated apply applies once in one tab",
+      "status": "passed"
+    },
+    {
+      "check": "Applied ID survives reload",
+      "status": "passed"
+    },
+    {
+      "check": "Completed request advances turn",
+      "status": "passed"
+    },
+    {
+      "check": "Evasion demo branches to dodged",
+      "status": "passed"
+    },
+    {
+      "check": "Empty magazine blocks execution",
+      "status": "passed"
+    },
+    {
+      "check": "Demo reload restores magazine",
+      "status": "passed"
+    },
+    {
+      "check": "Unknown DV blocks execution",
+      "status": "passed"
+    },
+    {
+      "check": "Hidden target absent and execution blocked",
+      "status": "passed"
+    },
+    {
+      "check": "Actor without weapon cannot prepare attack",
+      "status": "passed"
+    },
+    {
+      "check": "Selection does not change active turn",
+      "status": "passed"
+    },
+    {
+      "check": "Empty combat has no queue and no attack",
+      "status": "passed"
+    },
+    {
+      "check": "24 participants available",
+      "status": "passed"
+    },
+    {
+      "check": "Long queue stays within initiative bar",
+      "status": "passed"
+    },
+    {
+      "check": "Full long name preserved as tooltip",
+      "status": "passed"
+    },
+    {
+      "check": "Long names and 125% scale do not widen viewport",
+      "status": "passed"
+    },
+    {
+      "check": "Layout and reduced motion persist",
+      "status": "passed"
+    },
+    {
+      "check": "Panel placed left",
+      "status": "passed"
+    },
+    {
+      "check": "Collapse state toggles",
+      "status": "passed"
+    },
+    {
+      "check": "Reopening dock retains actor",
+      "status": "passed"
+    },
+    {
+      "check": "Repeated reopening does not duplicate handlers",
+      "status": "passed"
+    },
+    {
+      "check": "NET switches to flat presentation",
+      "status": "passed"
+    },
+    {
+      "check": "NET does not alter turn or ammunition",
+      "status": "passed"
+    },
+    {
+      "check": "Unimplemented aimed execution blocked",
+      "status": "passed"
+    },
+    {
+      "check": "No browser JavaScript exceptions",
+      "status": "passed"
+    }
+  ],
+  "passed": 31,
+  "failed": 0,
+  "scope": "Browser demonstration only; no Foundry or multi-client authority test"
+}
