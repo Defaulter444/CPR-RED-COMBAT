@@ -2,7 +2,7 @@
 
 Исследование модулей Cyberpunk RED для Foundry v12, новый дизайн боевого интерфейса и интерактивный **браузерный прототип**.
 
-**[Открыть прототип](https://defaulter444.github.io/CPR-RED-COMBAT/prototype/)** · **[Галерея экранов](https://defaulter444.github.io/CPR-RED-COMBAT/gallery.html)** · [Исследование](RESEARCH.md) · [Архитектура SDK](ARCHITECTURE.md)
+**[Отдельные экраны](renders/)** · [Исследование](RESEARCH.md) · [Архитектура SDK](ARCHITECTURE.md) · [Локальный запуск](#локальный-запуск)
 
 ![REDLINE COMBAT — общий экран, демонстрационные данные](renders/redline-overview-1920.png)
 
@@ -10,9 +10,23 @@
 
 Выберите персонажа и цель, откройте подготовку атаки, выполните демо-атаку, выберите защиту, переключитесь в GM и примените учебный результат. Запрос сохраняется после перезагрузки; повторное нажатие в одной вкладке не создаёт второй расход. Настройки позволяют проверить пустой бой, 24 участника, скрытую цель, неизвестный DV, длинные русские имена, масштаб и отключённые анимации.
 
-В [галерее](https://defaulter444.github.io/CPR-RED-COMBAT/gallery.html) — семь отдельных экранов на 1920×1080 и 1366×768, реконструкции Combat HUD, Token Action HUD и Evasion Workflow, авторские материалы с подписями. [Досье и ремонт корабля](https://defaulter444.github.io/CPR-RED-COMBAT/prototype/examples.html) используют те же небольшие общие компоненты.
+В [галерее](gallery.html) — семь отдельных экранов на 1920×1080 и 1366×768, реконструкции Combat HUD, Token Action HUD и Evasion Workflow, авторские материалы с подписями. [Досье и ремонт корабля](prototype/examples.html) используют те же небольшие общие компоненты.
 
 **Это пока нельзя установить в Foundry как модуль.** Системного адаптера и настоящих бросков нет. Значения результатов фиксированы, переключатель GM учебный, localStorage не обеспечивает мультиклиентную авторизацию или транзакции. Рабочий мир пользователя не менялся. Все ограничения и непроверенные операции перечислены в [VALIDATION.md](VALIDATION.md).
+
+## Просмотр прямо в браузере через GitHub Pages
+
+Код опубликован в `main`, но Pages пока не включён: подключённая GitHub-интеграция имеет доступ к push и получила `403 Resource not accessible by integration` при запросе создания Pages. Это отдельное право владельца репозитория.
+
+В [Settings → Pages](https://github.com/Defaulter444/CPR-RED-COMBAT/settings/pages) выберите **Deploy from a branch → main → / (root)** и нажмите **Save**. В корне уже есть `.nojekyll` и стартовый `index.html`; дополнительная сборка не нужна.
+
+После успешного развёртывания GitHub Pages:
+
+- Прототип: `https://defaulter444.github.io/CPR-RED-COMBAT/prototype/`
+- Галерея: `https://defaulter444.github.io/CPR-RED-COMBAT/`
+- Другие применения SDK: `https://defaulter444.github.io/CPR-RED-COMBAT/prototype/examples.html`
+
+Эти адреса до включения Pages могут возвращать 404. Скриншоты и отчёты доступны на GitHub уже сейчас; локальный запуск ниже работает без Pages.
 
 ## Локальный запуск
 
