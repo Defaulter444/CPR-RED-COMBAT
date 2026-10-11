@@ -1,0 +1,44 @@
+#!/usr/bin/env python3
+"""Build a dependency-free Foundry package from explicit source files."""
+from pathlib import Path
+import hashlib
+import json
+import shutil
+import zipfile
+
+ROOT = Path(__file__).resolve().parent
+MODULE = ROOT / 'foundry' / 'redline-combat'
+OUT = ROOT / 'dist'
+manifest = json.loads((MODULE / 'module.json').read_text())
+assert manifest['id'] == 'redline-combat'
+assert manifest['download'].endswith(f"/v{manifest['version']}/redline-combat.zip")
+
+# The browser demo is isolated in an iframe; its global CSS never reaches Foundry.
+demo = MODULE / 'demo'
+demo.mkdir(exist_ok=True)
+assets = ['index.html', 'app.js', 'style.css', 'map.svg', 'vega.svg', 'nyx.svg', 'guard.svg', 'weapon.svg', 'sdk/core.js', 'sdk/workflow.js']
+for name in assets:
+    destination = demo / name
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(ROOT / 'prototype' / name, destination)
+
+paths = ['module.json', 'README.md', 'scripts/main.js', 'scripts/state.js', 'scripts/view.js', 'styles/redline.css', 'styles/host.css', 'templates/hud.hbs', 'templates/demo.hbs']
+paths.extend('demo/' + name for name in assets)
+for name in paths:
+    assert (MODULE / name).is_file(), name
+for name in manifest['esmodules'] + manifest['styles']:
+    assert name in paths, name
+OUT.mkdir(exist_ok=True)
+shutil.copyfile(MODULE / 'module.json', OUT / 'module.json')
+archive = OUT / 'redline-combat.zip'
+with zipfile.ZipFile(archive, 'w', zipfile.ZIP_DEFLATED) as package:
+    for name in paths:
+        # A single module directory works both for Foundry installation and manual extraction.
+        info = zipfile.ZipInfo('redline-combat/' + name, date_time=(2026, 10, 11, 0, 0, 0))
+        info.compress_type = zipfile.ZIP_DEFLATED
+        info.external_attr = 0o100644 << 16
+        package.writestr(info, (MODULE / name).read_bytes())
+    assert package.testzip() is None
+checksums = {name: hashlib.sha256((OUT / name).read_bytes()).hexdigest() for name in ['module.json', 'redline-combat.zip']}
+(OUT / 'SHA256SUMS.txt').write_text(''.join(f'{value}  {name}\n' for name, value in checksums.items()))
+print(json.dumps({'version': manifest['version'], 'files': len(paths), 'zip_bytes': archive.stat().st_size, 'sha256': checksums}, indent=2))

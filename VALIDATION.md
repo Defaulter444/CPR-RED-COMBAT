@@ -1,6 +1,16 @@
 # Проверки и границы результата
 
-## Выполнено
+## Устанавливаемый пакет v0.1.0
+
+Добавлен `foundry/redline-combat/`: manifest для Foundry v12.343–12.999, legacy Application host, scoped CSS, Document hooks, read-only projection и отдельное iframe-демо. `python3 build-module.py` создаёт ZIP с единственным каталогом `redline-combat`, standalone manifest и SHA-256; в пакет не включены исходники исследованных сторонних модулей.
+
+`node --test tests/module/state.test.mjs` — **26 passed, 0 failed**. Проверены ownership, скрытые строки и цели до чтения их имён, отсутствие ресурсов чужих actors, token UUID между сценами и synthetic actor selection, независимость текущего хода, отзыв прав, неизвестные данные, кибероружие и capacity upgrades без записи документов.
+
+`python3 validate-module.py` — **21 passed, 0 failed** на модели публичного API в браузере. Проверены startup без world writes; скрытые данные; обновление по hooks; выбор actor и открытие штатного sheet; отсутствие повторных listeners; явная команда GM `Combat.nextTurn()` один раз при double-click; блокирование команды игрока; загрузка упакованного iframe-демо и отсутствие изменения HP/ammo мира после demo apply; закрытие/повторное открытие HUD; пустое состояние; отсутствие переполнения при 1920×1080, 1366×768 и 1093×614; отсутствие JS исключений. Результаты: `module-validation.json`. Снимок `renders/foundry-module-fixture-1366.png` помечен как API fixture.
+
+**Это не проверка настоящего Foundry runtime.** Лицензированная сборка, установщик, реальный тестовый мир и два клиента не запускались. `compatibility.verified` намеренно не заполнен. Подготовленный пакет позволяет пользователю провести эту проверку; боевые системные операции остаются нереализованными.
+
+## Выполнено для браузерного прототипа
 
 `python validate.py` — **31 passed, 0 failed** в финальном прогоне. Подробные assert-названия в `validation.json`. Runner падает при неуспехе, проверяет реальное DOM/state браузера, не только синтаксис JS. После визуального просмотра stress-снимка исправлен выход длинных имён за высоту очереди: фиксированная высота, ellipsis и полное имя в tooltip.
 
@@ -46,4 +56,4 @@
 | REDLINE как устанавливаемый module / SDK production | Не реализовано |
 | Работоспособность в рабочем мире пользователя | Не проверялась, мир не менялся |
 
-Production acceptance и multi-client failure matrix: [ARCHITECTURE.md](ARCHITECTURE.md). До доступа к изолированному Foundry полезный результат этого этапа — research, рендеры, локальный prototype и concrete integration contract.
+Production acceptance и multi-client failure matrix: [ARCHITECTURE.md](ARCHITECTURE.md). Доступны research, рендеры, browser prototype, integration contract и экспериментальный устанавливаемый UI-пакет. Проверка лицензированного Foundry и production acceptance остаётся отдельным этапом.

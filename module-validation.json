@@ -1,0 +1,91 @@
+{
+  "scope": "Browser public-API fixture only; zero real Foundry integration tests",
+  "passed": 21,
+  "failed": 0,
+  "checks": [
+    {
+      "check": "Startup reads live fixture documents without world writes",
+      "status": "passed"
+    },
+    {
+      "check": "Hidden combatant omitted from DOM and public projection",
+      "status": "passed"
+    },
+    {
+      "check": "Enemy resources not projected and enemy selection disabled",
+      "status": "passed"
+    },
+    {
+      "check": "Only visible target is included",
+      "status": "passed"
+    },
+    {
+      "check": "Player next turn disabled",
+      "status": "passed"
+    },
+    {
+      "check": "Center allows canvas click-through",
+      "status": "passed"
+    },
+    {
+      "check": "Queue actor selection is independent from active turn",
+      "status": "passed"
+    },
+    {
+      "check": "Actor update hook refreshes selected HP",
+      "status": "passed"
+    },
+    {
+      "check": "Re-render replaces listeners without repeated sheet actions",
+      "status": "passed"
+    },
+    {
+      "check": "Selection and sheet opening do not write world documents",
+      "status": "passed"
+    },
+    {
+      "check": "Explicit GM double-click advances native combat once",
+      "status": "passed"
+    },
+    {
+      "check": "Unauthorized synthetic next-turn click performs no write",
+      "status": "passed"
+    },
+    {
+      "check": "Packaged demo iframe loads with bundled assets",
+      "status": "passed"
+    },
+    {
+      "check": "Demo attack and GM apply leave real fixture HP/ammo/combat untouched",
+      "status": "passed"
+    },
+    {
+      "check": "Closed HUD stays closed after document hooks",
+      "status": "passed"
+    },
+    {
+      "check": "Scene-control tool restores HUD",
+      "status": "passed"
+    },
+    {
+      "check": "Empty combat and absent actor have useful empty states",
+      "status": "passed"
+    },
+    {
+      "check": "No viewport overflow at 1920x1080",
+      "status": "passed"
+    },
+    {
+      "check": "No viewport overflow at 1366x768",
+      "status": "passed"
+    },
+    {
+      "check": "No viewport overflow at 1093x614",
+      "status": "passed"
+    },
+    {
+      "check": "No browser exceptions",
+      "status": "passed"
+    }
+  ]
+}
