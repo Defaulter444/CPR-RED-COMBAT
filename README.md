@@ -11,10 +11,10 @@
 **Add-on Modules → Install Module → Manifest URL:**
 
 ```text
-https://github.com/Defaulter444/CPR-RED-COMBAT/releases/latest/download/module.json
+https://raw.githubusercontent.com/Defaulter444/CPR-RED-COMBAT/main/distribution/module.json
 ```
 
-Установите пакет и включите **REDLINE COMBAT — Experimental Preview** в Manage Modules отдельного тестового мира Cyberpunk RED. Поддерживаемый диапазон — **Foundry v12.343–12.999**, система `cyberpunk-red-core`. Выберите свой токен; HUD покажет HP, отслеживаемую броню, оружие и настоящую очередь боя. **Shift+R** или молния в инструментах токенов показывают / скрывают HUD. Учебные атаки открываются кнопкой **«Демонстрационный просмотр»**. Для ручной установки есть [ZIP релиза](https://github.com/Defaulter444/CPR-RED-COMBAT/releases/download/v0.1.0/redline-combat.zip).
+Установите пакет и включите **REDLINE COMBAT — Experimental Preview** в Manage Modules отдельного тестового мира Cyberpunk RED. Поддерживаемый диапазон — **Foundry v12.343–12.999**, система `cyberpunk-red-core`. Выберите свой токен; HUD покажет HP, отслеживаемую броню, оружие и настоящую очередь боя. **Shift+R** или молния в инструментах токенов показывают / скрывают HUD. Учебные атаки открываются кнопкой **«Демонстрационный просмотр»**. Для ручной установки есть [ZIP релиза](https://raw.githubusercontent.com/Defaulter444/CPR-RED-COMBAT/main/distribution/v0.1.0/redline-combat.zip).
 
 HUD читает документы мира; **«Следующий ход»** — явная команда GM стандартному трекеру. Настоящие броски, расход патронов, защита между клиентами, урон и NET automation в этой версии не подключены. Запуск в лицензированной Foundry не выполнялся. [Инструкция и ограничения пакета](foundry/redline-combat/README.md).
 

@@ -8,7 +8,7 @@
 2. В поле **Manifest URL** вставьте:
 
    ```text
-   https://github.com/Defaulter444/CPR-RED-COMBAT/releases/latest/download/module.json
+   https://raw.githubusercontent.com/Defaulter444/CPR-RED-COMBAT/main/distribution/module.json
    ```
 
 3. Нажмите **Install**, зайдите в отдельный тестовый мир Cyberpunk RED и включите **REDLINE COMBAT — Experimental Preview** в **Manage Modules**.
