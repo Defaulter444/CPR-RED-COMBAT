@@ -1,6 +1,6 @@
-# REDLINE COMBAT — Experimental Preview 0.1.1
+# REDLINE COMBAT — Experimental Preview 0.1.2
 
-Устанавливаемый модуль для **Foundry v12.343–12.999 / Cyberpunk RED (`cyberpunk-red-core`)**. Это первый пакет для самостоятельной проверки интерфейса в мире. Интеграция изучена по API v12 и исходникам CPR v0.92.4; запуск в лицензированной Foundry в этой среде не выполнялся.
+Устанавливаемый модуль для **Foundry v12 / Cyberpunk RED (`cyberpunk-red-core`)**. Это первый пакет для самостоятельной проверки интерфейса в мире. Интеграция изучена по API v12 и исходникам CPR v0.92.4; запуск в лицензированной Foundry в этой среде не выполнялся.
 
 ## Установка
 
@@ -14,7 +14,13 @@
 3. Нажмите **Install**, зайдите в отдельный тестовый мир Cyberpunk RED и включите **REDLINE COMBAT — Experimental Preview** в **Manage Modules**.
 4. HUD появится после перезагрузки мира. Выберите свой токен или назначьте персонажа пользователю. **Shift+R** и кнопка с молнией в инструментах токенов показывают / скрывают HUD.
 
-Если установка по URL недоступна, скачайте `redline-combat.zip` со страницы [релиза](https://github.com/Defaulter444/CPR-RED-COMBAT/releases/tag/v0.1.1), распакуйте так, чтобы manifest находился в `Data/modules/redline-combat/module.json`, и перезапустите Foundry.
+Если установка по URL недоступна, скачайте `redline-combat.zip` со страницы [релиза](https://github.com/Defaulter444/CPR-RED-COMBAT/releases/tag/v0.1.2), распакуйте так, чтобы manifest находился в `Data/modules/redline-combat/module.json`, и перезапустите Foundry.
+
+## Если установка не проходит
+
+В v0.1.2 нижняя граница исправлена на `minimum: "12"`: v0.1.1 ошибочно исключала сборки v12 ниже 343, хотя адаптер не требует этой сборки. Все сборки v12 теперь допускаются manifest; проверка настоящего runtime по-прежнему не выполнена.
+
+Используйте URL `raw.githubusercontent.com/.../main/distribution/module.json` выше. Адрес `github.com/.../releases/latest/download/module.json` не подходит: GitHub-интеграция не позволила загрузить release assets. Модуль предназначен для установленной системы `cyberpunk-red-core`; Foundry v13+ не входит в заявленный диапазон. Если проблема остаётся, нужен точный текст ошибки установки, номер сборки Foundry и сведения о том, установлена ли система Cyberpunk RED.
 
 ## Что работает в пакете
 

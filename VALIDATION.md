@@ -1,8 +1,8 @@
 # Проверки и границы результата
 
-## Устанавливаемый пакет v0.1.1
+## Устанавливаемый пакет v0.1.2
 
-Добавлен `foundry/redline-combat/`: manifest для Foundry v12.343–12.999, legacy Application host, scoped CSS, Document hooks, read-only projection и отдельное iframe-демо. `python3 build-module.py` создаёт ZIP с единственным каталогом `redline-combat`, standalone manifest и SHA-256; в пакет не включены исходники исследованных сторонних модулей.
+Добавлен `foundry/redline-combat/`: manifest для Foundry v12, legacy Application host, scoped CSS, Document hooks, read-only projection и отдельное iframe-демо. `python3 build-module.py` создаёт ZIP с единственным каталогом `redline-combat`, standalone manifest и SHA-256; в пакет не включены исходники исследованных сторонних модулей.
 
 `node --test tests/module/state.test.mjs` — **26 passed, 0 failed**. Проверены ownership, скрытые строки и цели до чтения их имён, отсутствие ресурсов чужих actors, token UUID между сценами и synthetic actor selection, независимость текущего хода, отзыв прав, неизвестные данные, кибероружие и capacity upgrades без записи документов.
 
@@ -11,6 +11,8 @@
 **Это не проверка настоящего Foundry runtime.** Лицензированная сборка, установщик, реальный тестовый мир и два клиента не запускались. `compatibility.verified` намеренно не заполнен. Подготовленный пакет позволяет пользователю провести эту проверку; боевые системные операции остаются нереализованными.
 
 У GitHub API создание релиза доступно, но загрузка assets в `uploads.github.com` получила `401 Bad credentials`; после неуспешной операции релиз и tag отсутствовали. ZIP, manifest и SHA-256 опубликованы в `distribution/` через рабочую HTTPS Git-аутентификацию. Установка не зависит от GitHub Pages или release assets.
+
+В v0.1.2 снята необоснованная нижняя граница `12.343`: `minimum` теперь `12`, `maximum` остаётся `12.999`. Это исправляет отклонение установки на более ранних v12, включая 12.331. Точная причина ошибки у пользователя пока не подтверждена: сообщена только версия v12 без номера сборки и сообщения ошибки. Указанные выше fixture-проверки относятся к неизменённому JS; изменение manifest проверено сборкой, согласованностью внешнего/внутреннего JSON, публичным скачиванием ZIP и SHA-256. Настоящий установщик Foundry не запускался.
 
 ## Выполнено для браузерного прототипа
 

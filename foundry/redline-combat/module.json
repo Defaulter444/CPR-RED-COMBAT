@@ -2,9 +2,9 @@
   "id": "redline-combat",
   "title": "REDLINE COMBAT — Experimental Preview",
   "description": "Экспериментальный HUD Cyberpunk RED: выбранный персонаж и очередь настоящего боя, отдельное демонстрационное окно атаки. Автоматизация бросков и урона ещё не подключена.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "compatibility": {
-    "minimum": "12.343",
+    "minimum": "12",
     "maximum": "12.999"
   },
   "relationships": {
@@ -25,7 +25,7 @@
   ],
   "url": "https://github.com/Defaulter444/CPR-RED-COMBAT",
   "manifest": "https://raw.githubusercontent.com/Defaulter444/CPR-RED-COMBAT/main/distribution/module.json",
-  "download": "https://raw.githubusercontent.com/Defaulter444/CPR-RED-COMBAT/main/distribution/v0.1.1/redline-combat.zip",
+  "download": "https://raw.githubusercontent.com/Defaulter444/CPR-RED-COMBAT/main/distribution/v0.1.2/redline-combat.zip",
   "readme": "https://github.com/Defaulter444/CPR-RED-COMBAT/blob/main/foundry/redline-combat/README.md",
   "bugs": "https://github.com/Defaulter444/CPR-RED-COMBAT/issues"
 }
