@@ -1,4 +1,4 @@
-# REDLINE COMBAT — Experimental Preview 0.1.0
+# REDLINE COMBAT — Experimental Preview 0.1.1
 
 Устанавливаемый модуль для **Foundry v12.343–12.999 / Cyberpunk RED (`cyberpunk-red-core`)**. Это первый пакет для самостоятельной проверки интерфейса в мире. Интеграция изучена по API v12 и исходникам CPR v0.92.4; запуск в лицензированной Foundry в этой среде не выполнялся.
 
@@ -14,7 +14,7 @@
 3. Нажмите **Install**, зайдите в отдельный тестовый мир Cyberpunk RED и включите **REDLINE COMBAT — Experimental Preview** в **Manage Modules**.
 4. HUD появится после перезагрузки мира. Выберите свой токен или назначьте персонажа пользователю. **Shift+R** и кнопка с молнией в инструментах токенов показывают / скрывают HUD.
 
-Если установка по URL недоступна, скачайте `redline-combat.zip` со страницы [релиза](https://github.com/Defaulter444/CPR-RED-COMBAT/releases/tag/v0.1.0), распакуйте так, чтобы manifest находился в `Data/modules/redline-combat/module.json`, и перезапустите Foundry.
+Если установка по URL недоступна, скачайте `redline-combat.zip` со страницы [релиза](https://github.com/Defaulter444/CPR-RED-COMBAT/releases/tag/v0.1.1), распакуйте так, чтобы manifest находился в `Data/modules/redline-combat/module.json`, и перезапустите Foundry.
 
 ## Что работает в пакете
 

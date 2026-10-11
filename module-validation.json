@@ -1,6 +1,6 @@
 {
   "scope": "Browser public-API fixture only; zero real Foundry integration tests",
-  "passed": 21,
+  "passed": 22,
   "failed": 0,
   "checks": [
     {
@@ -53,6 +53,10 @@
     },
     {
       "check": "Packaged demo iframe loads with bundled assets",
+      "status": "passed"
+    },
+    {
+      "check": "Demo request IDs work without secure-context randomUUID",
       "status": "passed"
     },
     {
