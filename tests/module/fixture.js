@@ -77,9 +77,9 @@ class FixtureApplication {
       const data = this.getData();
       const template = await (await fetch(foundry.utils.getRoute(this.options.template))).text();
       const escape = value => String(value).replace(/[&<>"']/g, char => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[char]));
-      const rendered = template.replace('{{{content}}}', data.content ?? '').replace('{{demoUrl}}', escape(data.demoUrl ?? ''));
+      const rendered = template.replace('{{{content}}}', data.content ?? '');
       const holder = document.createElement('template');
-      holder.innerHTML = this.options.popOut ? `<section class="window-app" id="${this.options.id}"><header class="window-header"><span>${escape(this.options.title)}</span><button type="button" aria-label="Закрыть демо">×</button></header><div class="window-content">${rendered}</div></section>` : rendered;
+      holder.innerHTML = this.options.popOut ? `<section class="window-app" id="${this.options.id}"><header class="window-header"><span>${escape(this.options.title)}</span><button type="button" aria-label="Закрыть окно">×</button></header><div class="window-content">${rendered}</div></section>` : rendered;
       const root = holder.content.firstElementChild;
       const previous = document.getElementById(this.options.id);
       if (previous) previous.replaceWith(root); else document.body.append(root);

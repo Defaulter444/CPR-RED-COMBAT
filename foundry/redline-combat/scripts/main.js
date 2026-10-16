@@ -5,7 +5,6 @@ import { weaponCapabilities, equippedWeapons } from './capabilities.js';
 
 const modulePath = `modules/${MODULE_ID}`;
 let hud = null;
-let demo = null;
 let ready = false;
 let selectedCombatantId = null;
 let turnPending = false;
@@ -102,33 +101,14 @@ class RedlineHUD extends Application {
   }
 }
 
-class RedlineDemo extends Application {
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      id: "redline-combat-demo", title: "REDLINE COMBAT — учебный интерфейс",
-      template: `${modulePath}/templates/demo.hbs`, width: 1180, height: 780, resizable: true,
-    });
-  }
-  getData() {
-    return { demoUrl: foundry.utils.getRoute(`${modulePath}/demo/index.html`) };
-  }
-}
-
 async function setEnabled(enabled) {
   await game.settings.set(MODULE_ID, "enabled", Boolean(enabled));
   if (enabled) hud?.refresh();
   else await hud?.close();
 }
-function openDemo() {
-  demo ??= new RedlineDemo();
-  demo.render(true);
-  return demo;
-}
-
 async function dispatch(action, id, request) {
   if(action.startsWith('weapon-') || ['skill','selected-skill','initiative','death-save'].includes(action)) return executeAction(request);
   if (action === "close") return setEnabled(false);
-  if (action === "demo") return openDemo();
   if (action === "refresh") return hud?.refresh();
   if (action === "select-combatant") {
     const row = game.combat?.combatants?.get(id);
@@ -185,7 +165,7 @@ Hooks.once("ready", () => {
   game.modules.get(MODULE_ID).api = Object.freeze({
     open: () => setEnabled(true), close: () => setEnabled(false),
     toggle: () => setEnabled(!game.settings.get(MODULE_ID, "enabled")),
-    openDemo, refresh: () => hud.refresh(),
+    refresh: () => hud.refresh(),
     getState: () => projectHUD(worldContext()),
   });
   hud.refresh();

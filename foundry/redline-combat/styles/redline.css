@@ -39,7 +39,6 @@
 #redline-combat-hud .redline-brand { font-size: 19px; font-weight: 800; letter-spacing: .04em; white-space: nowrap; }
 #redline-combat-hud .redline-brand span { color: var(--redline-red); }
 #redline-combat-hud .redline-toolbar { display: flex; flex-wrap: wrap; gap: 7px; justify-content: flex-end; }
-#redline-combat-hud .redline-preview { border-color: var(--redline-cyan); color: var(--redline-cyan); font-size: 12px; }
 #redline-combat-hud .redline-combat { display: flex; align-items: center; gap: 12px; padding: 10px 12px; min-height: 81px; }
 #redline-combat-hud .redline-round { min-width: 48px; }
 #redline-combat-hud .redline-round strong { font: 25px/1.2 monospace; }

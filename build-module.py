@@ -13,17 +13,8 @@ manifest = json.loads((MODULE / 'module.json').read_text(encoding='utf-8'))
 assert manifest['id'] == 'redline-combat'
 assert manifest['download'].endswith(f"/v{manifest['version']}/redline-combat.zip")
 
-# The browser demo is isolated in an iframe; its global CSS never reaches Foundry.
-demo = MODULE / 'demo'
-demo.mkdir(exist_ok=True)
-assets = ['index.html', 'app.js', 'style.css', 'map.svg', 'vega.svg', 'nyx.svg', 'guard.svg', 'weapon.svg', 'sdk/core.js', 'sdk/workflow.js']
-for name in assets:
-    destination = demo / name
-    destination.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copyfile(ROOT / 'prototype' / name, destination)
-
-paths = ['module.json', 'README.md', 'QA.md', 'scripts/main.js', 'scripts/state.js', 'scripts/view.js', 'scripts/actions.js', 'scripts/capabilities.js', 'styles/redline.css', 'styles/host.css', 'templates/hud.hbs', 'templates/demo.hbs']
-paths.extend('demo/' + name for name in assets)
+# Package only the production HUD. Historical prototype sources stay in the repository.
+paths = ['module.json', 'README.md', 'QA.md', 'scripts/main.js', 'scripts/state.js', 'scripts/view.js', 'scripts/actions.js', 'scripts/capabilities.js', 'styles/redline.css', 'styles/host.css', 'templates/hud.hbs']
 for name in paths:
     assert (MODULE / name).is_file(), name
 for name in manifest['esmodules'] + manifest['styles']:

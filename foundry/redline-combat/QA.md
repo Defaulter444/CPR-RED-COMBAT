@@ -1,4 +1,10 @@
-# Blackglass character actions QA
+# REDLINE COMBAT 0.2.1 verification status
+
+The 0.2.1 update passed 77 automated tests, JavaScript/Python syntax checks, API smoke checks and an archive-content check. The installable package contains 11 production files; the tutorial button, application, API, template and prototype assets have been removed. Character action logic, state projection, permission checks and production action styles remain unchanged.
+
+Live 0.2.1 verification: 2026-10-16, isolated deadline-test, Foundry 12.331 / CPR v0.92.4, GM and Player at 1280 × 720. The tutorial entry was absent, the initiative queue rendered for both clients, and Player's selected character card expanded to show real weapon, ammunition and skill actions. The production action source is unchanged. The broader combat report below is preserved evidence for **REDLINE 0.2.0 / Night City UI 0.3.1**, not a full rerun for 0.2.1. Production campaigns were not changed.
+
+# Previous release: Blackglass character actions QA
 
 Date: 2026-10-16. Night City UI 0.3.1 with REDLINE COMBAT 0.2.0.
 Result: passed for the tested scope below; release candidate verified before publication.

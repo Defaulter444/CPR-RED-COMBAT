@@ -2,7 +2,7 @@
   "id": "redline-combat",
   "title": "REDLINE COMBAT",
   "description": "Панель персонажа Cyberpunk RED: оружие, режимы атаки, урон, боеприпасы, навыки и очередь боя. Адаптер действий для CPR 0.92.4.",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "compatibility": {
     "minimum": "12",
     "verified": "12.331",
@@ -32,7 +32,7 @@
   "readme": "https://github.com/Defaulter444/CPR-RED-COMBAT/blob/main/foundry/redline-combat/README.md",
   "bugs": "https://github.com/Defaulter444/CPR-RED-COMBAT/issues",
   "manifest": "https://raw.githubusercontent.com/Defaulter444/CPR-RED-COMBAT/main/distribution/module.json",
-  "download": "https://github.com/Defaulter444/CPR-RED-COMBAT/releases/download/v0.2.0/redline-combat.zip",
+  "download": "https://github.com/Defaulter444/CPR-RED-COMBAT/releases/download/v0.2.1/redline-combat.zip",
   "changelog": "https://github.com/Defaulter444/CPR-RED-COMBAT/blob/main/CHANGELOG.md",
   "authors": [
     {

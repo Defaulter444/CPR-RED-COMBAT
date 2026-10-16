@@ -100,7 +100,7 @@ export function renderHUD(model = {}) {
   return `<div class="redline-interface">
     <header class="redline-header redline-panel">
       <div class="redline-heading"><div class="redline-brand">REDLINE <span>/ COMBAT</span></div><span class="redline-label">ПЕРСОНАЖ · ОРУЖИЕ · НАВЫКИ</span></div>
-      <nav class="redline-toolbar" aria-label="Управление REDLINE"><button type="button" data-action="demo" class="redline-preview" title="Отдельный учебный сценарий; документы мира не изменяются">Учебный пример</button><button type="button" data-action="refresh" class="redline-small" aria-label="Обновить данные" title="Перечитать данные мира без изменения документов">↻</button><button type="button" data-action="close" class="redline-small" aria-label="Закрыть REDLINE" title="Закрыть REDLINE">×</button></nav>
+      <nav class="redline-toolbar" aria-label="Управление REDLINE"><button type="button" data-action="refresh" class="redline-small" aria-label="Обновить данные" title="Перечитать данные мира без изменения документов">↻</button><button type="button" data-action="close" class="redline-small" aria-label="Закрыть REDLINE" title="Закрыть REDLINE">×</button></nav>
     </header>
     <section class="redline-combat redline-panel" aria-label="Очередь инициативы">
       <div class="redline-round"><span class="redline-label">РАУНД</span><strong>${numberLabel(combat.round)}</strong></div>

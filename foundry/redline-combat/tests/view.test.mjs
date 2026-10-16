@@ -15,6 +15,26 @@ const buttons = html => [...html.matchAll(/<button\b[^>]*>/g)].map(match=>match[
 const selects = html => [...html.matchAll(/<select\b[^>]*>/g)].map(match=>match[0]);
 const action = (html,name) => buttons(html).find(tag=>tag.includes(`data-action="${name}"`));
 
+test('production HUD has no tutorial and retains toolbar and character controls', () => {
+  for (const model of [{}, {supported:true}, {supported:true,selected:actor()}]) {
+    const html=renderHUD(model);
+    assert.doesNotMatch(html,/data-action="demo"|redline-preview|<iframe\b|Учебный пример/);
+    for (const name of ['refresh','close']) {
+      const tag=action(html,name);
+      assert.ok(tag,name);
+      assert.match(tag,/type="button"/);
+      assert.doesNotMatch(tag,/ disabled/);
+    }
+    assert.ok(action(html,'next-turn'));
+  }
+  const html=view(actor());
+  for (const name of ['sheet','weapon-attack','weapon-damage','weapon-reload','weapon-load','skill','selected-skill','initiative']) {
+    const tag=action(html,name);
+    assert.ok(tag,name);
+    assert.doesNotMatch(tag,/ disabled/);
+  }
+});
+
 test('weapon and character commands retain the exact subject and revision', () => {
   const html=view(actor());
   for(const name of ['weapon-attack','weapon-damage','weapon-reload','weapon-load','skill','selected-skill','initiative','death-save']) {
