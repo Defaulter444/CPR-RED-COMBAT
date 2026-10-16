@@ -14,7 +14,7 @@ assert manifest['id'] == 'redline-combat'
 assert manifest['download'].endswith(f"/v{manifest['version']}/redline-combat.zip")
 
 # Package only the production HUD. Historical prototype sources stay in the repository.
-paths = ['module.json', 'README.md', 'QA.md', 'scripts/main.js', 'scripts/state.js', 'scripts/view.js', 'scripts/actions.js', 'scripts/capabilities.js', 'styles/redline.css', 'styles/host.css', 'templates/hud.hbs']
+paths = ['module.json', 'README.md', 'QA.md', 'scripts/main.js', 'scripts/state.js', 'scripts/view.js', 'scripts/presentation.js', 'scripts/actions.js', 'scripts/capabilities.js', 'styles/redline.css', 'styles/host.css', 'templates/hud.hbs']
 for name in paths:
     assert (MODULE / name).is_file(), name
 for name in manifest['esmodules'] + manifest['styles']:

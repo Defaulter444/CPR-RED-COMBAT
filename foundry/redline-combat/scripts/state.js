@@ -58,6 +58,7 @@ export function projectActor(actor, token, user, options = {}) {
     id: actor.id,
     key, revision: options.revision ?? 0, busy: Boolean(options.actionBusy), status: options.actionStatus || '',
     selectedSkillId: options.selectedSkill?.(key) || '',
+    selectedWeaponId: options.selectedWeapon?.(key) || '',
     skills: skillItems.map(item => ({ id: item.id, name: options.localizeSkill?.(item.name) || item.name })).sort((a,b) => a.name.localeCompare(b.name)),
     quickSkills: Object.entries(QUICK_SKILLS).flatMap(([name,label]) => {
       const item = skillItems.find(skill => skill.name === name);
@@ -65,7 +66,7 @@ export function projectActor(actor, token, user, options = {}) {
     }),
     canDeathSave: typeof actor.processDeathSave === 'function' && Number(actor.system?.derivedStats?.hp?.value) <= 0,
     name: token?.name ?? actor.name ?? "Персонаж",
-    img: token?.texture?.src ?? actor.img ?? "",
+    img: actor.img || token?.texture?.src || "",
     hp: resource(actor.system?.derivedStats?.hp),
     armor,
     weapons: weapons.map(item => {
@@ -76,7 +77,7 @@ export function projectActor(actor, token, user, options = {}) {
           if (space !== null) ammo.max = ammo.value + space;
         } catch { /* Unknown capacity keeps the available base value. */ }
       }
-      return { id: item.id, name: item.name ?? "Оружие", ammo: item.system?.isRanged ? ammo : null,
+      return { id: item.id, name: item.name ?? "Оружие", img: item.img || '', ammo: item.system?.isRanged ? ammo : null,
         ...weaponCapabilities(actor,item,options.weaponMode?.(key,item) ?? actor.getFlag?.(SYSTEM_ID,`firetype-${item.id}`)) };
     }),
     canOpenSheet: Boolean(actor.sheet),
@@ -110,8 +111,8 @@ export function projectHUD({ user, system, generation, combat, controlled = [], 
       pending,
     },
     targets: targets.filter(target => visibleTarget(target, user)).map(target => ({
-      id: target.document.id, name: target.document.name ?? "Цель",
+      id: target.document.id, name: target.document.name ?? "Цель", img: target.document.texture?.src || '',
     })),
-    error: supported ? null : "HUD предназначен для Foundry v12 и Cyberpunk RED. Откройте демо интерфейса для просмотра.",
+    error: supported ? null : "HUD предназначен для Foundry v12 и Cyberpunk RED.",
   };
 }

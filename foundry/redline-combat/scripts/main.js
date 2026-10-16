@@ -2,6 +2,7 @@ import { MODULE_ID, projectHUD, resolveSubject, ownsActor, visibleCombatant } fr
 import { renderHUD } from "./view.js";
 import { createActionRunner, ActionRejected, resolveActionSubject } from './actions.js';
 import { weaponCapabilities, equippedWeapons } from './capabilities.js';
+import { safeInsets, skillPopupLayout } from './presentation.js';
 
 const modulePath = `modules/${MODULE_ID}`;
 let hud = null;
@@ -13,6 +14,8 @@ let actionBusy = false;
 let actionStatus = '';
 const weaponModes = new Map();
 const selectedSkills = new Map();
+const selectedWeapons = new Map();
+let skillsSubject = null;
 let systemAdapter;
 const executeAction = createActionRunner({
   getContext: worldContext,
@@ -34,6 +37,7 @@ function worldContext() {
     revision, actionBusy, actionStatus,
     weaponMode: (key,item) => weaponModes.get(`${key}:${item.id}`),
     selectedSkill: key => selectedSkills.get(key),
+    selectedWeapon: key => selectedWeapons.get(key),
     localizeSkill: name => game.i18n.localize(globalThis.Handlebars?.helpers?.cprGetLocalizedlNameKey?.(name,'skill') || name),
   };
 }
@@ -45,7 +49,12 @@ class RedlineHUD extends Application {
     });
   }
   getData() {
-    return { content: renderHUD(projectHUD(worldContext())) };
+    const model = projectHUD(worldContext());
+    return { content: renderHUD({...model,
+      dockExpanded: Boolean(game.settings.get(MODULE_ID, 'dockExpanded')),
+      skillsOpen: Boolean(model.selected && skillsSubject === model.selected.key),
+      hasHostBar: Boolean(document.querySelector('#ncu-shell .ncu-bar')),
+    }) };
   }
   refresh() {
     if (ready && game.settings.get(MODULE_ID, "enabled")) this.render(true);
@@ -58,6 +67,72 @@ class RedlineHUD extends Application {
     super.activateListeners(html);
     this._listeners?.abort();
     this._listeners = new AbortController();
+    const root = html[0];
+    root.classList.add('redline-blackglass');
+    root.dataset.layout = 'blackglass-dock';
+    this._geometryObserver?.disconnect();
+    this._geometryMutation?.disconnect();
+    this._geometryMount?.disconnect();
+    const geometry = () => {
+      const rect = selector => {
+        const element = document.querySelector(selector);
+        return element && getComputedStyle(element).display !== 'none' && getComputedStyle(element).visibility !== 'hidden' ? element.getBoundingClientRect() : null;
+      };
+      const insets = safeInsets({width:window.innerWidth,height:window.innerHeight,controls:rect('#controls'),sidebar:rect('#sidebar'),hotbar:rect('#hotbar'),hostBar:rect('#ncu-shell .ncu-bar'),navigation:rect('#navigation'),timer:rect('#cpr-deadline-hud'),queueHeight:root.querySelector('.redline-combat')?.getBoundingClientRect().height});
+      for (const [edge, value] of Object.entries(insets)) root.style.setProperty(`--redline-${edge}`, `${value}px`);
+      root.querySelector('.redline-interface')?.classList.toggle('has-host-bar', Boolean(rect('#ncu-shell .ncu-bar')));
+      const dock = root.querySelector('.redline-dock')?.getBoundingClientRect();
+      const queueBottom = root.querySelector('.redline-combat')?.getBoundingClientRect().bottom;
+      const skillLayout = skillPopupLayout({dockTop:dock?.top,dockBottom:dock?.bottom,queueBottom,viewportHeight:window.innerHeight});
+      root.style.setProperty('--redline-skill-height', `${skillLayout.height}px`);
+      root.style.setProperty('--redline-skill-bottom', skillLayout.placement === 'dock' ? '0px' : 'calc(100% + 8px)');
+    };
+    geometry();
+    window.addEventListener('resize', geometry, {signal:this._listeners.signal});
+    const chromeSelectors = ['#controls','#sidebar','#hotbar','#navigation','#ncu-shell','#cpr-deadline-hud'];
+    let observed = new Set();
+    const observeChrome = () => {
+      const current = new Set(chromeSelectors.map(selector => document.querySelector(selector)).filter(Boolean));
+      for (const element of observed) if (!current.has(element)) this._geometryObserver?.unobserve(element);
+      this._geometryMutation?.disconnect();
+      for (const element of current) {
+        if (!observed.has(element)) this._geometryObserver?.observe(element);
+        this._geometryMutation?.observe(element, {attributes:true,attributeFilter:['class','style','hidden']});
+      }
+      observed = current;
+    };
+    if (globalThis.ResizeObserver) {
+      this._geometryObserver = new ResizeObserver(geometry);
+    }
+    if (globalThis.MutationObserver) {
+      this._geometryMutation = new MutationObserver(geometry);
+      this._geometryMount = new MutationObserver(records => {
+        const changed = records.some(record => [...record.addedNodes,...record.removedNodes].some(node => node.nodeType === 1 && (node.matches(chromeSelectors.join(',')) || node.querySelector(chromeSelectors.join(',')))));
+        if (changed) { observeChrome(); geometry(); }
+      });
+      // DEADLINE mounts only while running. Ignore countdown text mutations.
+      this._geometryMount.observe(document.body, {childList:true,subtree:true});
+    }
+    observeChrome();
+    if (this._focusNext) {
+      const focusTarget = root.querySelector(this._focusNext);
+      focusTarget?.focus();
+      this._focusNext = null;
+    }
+    document.addEventListener('pointerdown', event => {
+      if (!skillsSubject || event.target.closest('#redline-skills-panel,[data-action="toggle-skills"]')) return;
+      skillsSubject = null;
+      // Keep the clicked control in the DOM until its click/change event arrives.
+      // Rendering here would swallow an attack or selector interaction outside the popup.
+      const panel = root.querySelector('#redline-skills-panel');
+      if (panel) panel.hidden = true;
+      root.querySelector('.redline-primary-actions [data-action="toggle-skills"]')?.setAttribute('aria-expanded', 'false');
+    }, {signal:this._listeners.signal});
+    root.addEventListener('keydown', event => {
+      if (event.key !== 'Escape' || !skillsSubject) return;
+      event.preventDefault();event.stopPropagation();
+      skillsSubject = null;this._focusNext = '.redline-primary-actions [data-action="toggle-skills"]';this.refresh();
+    }, {signal:this._listeners.signal});
     html[0].addEventListener("click", event => {
       const button = event.target.closest("[data-action]");
       if (!button || button.disabled || event.detail > 1) return;
@@ -78,10 +153,15 @@ class RedlineHUD extends Application {
       });
     }, { signal: this._listeners.signal });
     html[0].addEventListener('change', event => {
-      const select=event.target.closest('[data-weapon-mode], [data-skill-select]');
+      const select=event.target.closest('[data-weapon-mode], [data-skill-select], [data-weapon-select]');
       if(!select || actionBusy)return;
       try {
         const {actor}=resolveActionSubject(worldContext(),{subject:select.dataset.subject,revision:Number(select.dataset.revision)});
+        if(select.matches('[data-weapon-select]')) {
+          const item=equippedWeapons(actor).find(item=>item.id===select.value);
+          if(item){selectedWeapons.set(select.dataset.subject,item.id);actionStatus='';this._focusNext='[data-weapon-select]';hud?.refresh();}
+          return;
+        }
         if(select.matches('[data-skill-select]')) {
           const skill=actor.items.get(select.value);
           if(skill?.type==='skill' && typeof skill.createRoll==='function')selectedSkills.set(select.dataset.subject,skill.id);
@@ -89,7 +169,7 @@ class RedlineHUD extends Application {
         }
         const item=equippedWeapons(actor).find(item=>item.id===select.dataset.id);
         if(item && weaponCapabilities(actor,item,select.value).modes.some(mode=>mode.id===select.value)){
-          weaponModes.set(`${select.dataset.subject}:${item.id}`,select.value);actionStatus='';hud?.refresh();
+          weaponModes.set(`${select.dataset.subject}:${item.id}`,select.value);actionStatus='';this._focusNext='[data-weapon-mode]';hud?.refresh();
         }
       } catch(error){if(!(error instanceof ActionRejected))console.error(error);hud?.refresh();}
     }, {signal:this._listeners.signal});
@@ -97,6 +177,9 @@ class RedlineHUD extends Application {
   async close(options = {}) {
     clearTimeout(this._refreshTimer);
     this._listeners?.abort();
+    this._geometryObserver?.disconnect();
+    this._geometryMutation?.disconnect();
+    this._geometryMount?.disconnect();
     return super.close(options);
   }
 }
@@ -110,11 +193,25 @@ async function dispatch(action, id, request) {
   if(action.startsWith('weapon-') || ['skill','selected-skill','initiative','death-save'].includes(action)) return executeAction(request);
   if (action === "close") return setEnabled(false);
   if (action === "refresh") return hud?.refresh();
+  if (action === 'toggle-dock') {
+    skillsSubject = null;
+    hud._focusNext = '[data-action="toggle-dock"]';
+    await game.settings.set(MODULE_ID, 'dockExpanded', !game.settings.get(MODULE_ID, 'dockExpanded'));
+    return;
+  }
+  if (action === 'toggle-skills') {
+    const selected = projectHUD(worldContext()).selected;
+    if (!selected || !game.settings.get(MODULE_ID, 'dockExpanded')) return;
+    skillsSubject = skillsSubject === selected.key ? null : selected.key;
+    hud._focusNext = skillsSubject ? '#redline-skills-panel button' : '.redline-primary-actions [data-action="toggle-skills"]';
+    return hud.refresh();
+  }
   if (action === "select-combatant") {
     const row = game.combat?.combatants?.get(id);
     if (!visibleCombatant(row, game.user) || !ownsActor(row?.actor, game.user)) return;
     // Selection affects this client only; the current turn is independent.
     selectedCombatantId = row.id;
+    skillsSubject = null;
     revision++;actionStatus='';
     hud?.refresh();
   }
@@ -135,6 +232,10 @@ async function dispatch(action, id, request) {
 }
 
 Hooks.once("init", () => {
+  game.settings.register(MODULE_ID, 'dockExpanded', {
+    name:'REDLINE COMBAT: развернуть панель персонажа', scope:'client', config:false,
+    type:Boolean, default:false, onChange:() => hud?.refresh(),
+  });
   game.settings.register(MODULE_ID, "enabled", {
     name: "REDLINE COMBAT: показывать HUD", scope: "client", config: true,
     hint: "Выбранный персонаж и очередь боя. Shift+R или кнопка REDLINE в инструментах токенов переключают HUD.",
@@ -177,5 +278,5 @@ for (const hook of [
   "deleteCombatant", "combatStart", "updateUser", "deleteActor", "deleteToken", "updateActiveEffect", "createActiveEffect", "deleteActiveEffect",
 ]) Hooks.on(hook, () => hud?.scheduleRefresh());
 for (const hook of ["controlToken", "canvasReady", "canvasTearDown"]) {
-  Hooks.on(hook, () => { selectedCombatantId = null; revision++;actionStatus='';hud?.scheduleRefresh(); });
+    Hooks.on(hook, () => { selectedCombatantId = null; skillsSubject = null; revision++;actionStatus='';hud?.scheduleRefresh(); });
 }

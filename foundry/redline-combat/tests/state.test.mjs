@@ -75,7 +75,7 @@ test("controlled token projection uses its name, portrait, HP and explicitly lab
   const subject = token("hero-token", hero, { name: "Токен героя" });
   const model = projectHUD(context({ controlled: [subject] }));
   assert.equal(model.selected.name, "Токен героя");
-  assert.equal(model.selected.img, "hero-token.webp");
+  assert.equal(model.selected.img, "hero.webp");
   assert.deepEqual(model.selected.hp, { value: 38, max: 50 });
   assert.deepEqual(model.selected.armor.map(piece => piece.sp), [9, 10]);
   assert.ok(model.selected.armor.every(piece => piece.name.includes("отслеживаемая")));
@@ -141,7 +141,7 @@ test("target projection filters hidden and out-of-vision tokens before reading t
   assert.equal(visibleTarget({}, player), false);
   assert.equal(visibleTarget(seen, null), false);
   const model = projectHUD(context({ targets: [seen, hidden, unseen] }));
-  assert.deepEqual(model.targets, [{ id: "seen", name: "Видимая цель" }]);
+  assert.deepEqual(model.targets, [{ id: "seen", name: "Видимая цель", img: "seen.webp" }]);
 });
 
 test("GM can inspect hidden and out-of-vision targets", () => {
@@ -390,4 +390,25 @@ test("selected skill projection retains each exact token's choice through refres
   assert.equal(initial.selectedSkillId, perception.id, "an older DTO must remain an independent snapshot");
   assert.deepEqual(hero.items, [perception, evasion], "projection must not mutate system skills");
   assert.equal(projectActor(hero, first.document, player).selectedSkillId, "");
+});
+
+test('weapon choice and images are read-only, scoped to exact token identity, and gated by ownership', () => {
+  const hero=actor('shared', {items:[{id:'pistol',name:'Pistol',img:'items/pistol.webp',type:'weapon',system:{equipped:'equipped'}}]});
+  hero.uuid='Actor.shared';
+  const first=token('first',hero),second=token('second',hero);
+  const choices=new Map([[`${hero.uuid}|${first.document.uuid}`,'pistol'],[`${hero.uuid}|${second.document.uuid}`,'other']]);
+  const options={selectedWeapon:key=>choices.get(key)};
+  assert.equal(projectActor(hero,first.document,player,options).selectedWeaponId,'pistol');
+  assert.equal(projectActor(hero,second.document,player,options).selectedWeaponId,'other');
+  assert.equal(projectActor(hero,first.document,player,options).weapons[0].img,'items/pistol.webp');
+  assert.equal(projectActor(hero,first.document,player).selectedWeaponId,'');
+  const foreign=actor('foreign',{owners:[]});
+  Object.defineProperty(foreign,'img',{get(){throw new Error('unowned portrait accessed');}});
+  assert.equal(projectActor(foreign,null,player,options),null);
+});
+
+test('hidden target portrait is never read while projecting visible target icons', () => {
+  const hidden=token('hidden',actor('enemy',{owners:[]}),{hidden:true});
+  Object.defineProperty(hidden.document,'texture',{get(){throw new Error('hidden target portrait accessed');}});
+  assert.deepEqual(projectHUD(context({targets:[hidden]})).targets,[]);
 });

@@ -46,11 +46,54 @@ test('weapon and character commands retain the exact subject and revision', () =
   }
   for(const name of ['weapon-attack','weapon-damage','weapon-reload','weapon-load']) assert.match(action(html,name),/data-id="pistol"/);
   assert.match(html,/<option value="aimed" selected>Прицельная<\/option>/);
-  assert.match(selects(html)[0],/data-weapon-mode data-id="pistol"/);
-  assert.match(selects(html)[1],/data-skill-select/);
+  assert.match(selects(html)[0],/data-weapon-select/);
+  assert.match(selects(html)[1],/data-weapon-mode data-id="pistol"/);
+  assert.match(selects(html)[2],/data-skill-select/);
   assert.match(action(html,'weapon-load'),/aria-label="Выбрать патроны: Пистолет"/);
   assert.match(html,/fa-solid fa-box-open" aria-hidden="true"/);
   assert.match(html,/Уклонение · 12/);
+});
+
+test('Blackglass uses one selected weapon while all equipped weapons remain in its selector', () => {
+  const first=actor().weapons[0];
+  const second={...first,id:'rifle',name:'Винтовка',img:'weapons/rifle.webp'};
+  const model=actor({selectedWeaponId:'rifle',weapons:[first,second]});
+  const html=view(model);
+  assert.match(html,/redline-blackglass/);
+  assert.match(html,/data-layout="blackglass-dock"/);
+  assert.match(html,/<option value="pistol">Пистолет<\/option>/);
+  assert.match(html,/<option value="rifle" selected>Винтовка<\/option>/);
+  assert.match(html,/<img src="weapons\/rifle.webp"/);
+  for(const name of ['weapon-attack','weapon-damage','weapon-reload','weapon-load']) assert.match(action(html,name),/data-id="rifle"/);
+  assert.equal(buttons(html).filter(tag=>tag.includes('data-action="weapon-attack"')).length,1);
+  const stale=view({...model,selectedWeaponId:'deleted'});
+  assert.match(action(stale,'weapon-attack'),/data-id="pistol"/);
+});
+
+test('dock defaults to a compact status and exposes accessible native collapse and skills controls', () => {
+  const compact=view(actor({status:'Патроны выбраны.'}));
+  assert.match(compact,/class="redline-compact-summary">/);
+  assert.match(compact,/id="redline-dock-content"[^>]* hidden>/);
+  assert.match(action(compact,'toggle-dock'),/aria-expanded="false"/);
+  assert.match(action(compact,'toggle-dock'),/aria-controls="redline-dock-content"/);
+  assert.match(compact,/id="redline-skills-panel"[^>]* hidden>/);
+  assert.match(compact,/role="status" aria-live="polite" aria-atomic="true">Патроны выбраны\./);
+  const expanded=renderHUD({supported:true,selected:actor(),dockExpanded:true,skillsOpen:true});
+  assert.match(action(expanded,'toggle-dock'),/aria-expanded="true"/);
+  assert.doesNotMatch(expanded,/id="redline-dock-content"[^>]* hidden>/);
+  assert.doesNotMatch(expanded,/id="redline-skills-panel"[^>]* hidden>/);
+  assert.match(expanded,/data-action="toggle-skills" aria-expanded="true" aria-controls="redline-skills-panel"/);
+});
+
+test('portraits and weapons reject executable URLs without creating fake resource values', () => {
+  const model=actor({img:'javascript:alert(1)',hp:null});
+  model.weapons[0].img='data:image/svg+xml,<svg onload="alert(1)">';
+  const html=renderHUD({supported:true,selected:model,targets:[{name:'Цель',img:'vbscript:alert(1)'}],dockExpanded:true});
+  assert.doesNotMatch(html,/<img\b/);
+  assert.doesNotMatch(html,/javascript:|vbscript:|data:image/);
+  assert.match(html,/HP недоступно/);
+  assert.match(html,/aria-label="Цели атаки"/);
+  for(const img of ['java\nscript:alert(1)','file:///C:/private.png','vb\tscript:alert(1)']) assert.doesNotMatch(view(actor({img})),/<img\b/);
 });
 
 test('busy state disables every subject action and both selectors', () => {

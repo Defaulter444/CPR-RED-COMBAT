@@ -1,32 +1,39 @@
-/* Native character actions also remain usable without Night City UI. */
-#redline-combat-hud .redline-dock { max-height: min(50vh, 440px); }
-#redline-combat-hud .redline-actor:not(.redline-empty) { grid-template-columns: minmax(180px, 1fr) minmax(180px, 1fr); align-items: start; gap: 12px; }
-#redline-combat-hud .redline-weapons { grid-column: 1 / -1; min-width: 0; border-left: 0; border-top: 1px solid var(--redline-line); padding: 10px 0 0; }
-#redline-combat-hud .redline-weapons ul { max-height: none; overflow: visible; margin: 6px 0 0; }
-#redline-combat-hud .redline-weapons .redline-weapon { display: block; min-width: 0; margin: 0 0 7px; padding: 8px; border: 1px solid var(--redline-line); border-radius: 3px; background: #151f26; }
-#redline-combat-hud .redline-weapon-summary { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
-#redline-combat-hud .redline-weapon-name { min-width: 0; overflow-wrap: anywhere; color: var(--redline-text); font-size: 13px; line-height: 1.35; }
-#redline-combat-hud .redline-weapon-ammo { flex: 0 0 auto; color: var(--redline-yellow); font: 15px/1.2 monospace; white-space: nowrap; }
-#redline-combat-hud .redline-weapon-meta { margin-top: 3px; color: var(--redline-muted); font-size: 11px; }
-#redline-combat-hud .redline-weapon-controls { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-top: 7px; }
-#redline-combat-hud .redline-weapon-mode { display: flex; align-items: center; flex: 1 1 180px; min-width: min(160px, 100%); gap: 6px; font-size: 11px; color: var(--redline-muted); }
-#redline-combat-hud .redline-weapon-mode > span { flex: 0 0 auto; }
-#redline-combat-hud .redline-weapon-mode select,
-#redline-combat-hud .redline-skill-picker select { flex: 1 1 auto; min-width: 0; width: 100%; height: 32px; margin: 0; padding: 3px 6px; border: 1px solid #46535d; border-radius: 3px; background: #19242c; color: var(--redline-text); font-family: inherit; font-size: 12px; line-height: 1.3; }
-#redline-combat-hud .redline-weapon-mode option,
-#redline-combat-hud .redline-skill-picker option { color: #edf2f5; background: #19242c; }
-#redline-combat-hud .redline-actor select:focus-visible { outline: 2px solid var(--redline-cyan); outline-offset: -2px; }
-#redline-combat-hud .redline-actor select:disabled { opacity: .55; cursor: not-allowed; }
-#redline-combat-hud .redline-action-button { flex: 0 0 auto; min-height: 32px; padding: 4px 8px; font-size: 12px; line-height: 1.3; white-space: nowrap; }
-#redline-combat-hud .redline-action-icon { width: 32px; padding: 4px; }
-#redline-combat-hud .redline-action-icon i { margin: 0; pointer-events: none; }
-#redline-combat-hud .redline-action-tools { grid-column: 1 / -1; display: grid; min-width: 0; gap: 10px; border-top: 1px solid var(--redline-line); padding-top: 10px; }
+/* Native selectors and the upward skills disclosure remain independent of NCU. */
+#redline-combat-hud .redline-weapon-pickers { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 8px; }
+#redline-combat-hud .redline-weapon-pickers label { min-width: 0; }
+#redline-combat-hud select { width: 100%; min-width: 0; height: 36px; background: #101920; color: var(--redline-text); font-size: 12px; padding: 5px 6px; }
+#redline-combat-hud option { color: #eff3f6; background: #15222b; }
+#redline-combat-hud .redline-weapon-preview { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); align-items: center; gap: 12px; min-height: 116px; padding-top: 8px; }
+#redline-combat-hud .redline-weapon-art { display: flex; align-items: center; justify-content: center; min-width: 0; height: 112px; border: 1px solid #25323b; border-radius: 5px; overflow: hidden; background: #101820; }
+#redline-combat-hud .redline-weapon-art img { width: 100%; height: 100%; object-fit: contain; border: 0; border-radius: 0; }
+#redline-combat-hud .redline-weapon-art i { font-size: 48px; color: var(--redline-muted); }
+#redline-combat-hud .redline-weapon-data { min-width: 0; }
+#redline-combat-hud .redline-ammo-line { display: flex; align-items: center; gap: 5px; }
+#redline-combat-hud .redline-weapon-ammo { display: block; color: var(--redline-text); font: 30px/1.4 monospace; white-space: nowrap; }
+#redline-combat-hud .redline-weapon-ammo small { color: #cdd7de; font-size: 21px; }
+#redline-combat-hud .redline-weapon-meta { display: flex; flex-wrap: wrap; gap: 5px 9px; margin-top: 4px; font-size: 13px; color: #d6dfe5; }
+#redline-combat-hud .redline-no-weapon { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; text-align: center; }
+#redline-combat-hud .redline-no-weapon > i { font-size: 33px; color: var(--redline-muted); }
+#redline-combat-hud .redline-no-weapon p { font-size: 12px; }
+#redline-combat-hud .redline-skill-popover { position: absolute; z-index: 5; right: 0; bottom: var(--redline-skill-bottom, calc(100% + 8px)); width: min(440px, 100%); max-height: var(--redline-skill-height, min(42vh, 330px)); overflow-y: auto; padding: 10px 12px 12px; border-top: 2px solid var(--redline-cyan); }
+#redline-combat-hud .redline-popover-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-bottom: 8px; }
+#redline-combat-hud .redline-popover-header strong { font-size: 14px; }
+#redline-combat-hud .redline-popover-header button { min-height: 30px; }
+#redline-combat-hud .redline-action-tools { display: grid; gap: 12px; min-width: 0; }
 #redline-combat-hud .redline-skills { min-width: 0; }
-#redline-combat-hud .redline-quick-skills { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 8px; }
-#redline-combat-hud .redline-skill-picker { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
-#redline-combat-hud .redline-skill-picker > label { display: flex; align-items: center; flex: 1 1 0; min-width: 0; gap: 8px; }
-#redline-combat-hud .redline-skill-picker > label > span { flex: 0 0 auto; color: var(--redline-muted); font-size: 12px; }
-#redline-combat-hud .redline-character-actions { display: flex; flex-wrap: wrap; gap: 8px; }
-#redline-combat-hud .redline-action-note { margin: 0; font-size: 11px; line-height: 1.4; }
-#redline-combat-hud .redline-action-status { grid-column: 1 / -1; margin: 0; color: var(--redline-cyan); font-size: 12px; line-height: 1.4; overflow-wrap: anywhere; }
+#redline-combat-hud .redline-quick-skills { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 10px; }
+#redline-combat-hud .redline-skill-picker { display: flex; align-items: end; gap: 8px; margin-top: 6px; }
+#redline-combat-hud .redline-skill-picker label { flex: 1; min-width: 0; }
+#redline-combat-hud .redline-skill-picker label > span { display: block; color: var(--redline-muted); font-size: 11px; margin-bottom: 4px; }
+#redline-combat-hud .redline-character-actions { display: flex; flex-wrap: wrap; gap: 7px; border-top: 1px solid var(--redline-line); padding-top: 10px; }
+#redline-combat-hud .redline-action-note { margin: 0; font-size: 11px; line-height: 1.45; }
+#redline-combat-hud .redline-action-status { padding: 0 12px 9px; color: var(--redline-cyan); font-size: 12px; line-height: 1.4; overflow-wrap: anywhere; }
 #redline-combat-hud .redline-action-status:empty { display: none; }
+@media (max-width: 1300px) {
+  #redline-combat-hud .redline-weapon-pickers { gap: 6px; }
+  #redline-combat-hud .redline-weapon-preview { gap: 8px; min-height: 105px; }
+  #redline-combat-hud .redline-weapon-art { height: 100px; }
+  #redline-combat-hud .redline-weapon-ammo { font-size: 24px; }
+  #redline-combat-hud .redline-weapon-ammo small { font-size: 16px; }
+  #redline-combat-hud .redline-weapon-meta { font-size: 12px; }
+}
