@@ -1,10 +1,11 @@
 {
   "id": "redline-combat",
-  "title": "REDLINE COMBAT — Experimental Preview",
-  "description": "Экспериментальный HUD Cyberpunk RED: выбранный персонаж и очередь настоящего боя, отдельное демонстрационное окно атаки. Автоматизация бросков и урона ещё не подключена.",
-  "version": "0.1.2",
+  "title": "REDLINE COMBAT",
+  "description": "Панель персонажа Cyberpunk RED: оружие, режимы атаки, урон, боеприпасы, навыки и очередь боя. Адаптер действий для CPR 0.92.4.",
+  "version": "0.2.0",
   "compatibility": {
     "minimum": "12",
+    "verified": "12.331",
     "maximum": "12.999"
   },
   "relationships": {
@@ -12,7 +13,11 @@
       {
         "id": "cyberpunk-red-core",
         "type": "system",
-        "compatibility": {}
+        "compatibility": {
+          "minimum": "v0.92.4",
+          "verified": "v0.92.4",
+          "maximum": "v0.92.4"
+        }
       }
     ]
   },
@@ -24,8 +29,15 @@
     "styles/host.css"
   ],
   "url": "https://github.com/Defaulter444/CPR-RED-COMBAT",
-  "manifest": "https://raw.githubusercontent.com/Defaulter444/CPR-RED-COMBAT/main/distribution/module.json",
-  "download": "https://raw.githubusercontent.com/Defaulter444/CPR-RED-COMBAT/main/distribution/v0.1.2/redline-combat.zip",
   "readme": "https://github.com/Defaulter444/CPR-RED-COMBAT/blob/main/foundry/redline-combat/README.md",
-  "bugs": "https://github.com/Defaulter444/CPR-RED-COMBAT/issues"
+  "bugs": "https://github.com/Defaulter444/CPR-RED-COMBAT/issues",
+  "manifest": "https://raw.githubusercontent.com/Defaulter444/CPR-RED-COMBAT/main/distribution/module.json",
+  "download": "https://github.com/Defaulter444/CPR-RED-COMBAT/releases/download/v0.2.0/redline-combat.zip",
+  "changelog": "https://github.com/Defaulter444/CPR-RED-COMBAT/blob/main/CHANGELOG.md",
+  "authors": [
+    {
+      "name": "Defaulter444",
+      "url": "https://github.com/Defaulter444"
+    }
+  ]
 }

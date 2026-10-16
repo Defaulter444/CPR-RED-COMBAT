@@ -9,7 +9,7 @@ import zipfile
 ROOT = Path(__file__).resolve().parent
 MODULE = ROOT / 'foundry' / 'redline-combat'
 OUT = ROOT / 'dist'
-manifest = json.loads((MODULE / 'module.json').read_text())
+manifest = json.loads((MODULE / 'module.json').read_text(encoding='utf-8'))
 assert manifest['id'] == 'redline-combat'
 assert manifest['download'].endswith(f"/v{manifest['version']}/redline-combat.zip")
 
@@ -22,7 +22,7 @@ for name in assets:
     destination.parent.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(ROOT / 'prototype' / name, destination)
 
-paths = ['module.json', 'README.md', 'scripts/main.js', 'scripts/state.js', 'scripts/view.js', 'styles/redline.css', 'styles/host.css', 'templates/hud.hbs', 'templates/demo.hbs']
+paths = ['module.json', 'README.md', 'QA.md', 'scripts/main.js', 'scripts/state.js', 'scripts/view.js', 'scripts/actions.js', 'scripts/capabilities.js', 'styles/redline.css', 'styles/host.css', 'templates/hud.hbs', 'templates/demo.hbs']
 paths.extend('demo/' + name for name in assets)
 for name in paths:
     assert (MODULE / name).is_file(), name

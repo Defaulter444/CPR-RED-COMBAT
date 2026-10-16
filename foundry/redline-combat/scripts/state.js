@@ -1,4 +1,5 @@
 /** Public, read-only projection. Never returns raw Documents or enemy resources. */
+import { equippedWeapons, subjectKey, weaponCapabilities, QUICK_SKILLS } from './capabilities.js';
 export const MODULE_ID = "redline-combat";
 export const SYSTEM_ID = "cyberpunk-red-core";
 
@@ -43,19 +44,26 @@ function resource(value) {
   if (!value || number(value.value) === null) return null;
   return { value: number(value.value), max: number(value.max) };
 }
-export function projectActor(actor, token, user) {
+export function projectActor(actor, token, user, options = {}) {
   if (!ownsActor(actor, user)) return null;
   if (!["character", "mook"].includes(actor.type)) return null;
   const armor = [
     ["Голова · отслеживаемая броня", actor.system?.externalData?.currentArmorHead],
     ["Тело · отслеживаемая броня", actor.system?.externalData?.currentArmorBody],
   ].flatMap(([name, value]) => number(value?.value) === null ? [] : [{ name, sp: value.value }]);
-  const equipped = actor.system?.weapons?.equipped;
-  const weapons = equipped && typeof equipped[Symbol.iterator] === "function"
-    ? Array.from(equipped) : Array.from(actor.items ?? []).filter(item =>
-      item.type === "weapon" && item.system?.equipped === "equipped");
+  const weapons = equippedWeapons(actor);
+  const key = subjectKey(actor, token);
+  const skillItems = Array.from(actor.items ?? []).filter(item => item.type === 'skill' && typeof item.createRoll === 'function');
   return {
     id: actor.id,
+    key, revision: options.revision ?? 0, busy: Boolean(options.actionBusy), status: options.actionStatus || '',
+    selectedSkillId: options.selectedSkill?.(key) || '',
+    skills: skillItems.map(item => ({ id: item.id, name: options.localizeSkill?.(item.name) || item.name })).sort((a,b) => a.name.localeCompare(b.name)),
+    quickSkills: Object.entries(QUICK_SKILLS).flatMap(([name,label]) => {
+      const item = skillItems.find(skill => skill.name === name);
+      return item ? [{id:item.id,name:label}] : [];
+    }),
+    canDeathSave: typeof actor.processDeathSave === 'function' && Number(actor.system?.derivedStats?.hp?.value) <= 0,
     name: token?.name ?? actor.name ?? "Персонаж",
     img: token?.texture?.src ?? actor.img ?? "",
     hp: resource(actor.system?.derivedStats?.hp),
@@ -68,18 +76,20 @@ export function projectActor(actor, token, user) {
           if (space !== null) ammo.max = ammo.value + space;
         } catch { /* Unknown capacity keeps the available base value. */ }
       }
-      return { id: item.id, name: item.name ?? "Оружие", ammo };
+      return { id: item.id, name: item.name ?? "Оружие", ammo: item.system?.isRanged ? ammo : null,
+        ...weaponCapabilities(actor,item,options.weaponMode?.(key,item) ?? actor.getFlag?.(SYSTEM_ID,`firetype-${item.id}`)) };
     }),
     canOpenSheet: Boolean(actor.sheet),
   };
 }
 
-export function projectHUD({ user, system, generation, combat, controlled = [], targets = [], selectedCombatantId = null, pending = false }) {
+export function projectHUD({ user, system, generation, combat, controlled = [], targets = [], selectedCombatantId = null, pending = false, ...options }) {
   const supported = system?.id === SYSTEM_ID && Number(generation) === 12;
   const rows = Array.from(combat?.turns ?? combat?.combatants ?? []);
   const visibleRows = rows.filter(row => visibleCombatant(row, user));
   const { token, actor } = resolveSubject({ user, combat, controlled, selectedCombatantId });
-  const selected = supported ? projectActor(actor, token, user) : null;
+  const selected = supported ? projectActor(actor, token, user, options) : null;
+  if (selected) selected.canInitiative = typeof combat?.rollInitiative === 'function' && rows.some(row => visibleCombatant(row,user) && ownsActor(row.actor,user) && (token ? sameToken(row.token,token) : row.actor === actor));
   const current = combat?.combatant?.id;
   return {
     supported,
