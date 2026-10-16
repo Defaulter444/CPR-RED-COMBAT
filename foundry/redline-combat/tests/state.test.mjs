@@ -374,8 +374,8 @@ test("selected skill projection retains each exact token's choice through refres
   assert.equal(initial.busy, true);
   assert.equal(initial.status, options.actionStatus);
   assert.deepEqual(initial.skills, [
-    { id: perception.id, name: "Восприятие" },
-    { id: evasion.id, name: "Уклонение" },
+    { id: perception.id, name: "Восприятие", category: "", difficult: false },
+    { id: evasion.id, name: "Уклонение", category: "", difficult: false },
   ]);
   assert.equal(project(second).selectedSkillId, evasion.id);
   assert.equal(project(first).selectedSkillId, perception.id);

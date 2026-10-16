@@ -1,0 +1,60 @@
+{
+  "source": "Native character sheet DOM",
+  "categories": [
+    {
+      "category": "awarenessSkills",
+      "label": "Навыки восприятия",
+      "count": 5,
+      "match": true
+    },
+    {
+      "category": "bodySkills",
+      "label": "Физические навыки",
+      "count": 6,
+      "match": true
+    },
+    {
+      "category": "controlSkills",
+      "label": "Навыки управления",
+      "count": 4,
+      "match": true
+    },
+    {
+      "category": "educationSkills",
+      "label": "Навыки образования",
+      "count": 15,
+      "match": true
+    },
+    {
+      "category": "fightingSkills",
+      "label": "Навыки ближнего боя",
+      "count": 3,
+      "match": true
+    },
+    {
+      "category": "performanceSkills",
+      "label": "Навыки выступления",
+      "count": 1,
+      "match": true
+    },
+    {
+      "category": "rangedweaponSkills",
+      "label": "Навыки дальнего боя",
+      "count": 5,
+      "match": true
+    },
+    {
+      "category": "socialSkills",
+      "label": "Социальные навыки",
+      "count": 9,
+      "match": true
+    },
+    {
+      "category": "techniqueSkills",
+      "label": "Технические навыки",
+      "count": 15,
+      "match": true
+    }
+  ],
+  "skillCount": 63
+}

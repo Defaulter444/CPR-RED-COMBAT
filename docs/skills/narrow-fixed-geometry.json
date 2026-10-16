@@ -1,0 +1,25 @@
+{
+  "hotbarTop": 668,
+  "panel": {
+    "bottom": 657,
+    "height": 430,
+    "left": 63,
+    "right": 701,
+    "top": 227,
+    "width": 638,
+    "x": 63,
+    "y": 227
+  },
+  "roll": {
+    "bottom": 618.5625,
+    "height": 47.5,
+    "left": 76.5,
+    "right": 491.25,
+    "top": 571.0625,
+    "width": 414.75,
+    "x": 76.5,
+    "y": 571.0625
+  },
+  "rollWithin": true,
+  "scale": "125"
+}

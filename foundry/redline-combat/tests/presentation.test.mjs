@@ -45,8 +45,8 @@ test('skills popup remains between the initiative queue and dock on the live 102
   assert.ok(height<768*.42);
 });
 test('skills popup height follows dock expansion, respects its wide-screen cap, and handles no free gap', () => {
-  assert.equal(skillPopupHeight({dockTop:700,queueBottom:150,viewportHeight:1080}),330);
-  assert.equal(skillPopupHeight({dockTop:480,queueBottom:150,viewportHeight:720}),302);
+  assert.equal(skillPopupHeight({dockTop:700,queueBottom:150,viewportHeight:1080}),430);
+  assert.equal(skillPopupHeight({dockTop:480,queueBottom:150,viewportHeight:720}),310);
   assert.equal(skillPopupHeight({dockTop:160,queueBottom:150,viewportHeight:600}),0);
   assert.equal(skillPopupHeight(),0);
 });
@@ -78,9 +78,15 @@ test('expanded timer at 1024×768 uses a usable skills drawer over the dock, cle
   assert.ok(layout.height>=180);
 });
 test('skills stay above the dock when the map has room and drawer fallback never reduces available space', () => {
-  assert.deepEqual(skillPopupLayout({dockTop:383,dockBottom:658,queueBottom:150,viewportHeight:768}),{placement:'above',height:213});
-  assert.deepEqual(skillPopupLayout({dockTop:500,dockBottom:680,queueBottom:120,viewportHeight:768}),{placement:'above',height:322});
+  assert.deepEqual(skillPopupLayout({dockTop:383,dockBottom:658,queueBottom:150,viewportHeight:768}),{placement:'dock',height:430});
+  assert.deepEqual(skillPopupLayout({dockTop:500,dockBottom:680,queueBottom:120,viewportHeight:768}),{placement:'above',height:360});
   assert.deepEqual(skillPopupLayout({dockTop:160,dockBottom:161,queueBottom:150,viewportHeight:600}),{placement:'above',height:0});
+});
+
+test('catalog at 125% on 1024×768 uses the dock drawer so search and roll stay reachable', () => {
+  const layout=skillPopupLayout({dockTop:284,dockBottom:658,queueBottom:60,viewportHeight:768});
+  assert.deepEqual(layout,{placement:'dock',height:430});
+  assert.ok(658-layout.height>=60+12);
 });
 
 test('client scale defaults to 80%, rounds to 5%, and limits invalid or out-of-range values', () => {

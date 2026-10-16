@@ -6,14 +6,16 @@ const actor = overrides => ({
   key:'Actor.owned|Scene.a.Token.b', revision:7, name:'Ви', canOpenSheet:true,
   hp:{value:10,max:40}, armor:[{name:'Куртка',sp:11}],
   weapons:[{id:'pistol',name:'Пистолет',ammo:{value:9,max:12},modes:[{id:'attack',label:'Обычная'},{id:'aimed',label:'Прицельная'}],mode:'aimed',canAttack:true,canDamage:true,canReload:true,canLoad:true,damageLabel:'3d6',rof:2}],
-  skills:[{id:'evasion',name:'Уклонение',base:12},{id:'perception',name:'Восприятие',base:10}],
-  quickSkills:[{id:'evasion',name:'Уклонение'}],canInitiative:true,canDeathSave:false,busy:false,status:'',
+  skillCategories:[{id:'awarenessSkills',label:'Навыки восприятия'},{id:'fightingSkills',label:'Боевые навыки'},{id:'techniqueSkills',label:'Технические навыки'},{id:'emptySkills',label:'Пустой раздел'}],
+  skills:[{id:'evasion',name:'Уклонение',category:'fightingSkills'},{id:'perception',name:'Восприятие',category:'awarenessSkills'},{id:'lock',name:'Взлом замков',category:'techniqueSkills',difficult:true}],
+  canInitiative:true,canDeathSave:false,busy:false,status:'',
   ...overrides,
 });
 const view = selected => renderHUD({supported:true,selected});
 const buttons = html => [...html.matchAll(/<button\b[^>]*>/g)].map(match=>match[0]);
 const selects = html => [...html.matchAll(/<select\b[^>]*>/g)].map(match=>match[0]);
 const action = (html,name) => buttons(html).find(tag=>tag.includes(`data-action="${name}"`));
+const actions = (html,name) => buttons(html).filter(tag=>tag.includes(`data-action="${name}"`));
 
 test('production HUD has no tutorial and retains toolbar and character controls', () => {
   for (const model of [{}, {supported:true}, {supported:true,selected:actor()}]) {
@@ -28,7 +30,7 @@ test('production HUD has no tutorial and retains toolbar and character controls'
     assert.equal(action(html,'next-turn'),undefined);
   }
   const html=view(actor());
-  for (const name of ['sheet','weapon-attack','weapon-damage','weapon-reload','weapon-load','skill','selected-skill','initiative']) {
+  for (const name of ['sheet','weapon-attack','weapon-damage','weapon-reload','weapon-load','skill-category','choose-skill','selected-skill','initiative']) {
     const tag=action(html,name);
     assert.ok(tag,name);
     assert.doesNotMatch(tag,/ disabled/);
@@ -60,7 +62,7 @@ test('scale control is available in both dock states and settings default to a b
 
 test('weapon and character commands retain the exact subject and revision', () => {
   const html=view(actor());
-  for(const name of ['weapon-attack','weapon-damage','weapon-reload','weapon-load','skill','selected-skill','initiative','death-save']) {
+  for(const name of ['weapon-attack','weapon-damage','weapon-reload','weapon-load','skill-category','choose-skill','selected-skill','initiative','death-save']) {
     const tag=action(html,name);
     assert.ok(tag,name);
     assert.match(tag,/type="button"/);
@@ -71,10 +73,15 @@ test('weapon and character commands retain the exact subject and revision', () =
   assert.match(html,/<option value="aimed" selected>Прицельная<\/option>/);
   assert.match(selects(html)[0],/data-weapon-select/);
   assert.match(selects(html)[1],/data-weapon-mode data-id="pistol"/);
-  assert.match(selects(html)[2],/data-skill-select/);
+  assert.equal(selects(html).length,2);
+  assert.doesNotMatch(html,/data-skill-select|data-action="skill"/);
   assert.match(action(html,'weapon-load'),/aria-label="Выбрать патроны: Пистолет"/);
   assert.match(html,/fa-solid fa-box-open" aria-hidden="true"/);
-  assert.match(html,/Уклонение · 12/);
+  assert.match(action(html,'selected-skill'),/data-id="evasion"/);
+  for(const tag of actions(html,'choose-skill')) {
+    assert.match(tag,/data-subject="Actor\.owned\|Scene\.a\.Token\.b"/);
+    assert.match(tag,/data-revision="7"/);
+  }
 });
 
 test('Blackglass uses one selected weapon while all equipped weapons remain in its selector', () => {
@@ -119,19 +126,79 @@ test('portraits and weapons reject executable URLs without creating fake resourc
   for(const img of ['java\nscript:alert(1)','file:///C:/private.png','vb\tscript:alert(1)']) assert.doesNotMatch(view(actor({img})),/<img\b/);
 });
 
-test('busy state disables every subject action and both selectors', () => {
+test('busy state disables every subject action, the search input, and both weapon selectors', () => {
   const html=view(actor({busy:true}));
   for(const tag of [...buttons(html).filter(tag=>tag.includes('data-subject=')),...selects(html)]) assert.match(tag,/ disabled>/);
   assert.match(html,/aria-busy="true"/);
+  assert.match(html,/<input\b[^>]*data-skill-search[^>]* disabled>/);
   assert.match(html,/role="status" aria-live="polite" aria-atomic="true">Выполняется действие системы…/);
 });
 
 test('the actor-selected skill persists across a refreshed view', () => {
   const html=view(actor({selectedSkillId:'perception'}));
-  assert.match(html,/<option value="perception" selected>Восприятие · 10<\/option>/);
-  assert.match(html,/<option value="evasion">Уклонение · 12<\/option>/);
+  assert.match(actions(html,'choose-skill').find(tag=>tag.includes('data-id="perception"')),/aria-pressed="true"/);
+  assert.match(actions(html,'choose-skill').find(tag=>tag.includes('data-id="evasion"')),/aria-pressed="false"/);
+  assert.match(action(html,'selected-skill'),/data-id="perception"/);
+  assert.match(action(html,'selected-skill'),/aria-label="Бросить — Восприятие"/);
   const stale=view(actor({selectedSkillId:'removed-skill'}));
-  assert.doesNotMatch(stale,/<option value="(?:perception|evasion)" selected>/);
+  assert.match(action(stale,'selected-skill'),/data-id="evasion"/);
+  assert.doesNotMatch(stale,/removed-skill/);
+});
+
+test('catalog navigation retains exact character-sheet group order and labels, including empty sections', () => {
+  const model=actor();
+  const html=renderHUD({supported:true,selected:model,skillState:{category:'techniqueSkills'}});
+  const categoryButtons=actions(html,'skill-category');
+  assert.deepEqual(categoryButtons.map(tag=>tag.match(/data-id="([^"]+)"/)[1]),['all',...model.skillCategories.map(category=>category.id)]);
+  const nav=html.match(/<nav class="redline-skill-categories"[^>]*>(.*?)<\/nav>/s)[1];
+  assert.deepEqual([...nav.matchAll(/<span>(.*?)<\/span>/g)].map(match=>match[1]),['Все навыки',...model.skillCategories.map(category=>category.label)]);
+  assert.match(categoryButtons.find(tag=>tag.includes('data-id="techniqueSkills"')),/aria-pressed="true"/);
+  assert.equal(categoryButtons.filter(tag=>tag.includes('aria-pressed="true"')).length,1);
+  assert.deepEqual(actions(html,'choose-skill').map(tag=>tag.match(/data-id="([^"]+)"/)[1]),['lock']);
+  assert.match(html,/<strong>Технические навыки<\/strong>/);
+});
+
+test('category and search route the primary roll to the visible skill, never the old hidden selection', () => {
+  const selected=actor({selectedSkillId:'evasion'});
+  const html=renderHUD({supported:true,selected,skillState:{category:'awarenessSkills',query:'  ВОСП  '}});
+  assert.match(html,/<input\b[^>]*data-skill-search[^>]*value="  ВОСП  "/);
+  assert.deepEqual(actions(html,'choose-skill').map(tag=>tag.match(/data-id="([^"]+)"/)[1]),['perception']);
+  assert.match(action(html,'selected-skill'),/data-id="perception"/);
+  assert.doesNotMatch(action(html,'selected-skill'),/ disabled|data-id="evasion"/);
+  assert.match(action(html,'selected-skill'),/data-subject="Actor\.owned\|Scene\.a\.Token\.b" data-revision="7"/);
+});
+
+test('no search results or an empty sheet section disables the roll without a stale skill id', () => {
+  for(const skillState of [{category:'all',query:'Нет такого навыка'},{category:'emptySkills',query:''}]) {
+    const html=renderHUD({supported:true,selected:actor({selectedSkillId:'evasion'}),skillState});
+    assert.deepEqual(actions(html,'choose-skill'),[]);
+    assert.match(action(html,'selected-skill'),/data-id=""/);
+    assert.match(action(html,'selected-skill'),/ disabled>/);
+    assert.match(action(html,'selected-skill'),/aria-label="Выберите навык"/);
+    assert.match(html,/<span class="redline-skill-count" role="status" aria-live="polite">0<\/span>/);
+    assert.match(html,skillState.query ? /Ничего не найдено\. Измените запрос или раздел\./ : /Нет доступных навыков в этом разделе\./);
+  }
+});
+
+test('difficult skills retain the sheet marker without inventing a base or final roll value', () => {
+  const selected=actor({selectedSkillId:'lock'});
+  selected.skills[2].base=999;
+  const html=renderHUD({supported:true,selected,skillState:{category:'techniqueSkills'}});
+  assert.match(action(html,'choose-skill'),/title="Выбрать навык: Взлом замков \(x2\)"/);
+  assert.match(action(html,'selected-skill'),/aria-label="Бросить — Взлом замков \(x2\)"/);
+  assert.match(html,/<span>Взлом замков \(x2\)<\/span>/);
+  assert.doesNotMatch(html,/999|Взлом замков ·/);
+});
+
+test('other native character rolls remain behind an accessible disclosure with their own capabilities', () => {
+  const closed=view(actor());
+  assert.match(closed,/<details class="redline-other-rolls" data-other-rolls>/);
+  assert.match(closed,/<summary>Другие броски /);
+  const html=renderHUD({supported:true,selected:actor(),skillState:{otherRolls:true}});
+  const detail=html.match(/<details class="redline-other-rolls" data-other-rolls open>(.*?)<\/details>/s)[1];
+  assert.doesNotMatch(action(detail,'initiative'),/ disabled/);
+  assert.match(action(detail,'death-save'),/ disabled>/);
+  for(const name of ['initiative','death-save']) assert.match(action(detail,name),/data-subject="Actor\.owned\|Scene\.a\.Token\.b" data-revision="7"/);
 });
 
 test('capabilities disable only unavailable commands and explain their reason', () => {
@@ -149,7 +216,7 @@ test('capabilities disable only unavailable commands and explain their reason', 
 
 test('document text, ids, mode labels and result messages are escaped as data', () => {
   const dangerous='"/><script>alert(1)</script>&\'';
-  const model=actor({key:dangerous,name:dangerous,status:dangerous,skills:[{id:dangerous,name:dangerous,base:12}],quickSkills:[{id:dangerous,name:dangerous}]});
+  const model=actor({key:dangerous,name:dangerous,status:dangerous,skills:[{id:dangerous,name:dangerous,category:dangerous}],skillCategories:[{id:dangerous,label:dangerous}]});
   Object.assign(model.weapons[0],{id:dangerous,name:dangerous,mode:dangerous,modes:[{id:dangerous,label:dangerous}],damageLabel:dangerous,canAttack:false,reason:dangerous});
   const html=view(model);
   assert.doesNotMatch(html,/<script>|<\/script>/);
@@ -159,8 +226,26 @@ test('document text, ids, mode labels and result messages are escaped as data', 
   assert.match(html,/role="status" aria-live="polite" aria-atomic="true">&quot;\/&gt;&lt;script&gt;/);
 });
 
+test('skill search and exact sheet category ids and labels are escaped as data', () => {
+  const dangerous='"/><script>alert(1)</script>&\'';
+  const escaped='&quot;/&gt;&lt;script&gt;alert(1)&lt;/script&gt;&amp;&#39;';
+  const selected=actor({skills:[{id:'safe-skill',name:'Название навыка',category:dangerous}],skillCategories:[{id:dangerous,label:dangerous}]});
+  const categoryHTML=renderHUD({supported:true,selected,skillState:{category:dangerous}});
+  const category=actions(categoryHTML,'skill-category')[1];
+  assert.ok(category.includes(`data-id="${escaped}"`));
+  assert.ok(category.includes(`title="${escaped}"`));
+  assert.match(category,/aria-pressed="true"/);
+  assert.ok(categoryHTML.includes(`<strong>${escaped}</strong>`));
+  assert.match(action(categoryHTML,'selected-skill'),/data-id="safe-skill"/);
+  const searchHTML=renderHUD({supported:true,selected,skillState:{category:dangerous,query:dangerous}});
+  const search=searchHTML.match(/<input\b[^>]*data-skill-search[^>]*>/)[0];
+  assert.ok(search.includes(`value="${escaped}"`));
+  assert.match(action(searchHTML,'selected-skill'),/ disabled>/);
+  assert.doesNotMatch(categoryHTML+searchHTML,/<script>|<\/script>/);
+});
+
 test('missing capabilities and action identity remain read-only instead of enabling commands', () => {
-  const html=view(actor({key:undefined,revision:undefined,weapons:[{id:'legacy',name:'Старое оружие'}],skills:[],quickSkills:[],canInitiative:false,canDeathSave:false}));
+  const html=view(actor({key:undefined,revision:undefined,weapons:[{id:'legacy',name:'Старое оружие'}],skills:[],canInitiative:false,canDeathSave:false}));
   for(const tag of buttons(html).filter(tag=>tag.includes('data-subject=')&&!tag.includes('data-action="sheet"'))) assert.match(tag,/ disabled>/);
   for(const tag of selects(html)) assert.match(tag,/ disabled>/);
   assert.match(html,/Нет доступных навыков/);
@@ -171,6 +256,6 @@ test('the action view preserves native identity containers and removes stale pre
   const html=view(actor({status:'Бросок отправлен в чат.'}));
   for(const name of ['redline-actor','redline-identity','redline-vitals','redline-weapons','redline-dock']) assert.match(html,new RegExp(`class="${name}(?: |")`));
   assert.match(html,/data-action="sheet"/);
-  assert.match(html,/Броски и применение урона — через диалоги и чат системы\./);
+  assert.match(html,/Откроется диалог броска/);
   assert.doesNotMatch(html,/Броски и урон выполняются через лист системы|ПРОСМОТР ДАННЫХ МИРА|Просмотр · атака не запускается/);
 });

@@ -59,7 +59,17 @@ export function projectActor(actor, token, user, options = {}) {
     key, revision: options.revision ?? 0, busy: Boolean(options.actionBusy), status: options.actionStatus || '',
     selectedSkillId: options.selectedSkill?.(key) || '',
     selectedWeaponId: options.selectedWeapon?.(key) || '',
-    skills: skillItems.map(item => ({ id: item.id, name: options.localizeSkill?.(item.name) || item.name })).sort((a,b) => a.name.localeCompare(b.name)),
+    // Match the character sheet's sections and localized-name ordering without
+    // sharing configuration objects or changing any owned Item data.
+    skillCategories: (Array.isArray(options.skillCategories) ? options.skillCategories : [])
+      .filter(category => category && typeof category.id === 'string' && typeof category.label === 'string')
+      .map(({ id, label }) => ({ id, label })),
+    skills: skillItems.map(item => ({
+      id: item.id,
+      name: options.localizeSkill?.(item.name) || item.name,
+      category: typeof item.system?.category === 'string' ? item.system.category : '',
+      difficult: item.system?.difficulty === 'difficult',
+    })).sort((a, b) => a.name > b.name ? 1 : a.name < b.name ? -1 : 0),
     quickSkills: Object.entries(QUICK_SKILLS).flatMap(([name,label]) => {
       const item = skillItems.find(skill => skill.name === name);
       return item ? [{id:item.id,name:label}] : [];

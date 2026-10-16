@@ -1,5 +1,6 @@
 import { MODULE_ID, projectHUD, resolveSubject, ownsActor, visibleCombatant } from "./state.js";
-import { renderHUD, renderScaleSettings } from "./view.js";
+import { renderHUD, renderScaleSettings, renderSkillsPanel } from "./view.js";
+import { skillCatalog } from './skills.js';
 import { createActionRunner, ActionRejected, resolveActionSubject } from './actions.js';
 import { weaponCapabilities, equippedWeapons } from './capabilities.js';
 import { safeInsets, skillPopupLayout, panelSizing, normalizeInterfaceScale, DEFAULT_INTERFACE_SCALE } from './presentation.js';
@@ -15,6 +16,7 @@ let actionStatus = '';
 const weaponModes = new Map();
 const selectedSkills = new Map();
 const selectedWeapons = new Map();
+const skillStates = new Map();
 let skillsSubject = null;
 let scaleDialog = null;
 let systemAdapter;
@@ -39,6 +41,8 @@ function worldContext() {
     weaponMode: (key,item) => weaponModes.get(`${key}:${item.id}`),
     selectedSkill: key => selectedSkills.get(key),
     selectedWeapon: key => selectedWeapons.get(key),
+    skillCategories: Object.entries(globalThis.Handlebars?.helpers?.cprFindConfigObj?.('skillCategories') || {})
+      .map(([id,labelKey]) => ({id,label:game.i18n.localize(labelKey)})),
     localizeSkill: name => game.i18n.localize(globalThis.Handlebars?.helpers?.cprGetLocalizedlNameKey?.(name,'skill') || name),
   };
 }
@@ -54,12 +58,38 @@ class RedlineHUD extends Application {
     return { content: renderHUD({...model,
       dockExpanded: Boolean(game.settings.get(MODULE_ID, 'dockExpanded')),
       skillsOpen: Boolean(model.selected && skillsSubject === model.selected.key),
+      skillState: skillStates.get(model.selected?.key),
       hasHostBar: Boolean(document.querySelector('#ncu-shell .ncu-bar')),
       interfaceScale: normalizeInterfaceScale(game.settings.get(MODULE_ID, 'interfaceScale')),
     }) };
   }
   refresh() {
+    const active = document.activeElement;
+    if (!this._focusNext && active?.matches('#redline-combat-hud [data-skill-search]')) {
+      this._focusNext = '[data-skill-search]';
+      this._searchSelection = [active.selectionStart, active.selectionEnd];
+    }
     if (ready && game.settings.get(MODULE_ID, "enabled")) this.render(true);
+  }
+  refreshSkills({focus, resetList = false} = {}) {
+    const panel = this.element?.[0]?.querySelector('#redline-skills-panel');
+    const actor = projectHUD(worldContext()).selected;
+    if (!panel || !actor || skillsSubject !== actor.key) return this.refresh();
+    const active = document.activeElement;
+    const searching = active?.matches('[data-skill-search]');
+    const selection = searching ? [active.selectionStart, active.selectionEnd] : null;
+    const categoryScroll = panel.querySelector('.redline-skill-categories')?.scrollTop || 0;
+    const listScroll = resetList ? 0 : panel.querySelector('.redline-skill-list')?.scrollTop || 0;
+    const state = skillStates.get(actor.key) || {};
+    const template = document.createElement('template');
+    template.innerHTML = renderSkillsPanel(actor, true, state);
+    panel.replaceChildren(...template.content.firstElementChild.childNodes);
+    panel.querySelector('.redline-skill-categories').scrollTop = categoryScroll;
+    panel.querySelector('.redline-skill-list').scrollTop = listScroll;
+    const target = panel.querySelector(focus || (searching ? '[data-skill-search]' : '[data-action="selected-skill"]'));
+    target?.focus({preventScroll:true});
+    if (selection) target?.setSelectionRange?.(...selection);
+    if (focus?.includes('choose-skill')) target?.scrollIntoView({block:'nearest'});
   }
   scheduleRefresh() {
     clearTimeout(this._refreshTimer);
@@ -134,6 +164,8 @@ class RedlineHUD extends Application {
     if (this._focusNext) {
       const focusTarget = root.querySelector(this._focusNext);
       focusTarget?.focus();
+      if (this._searchSelection && focusTarget?.matches('[data-skill-search]')) focusTarget.setSelectionRange(...this._searchSelection);
+      this._searchSelection = null;
       this._focusNext = null;
     }
     document.addEventListener('pointerdown', event => {
@@ -146,17 +178,45 @@ class RedlineHUD extends Application {
       root.querySelector('.redline-primary-actions [data-action="toggle-skills"]')?.setAttribute('aria-expanded', 'false');
     }, {signal:this._listeners.signal});
     root.addEventListener('keydown', event => {
-      if (event.key !== 'Escape' || !skillsSubject) return;
-      event.preventDefault();event.stopPropagation();
-      skillsSubject = null;this._focusNext = '.redline-primary-actions [data-action="toggle-skills"]';this.refresh();
+      if (!skillsSubject) return;
+      if (event.key === 'Escape') {
+        event.preventDefault();event.stopPropagation();
+        skillsSubject = null;this._focusNext = '.redline-primary-actions [data-action="toggle-skills"]';this.refresh();
+        return;
+      }
+      if (!event.target.closest('[data-skill-search],.redline-skill-row')) return;
+      event.stopPropagation();
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        if (!event.repeat) root.querySelector('[data-action="selected-skill"]:not(:disabled)')?.click();
+      } else if (['ArrowDown','ArrowUp'].includes(event.key)) {
+        event.preventDefault();
+        const rows = [...root.querySelectorAll('.redline-skill-row:not(:disabled)')];
+        const current = rows.indexOf(event.target.closest('.redline-skill-row'));
+        const index = current < 0 ? (event.key === 'ArrowDown' ? 0 : rows.length - 1) : (current + (event.key === 'ArrowDown' ? 1 : -1) + rows.length) % rows.length;
+        rows[index]?.click();
+      }
     }, {signal:this._listeners.signal});
+    root.addEventListener('input', event => {
+      const input = event.target.closest('[data-skill-search]');
+      if (!input || actionBusy) return;
+      try {
+        resolveActionSubject(worldContext(), {subject:input.dataset.subject,revision:Number(input.dataset.revision)});
+        skillStates.set(input.dataset.subject, {...skillStates.get(input.dataset.subject),query:input.value.slice(0,200)});
+        this.refreshSkills({resetList:true});
+      } catch (error) { if (!(error instanceof ActionRejected)) console.error(error); this.refresh(); }
+    }, {signal:this._listeners.signal});
+    root.addEventListener('toggle', event => {
+      if (!event.target.matches('[data-other-rolls]') || !skillsSubject) return;
+      skillStates.set(skillsSubject, {...skillStates.get(skillsSubject),otherRolls:event.target.open});
+    }, {capture:true,signal:this._listeners.signal});
     html[0].addEventListener("click", event => {
       const button = event.target.closest("[data-action]");
       if (!button || button.disabled || event.detail > 1) return;
       event.preventDefault();
       event.stopPropagation();
       const request = {action:button.dataset.action,id:button.dataset.id,subject:button.dataset.subject,revision:Number(button.dataset.revision)};
-      if(request.action === 'selected-skill') { request.action='skill'; request.id=html[0].querySelector('[data-skill-select]')?.value; }
+      if(request.action === 'selected-skill') request.action='skill';
       if(request.action.startsWith('weapon-')) {
         const select=[...html[0].querySelectorAll('[data-weapon-mode]')].find(element=>element.dataset.id===request.id);
         request.mode=select?.value || 'attack';
@@ -170,18 +230,13 @@ class RedlineHUD extends Application {
       });
     }, { signal: this._listeners.signal });
     html[0].addEventListener('change', event => {
-      const select=event.target.closest('[data-weapon-mode], [data-skill-select], [data-weapon-select]');
+      const select=event.target.closest('[data-weapon-mode], [data-weapon-select]');
       if(!select || actionBusy)return;
       try {
         const {actor}=resolveActionSubject(worldContext(),{subject:select.dataset.subject,revision:Number(select.dataset.revision)});
         if(select.matches('[data-weapon-select]')) {
           const item=equippedWeapons(actor).find(item=>item.id===select.value);
           if(item){selectedWeapons.set(select.dataset.subject,item.id);actionStatus='';this._focusNext='[data-weapon-select]';hud?.refresh();}
-          return;
-        }
-        if(select.matches('[data-skill-select]')) {
-          const skill=actor.items.get(select.value);
-          if(skill?.type==='skill' && typeof skill.createRoll==='function')selectedSkills.set(select.dataset.subject,skill.id);
           return;
         }
         const item=equippedWeapons(actor).find(item=>item.id===select.dataset.id);
@@ -207,6 +262,27 @@ async function setEnabled(enabled) {
   else await hud?.close();
 }
 async function dispatch(action, id, request) {
+  if (['skill-category','choose-skill'].includes(action)) {
+    if (actionBusy) return;
+    const context = worldContext();
+    const {actor} = resolveActionSubject(context, request);
+    const selected = projectHUD(context).selected;
+    if (!selected || skillsSubject !== selected.key) return;
+    const state = skillStates.get(selected.key) || {};
+    if (action === 'skill-category') {
+      if (id !== 'all' && !selected.skillCategories.some(category => category.id === id)) return;
+      skillStates.set(selected.key, {...state,category:id});
+      return hud.refreshSkills({focus:`[data-action="skill-category"][data-id="${CSS.escape(id)}"]`,resetList:true});
+    }
+    const skill = actor.items.get(id);
+    if (skill?.type !== 'skill' || typeof skill.createRoll !== 'function' || !skillCatalog(selected,state).skills.some(item => item.id === id)) return;
+    selectedSkills.set(selected.key, id);
+    return hud.refreshSkills({focus:`[data-action="choose-skill"][data-id="${CSS.escape(id)}"]`});
+  }
+  if (action === 'selected-skill') {
+    const selected = projectHUD(worldContext()).selected;
+    if (!selected || skillCatalog(selected,skillStates.get(selected.key)).selected?.id !== request.id) throw new ActionRejected('Список навыков изменился. Выберите навык ещё раз.');
+  }
   if(action.startsWith('weapon-') || ['skill','selected-skill','initiative','death-save'].includes(action)) return executeAction(request);
   if (action === "close") return setEnabled(false);
   if (action === "refresh") return hud?.refresh();
@@ -221,7 +297,7 @@ async function dispatch(action, id, request) {
     const selected = projectHUD(worldContext()).selected;
     if (!selected || !game.settings.get(MODULE_ID, 'dockExpanded')) return;
     skillsSubject = skillsSubject === selected.key ? null : selected.key;
-    hud._focusNext = skillsSubject ? '#redline-skills-panel button' : '.redline-primary-actions [data-action="toggle-skills"]';
+    hud._focusNext = skillsSubject ? '[data-skill-search]' : '.redline-primary-actions [data-action="toggle-skills"]';
     return hud.refresh();
   }
   if (action === "select-combatant") {

@@ -1,8 +1,8 @@
 {
   "id": "redline-combat",
   "title": "REDLINE COMBAT",
-  "description": "Blackglass Dock для Cyberpunk RED: компактная нижняя панель персонажа, выбранное оружие и патроны, действия, раскрывающиеся навыки и очередь боя. Адаптер действий для CPR 0.92.4.",
-  "version": "0.3.1",
+  "description": "Blackglass Dock для Cyberpunk RED: компактная панель персонажа, оружие и действия, каталог навыков с разделами листа, поиском и штатными бросками; очередь только во время боя. Адаптер CPR 0.92.4.",
+  "version": "0.3.2",
   "compatibility": {
     "minimum": "12",
     "verified": "12.331",
@@ -32,7 +32,7 @@
   "readme": "https://github.com/Defaulter444/CPR-RED-COMBAT/blob/main/foundry/redline-combat/README.md",
   "bugs": "https://github.com/Defaulter444/CPR-RED-COMBAT/issues",
   "manifest": "https://raw.githubusercontent.com/Defaulter444/CPR-RED-COMBAT/main/distribution/module.json",
-  "download": "https://github.com/Defaulter444/CPR-RED-COMBAT/releases/download/v0.3.1/redline-combat.zip",
+  "download": "https://github.com/Defaulter444/CPR-RED-COMBAT/releases/download/v0.3.2/redline-combat.zip",
   "changelog": "https://github.com/Defaulter444/CPR-RED-COMBAT/blob/main/CHANGELOG.md",
   "authors": [
     {

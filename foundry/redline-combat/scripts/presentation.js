@@ -41,16 +41,17 @@ export function skillPopupHeight({dockTop, queueBottom, viewportHeight} = {}) {
   if (!Number.isFinite(dockTop)) return 0;
   const ceiling = Math.max(12, Number.isFinite(queueBottom) ? queueBottom + 12 : 12);
   const gap = Math.max(0, dockTop - 8 - ceiling);
-  const viewportLimit = Number.isFinite(viewportHeight) ? Math.max(0, viewportHeight * .42) : 330;
-  return Math.floor(Math.min(330, viewportLimit, gap));
+  const viewportLimit = Number.isFinite(viewportHeight) ? Math.max(0, viewportHeight * .6) : 430;
+  return Math.floor(Math.min(430, viewportLimit, gap));
 }
 
 /** A short map gap becomes a drawer over the dock, preserving queue and macros. */
 export function skillPopupLayout({dockTop, dockBottom, queueBottom, viewportHeight} = {}) {
   const above = skillPopupHeight({dockTop,queueBottom,viewportHeight});
-  if (above >= 180 || !Number.isFinite(dockBottom)) return {placement:'above',height:above};
+  // The catalog needs its header, search and roll footer plus usable list space.
+  if (above >= 300 || !Number.isFinite(dockBottom)) return {placement:'above',height:above};
   const ceiling = Math.max(12, Number.isFinite(queueBottom) ? queueBottom + 12 : 12);
-  const viewportLimit = Number.isFinite(viewportHeight) ? Math.max(0, viewportHeight * .42) : 330;
-  const drawer = Math.floor(Math.min(330, viewportLimit, Math.max(0, dockBottom - ceiling)));
+  const viewportLimit = Number.isFinite(viewportHeight) ? Math.max(0, viewportHeight * .6) : 430;
+  const drawer = Math.floor(Math.min(430, viewportLimit, Math.max(0, dockBottom - ceiling)));
   return drawer > above ? {placement:'dock',height:drawer} : {placement:'above',height:above};
 }

@@ -1,5 +1,6 @@
 /** HTML presentation only. All permissions and native actions belong to the host. */
 import { selectedWeapon, normalizeInterfaceScale } from './presentation.js';
+import { skillCatalog, skillName } from './skills.js';
 
 const escapeHTML = value => String(value ?? '').replace(/[&<>"']/g, char => ({
   '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;',
@@ -57,14 +58,25 @@ function targetsView(targets) {
   return `<div class="redline-targets" aria-label="Цели атаки">${targets.length ? portrait(targets[0]) : `<span class="redline-target-icon" aria-hidden="true">${icon('fa-crosshairs')}</span>`}<div class="redline-target-copy"><span class="redline-label">${targets.length > 1 ? `ЦЕЛИ · ${targets.length}` : 'ЦЕЛЬ'}</span><span class="redline-target-list" title="${escapeHTML(targets.map(target => target.name || 'Цель').join(', '))}">${targets.length ? targets.map(target => `<span>${escapeHTML(target.name || 'Цель')}</span>`).join('<span class="redline-muted">, </span>') : '<span class="redline-muted">Выберите цель на сцене</span>'}</span></div></div>`;
 }
 
-function skillView(actor, open) {
-  const skills = Array.isArray(actor.skills) ? actor.skills : [];
-  const quickSkills = Array.isArray(actor.quickSkills) ? actor.quickSkills : [];
-  const disabled = actor.busy || !hasActionSubject(actor) || !skills.length;
+const categoryIcons = {
+  all:'fa-table-cells-large', awarenessSkills:'fa-eye', bodySkills:'fa-person-running',
+  controlSkills:'fa-compass', educationSkills:'fa-graduation-cap', fightingSkills:'fa-hand-fist',
+  performanceSkills:'fa-masks-theater', rangedweaponSkills:'fa-crosshairs',
+  socialSkills:'fa-user-group', techniqueSkills:'fa-gear',
+};
+
+export function renderSkillsPanel(actor, open, state = {}) {
+  const catalog = skillCatalog(actor, state);
+  const disabled = actor.busy || !hasActionSubject(actor);
+  const selected = catalog.selected;
   return `<section id="redline-skills-panel" class="redline-skill-popover redline-panel" aria-label="Навыки и броски персонажа"${open ? '' : ' hidden'}>
-    <header class="redline-popover-header"><strong>Навыки и броски</strong><button type="button" data-action="toggle-skills" class="redline-small" aria-label="Закрыть навыки" title="Закрыть навыки">${icon('fa-xmark')}</button></header>
-    <div class="redline-action-tools"><section class="redline-skills" aria-label="Навыки персонажа"><span class="redline-label">БЫСТРЫЕ ПРОВЕРКИ</span>${quickSkills.length ? `<div class="redline-quick-skills">${quickSkills.map(skill => actionButton(actor, {action:'skill', id:skill.id, label:skill.name || 'Навык', title:`Проверка: ${skill.name || 'Навык'}`, allowed:Boolean(skill.id)})).join('')}</div>` : ''}<div class="redline-skill-picker"><label><span>Все навыки</span><select data-skill-select ${subjectAttributes(actor)} aria-label="Все навыки персонажа"${disabled ? ' disabled' : ''}>${skills.length ? skills.map(skill => `<option value="${escapeHTML(skill.id)}"${actor.selectedSkillId != null && String(skill.id) === String(actor.selectedSkillId) ? ' selected' : ''}>${escapeHTML(skill.name || 'Навык')}${Number.isFinite(skill.base) ? ` · ${numberLabel(skill.base)}` : ''}</option>`).join('') : '<option value="">Нет доступных навыков</option>'}</select></label>${actionButton(actor, {action:'selected-skill', label:'Бросить', title:'Бросить выбранный навык', allowed:skills.length > 0, reason:'В листе нет доступных навыков.'})}</div></section>
-    <div class="redline-character-actions" aria-label="Броски персонажа">${actionButton(actor, {action:'initiative', label:'Инициатива', icon:'fa-bolt', allowed:Boolean(actor.canInitiative), reason:'Добавьте этого персонажа в бой, чтобы бросить инициативу.'})}${actionButton(actor, {action:'death-save', label:'Спасбросок смерти', icon:'fa-skull', allowed:Boolean(actor.canDeathSave), reason:'Спасбросок смерти доступен при смертельном ранении.'})}</div><p class="redline-action-note redline-muted">Броски и применение урона — через диалоги и чат системы.</p></div>
+    <header class="redline-popover-header"><div><strong>Навыки</strong><span class="redline-skill-actor" title="${escapeHTML(actor.name)}">${escapeHTML(actor.name || 'Персонаж')}</span></div><button type="button" data-action="toggle-skills" class="redline-small" aria-label="Закрыть навыки" title="Закрыть навыки">${icon('fa-xmark')}</button></header>
+    <label class="redline-skill-search">${icon('fa-magnifying-glass')}<span class="redline-sr-only">Поиск навыка в выбранном разделе</span><input type="search" data-skill-search ${subjectAttributes(actor)} value="${escapeHTML(catalog.query)}" placeholder="Найти навык…" autocomplete="off" spellcheck="false" maxlength="200" aria-label="Поиск навыка в выбранном разделе" aria-controls="redline-skill-results"${disabled ? ' disabled' : ''}></label>
+    <div class="redline-skill-catalog">
+      <nav class="redline-skill-categories" aria-label="Разделы навыков листа персонажа">${catalog.categories.map(category => `<button type="button" data-action="skill-category" data-id="${escapeHTML(category.id)}" ${subjectAttributes(actor)} aria-pressed="${category.id === catalog.category}" title="${escapeHTML(category.label)}"${disabled ? ' disabled' : ''}>${icon(categoryIcons[category.id] || 'fa-list')}<span>${escapeHTML(category.label)}</span></button>`).join('')}</nav>
+      <section class="redline-skill-results" id="redline-skill-results" aria-label="Навыки выбранного раздела"><header><strong>${escapeHTML(catalog.heading)}</strong><span class="redline-skill-count" role="status" aria-live="polite">${catalog.skills.length}</span></header><div class="redline-skill-list">${catalog.skills.length ? catalog.skills.map(skill => `<button type="button" class="redline-skill-row" data-action="choose-skill" data-id="${escapeHTML(skill.id)}" ${subjectAttributes(actor)} aria-pressed="${skill.id === selected?.id}" title="Выбрать навык: ${escapeHTML(skillName(skill))}"${disabled ? ' disabled' : ''}><span>${escapeHTML(skillName(skill))}</span>${skill.id === selected?.id ? icon('fa-check') : ''}</button>`).join('') : `<p class="redline-skill-empty">${catalog.query.trim() ? 'Ничего не найдено. Измените запрос или раздел.' : 'Нет доступных навыков в этом разделе.'}</p>`}</div></section>
+    </div>
+    <footer class="redline-skill-footer"><div class="redline-skill-roll">${actionButton(actor, {action:'selected-skill', id:selected?.id || '', label:selected ? `Бросить — ${skillName(selected)}` : 'Выберите навык', title:selected ? `Бросить — ${skillName(selected)}` : 'Выберите навык', icon:'fa-dice', allowed:Boolean(selected), reason:'В выбранном разделе нет доступного навыка.', className:'redline-skill-primary'})}<p class="redline-action-note redline-muted">Откроется диалог броска</p></div><details class="redline-other-rolls" data-other-rolls${state.otherRolls ? ' open' : ''}><summary>Другие броски ${icon('fa-chevron-down')}</summary><div class="redline-character-actions" aria-label="Броски персонажа">${actionButton(actor, {action:'initiative', label:'Инициатива', icon:'fa-bolt', allowed:Boolean(actor.canInitiative), reason:'Добавьте этого персонажа в бой, чтобы бросить инициативу.'})}${actionButton(actor, {action:'death-save', label:'Спасбросок смерти', icon:'fa-skull', allowed:Boolean(actor.canDeathSave), reason:'Спасбросок смерти доступен при смертельном ранении.'})}</div></details></footer>
   </section>`;
 }
 
@@ -74,7 +86,7 @@ function healthView(actor) {
   return `<div class="redline-vitals"><div class="redline-health"><span class="redline-label">HP</span>${hp ? `${numberLabel(hp.value)} <small>/ ${numberLabel(hp.max)}</small>` : '<span class="redline-unavailable">HP недоступно</span>'}</div>${hp ? `<div class="redline-meter" aria-hidden="true"><span style="width:${healthPercent}%"></span></div>` : ''}<div class="redline-armor"><span class="redline-label">БРОНЯ</span>${actor.armor?.length ? actor.armor.map(item => `<span title="${escapeHTML(item.name)}">${escapeHTML(String(item.name || 'Броня').replace(' · отслеживаемая броня', ''))} <b>SP ${numberLabel(item.sp)}</b></span>`).join('') : '<span class="redline-muted">Броня недоступна</span>'}</div></div>`;
 }
 
-function actorView(actor, targets, expanded, skillsOpen) {
+function actorView(actor, targets, expanded, skillsOpen, skillState) {
   if (!actor) return `<section id="redline-dock-content" class="redline-actor redline-empty" aria-label="Выбранный персонаж"><span class="redline-label">ПЕРСОНАЖ НЕ ВЫБРАН</span><h2>Выберите доступный токен на сцене</h2><p>Здесь появятся здоровье, оружие и действия персонажа. Выбор персонажа не меняет текущий ход.</p></section>`;
   const weapon = selectedWeapon(actor);
   const status = actor.status || (actor.busy ? 'Выполняется действие системы…' : '');
@@ -85,7 +97,7 @@ function actorView(actor, targets, expanded, skillsOpen) {
       ${weaponView(actor, weapon)}
       <section class="redline-primary-actions" aria-label="Действия персонажа">${targetsView(targets)}${weaponButton('weapon-attack', 'Атака', 'canAttack', 'Выберите доступное оружие в листе персонажа.', 'fa-crosshairs', 'redline-action-primary')}<div class="redline-secondary-actions">${weaponButton('weapon-damage', 'Урон', 'canDamage', 'Для этого режима нет отдельного броска урона.', 'fa-burst')}${weaponButton('weapon-reload', 'Перезарядить', 'canReload', 'Это оружие не поддерживает перезарядку.', 'fa-arrows-rotate')}<button type="button" class="redline-action-button" data-action="toggle-skills" aria-expanded="${Boolean(skillsOpen)}" aria-controls="redline-skills-panel">${icon('fa-list')}<span>Навыки</span></button>${actionButton(actor, {action:'sheet', label:'Лист', title:'Открыть лист персонажа', allowed:Boolean(actor.canOpenSheet), reason:'Нет доступа к листу персонажа.', icon:'fa-file-lines'})}</div></section>
     </section>
-    <p class="redline-action-status" role="status" aria-live="polite" aria-atomic="true">${escapeHTML(status)}</p>${skillView(actor, expanded && skillsOpen)}`;
+    <p class="redline-action-status" role="status" aria-live="polite" aria-atomic="true">${escapeHTML(status)}</p>${renderSkillsPanel(actor, expanded && skillsOpen, skillState)}`;
 }
 
 export function renderHUD(model = {}) {
@@ -99,7 +111,7 @@ export function renderHUD(model = {}) {
     <header class="redline-header redline-panel"><div class="redline-brand">REDLINE <span>/ COMBAT</span></div><nav class="redline-toolbar" aria-label="Управление REDLINE"><button type="button" data-action="refresh" class="redline-small" aria-label="Обновить данные" title="Перечитать данные мира без изменения документов">${icon('fa-rotate-right')}</button><button type="button" data-action="close" class="redline-small" aria-label="Закрыть REDLINE" title="Закрыть REDLINE">${icon('fa-xmark')}</button></nav></header>
     ${combat.started ? `<section class="redline-combat redline-panel" aria-label="Очередь инициативы"><div class="redline-round"><span class="redline-label">РАУНД</span><strong>${numberLabel(combat.round)}</strong></div><div class="redline-queue" aria-label="Участники боя">${combatants.map(combatantView).join('')}</div><div class="redline-turn-control"><button type="button" data-action="next-turn" class="redline-next" title="GM: сменить текущий ход через трекер Foundry"${combat.canAdvance && !combat.pending ? '' : ' disabled'}>${combat.pending ? 'Обновление…' : 'Следующий ход'}</button></div></section>` : ''}
     ${notices ? `<aside class="redline-notices" aria-label="Состояние модуля">${notices}</aside>` : ''}
-    <div class="redline-bottom"><div class="redline-dock redline-panel"><nav class="redline-dock-utilities" aria-label="Вид панели персонажа"><button type="button" class="redline-dock-settings" data-action="scale-settings" aria-label="Настроить размер REDLINE" title="Размер панели: ${scale}%">${icon('fa-gear')}</button><button type="button" class="redline-dock-toggle" data-action="toggle-dock" aria-expanded="${expanded}" aria-controls="redline-dock-content" aria-label="${expanded ? 'Свернуть панель персонажа' : 'Развернуть панель персонажа'}" title="${expanded ? 'Свернуть панель персонажа' : 'Развернуть панель персонажа'}">${icon(expanded ? 'fa-chevron-down' : 'fa-chevron-up')}</button></nav>${actorView(model.selected, targets, expanded, Boolean(model.skillsOpen))}</div></div>
+    <div class="redline-bottom"><div class="redline-dock redline-panel"><nav class="redline-dock-utilities" aria-label="Вид панели персонажа"><button type="button" class="redline-dock-settings" data-action="scale-settings" aria-label="Настроить размер REDLINE" title="Размер панели: ${scale}%">${icon('fa-gear')}</button><button type="button" class="redline-dock-toggle" data-action="toggle-dock" aria-expanded="${expanded}" aria-controls="redline-dock-content" aria-label="${expanded ? 'Свернуть панель персонажа' : 'Развернуть панель персонажа'}" title="${expanded ? 'Свернуть панель персонажа' : 'Развернуть панель персонажа'}">${icon(expanded ? 'fa-chevron-down' : 'fa-chevron-up')}</button></nav>${actorView(model.selected, targets, expanded, Boolean(model.skillsOpen), model.skillState)}</div></div>
   </div>`;
 }
 
