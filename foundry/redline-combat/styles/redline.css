@@ -11,6 +11,9 @@
   --redline-right: 320px;
   --redline-top: 76px;
   --redline-bottom: 72px;
+  --redline-scale: .8;
+  --redline-panel-width: 1100px;
+  --redline-panel-footprint: 880px;
   position: fixed !important;
   inset: 0 !important;
   width: 100vw !important;
@@ -48,7 +51,7 @@
 #redline-combat-hud .redline-brand { font-size: 17px; font-weight: 800; letter-spacing: .04em; }
 #redline-combat-hud .redline-brand span { color: var(--redline-red); }
 #redline-combat-hud .redline-toolbar { display: flex; gap: 6px; }
-#redline-combat-hud .redline-combat { display: flex; align-items: center; gap: 12px; min-height: 78px; padding: 9px 11px; }
+#redline-combat-hud .redline-combat { display: flex; flex: 0 0 auto; align-self: flex-start; align-items: center; gap: 12px; min-height: 78px; padding: 9px 11px; width: var(--redline-panel-width); zoom: var(--redline-scale); }
 #redline-combat-hud .redline-round { display: flex; align-items: center; gap: 9px; padding: 5px 14px 5px 2px; border-right: 1px solid var(--redline-line); }
 #redline-combat-hud .redline-round strong { font: 31px/1 monospace; }
 #redline-combat-hud .redline-queue { display: flex; align-items: center; gap: 9px; min-width: 0; flex: 1; overflow-x: auto; padding: 2px 3px; scrollbar-width: thin; scrollbar-color: #52616d #0c1318; }
@@ -69,17 +72,18 @@
 #redline-combat-hud .redline-notices { align-self: flex-start; max-width: 560px; }
 #redline-combat-hud .redline-status { padding: 9px 12px; background: #111e26f5; border-left: 3px solid var(--redline-cyan); font-size: 12px; }
 #redline-combat-hud .redline-error { border-color: var(--redline-red); color: #ffb8bd; }
-#redline-combat-hud .redline-bottom { margin-top: auto; min-height: 0; pointer-events: none; }
-#redline-combat-hud .redline-dock { position: relative; container-type: inline-size; }
-#redline-combat-hud .redline-dock-toggle { position: absolute; right: -1px; top: -14px; z-index: 3; width: 36px; height: 32px; min-height: 32px; padding: 4px; background: #0c151c; }
-#redline-combat-hud .redline-compact-summary { display: flex; align-items: center; gap: 12px; min-height: 55px; padding: 7px 43px 7px 10px; }
+#redline-combat-hud .redline-bottom { margin-top: auto; align-self: flex-start; width: var(--redline-panel-footprint); min-height: 0; pointer-events: none; }
+#redline-combat-hud .redline-dock { position: relative; container-type: inline-size; width: var(--redline-panel-width); zoom: var(--redline-scale); }
+#redline-combat-hud .redline-dock-utilities { position: absolute; right: -1px; top: -14px; z-index: 3; display: flex; gap: 5px; }
+#redline-combat-hud .redline-dock-toggle, #redline-combat-hud .redline-dock-settings { position: static; width: max(36px, calc(28px / var(--redline-scale))); height: max(32px, calc(28px / var(--redline-scale))); min-height: max(32px, calc(28px / var(--redline-scale))); padding: 4px; background: #0c151c; }
+#redline-combat-hud .redline-compact-summary { display: flex; align-items: center; gap: 12px; min-height: 55px; padding: 7px 88px 7px 10px; }
 #redline-combat-hud .redline-compact-summary .redline-portrait { flex-basis: 29px; width: 29px; height: 36px; }
 #redline-combat-hud .redline-compact-summary > strong { flex: 0 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 23%; }
 #redline-combat-hud .redline-compact-hp { flex: 0 0 auto; color: var(--redline-muted); font-size: 12px; white-space: nowrap; }
 #redline-combat-hud .redline-compact-hp b { color: var(--redline-cyan); font-size: 17px; }
 #redline-combat-hud .redline-compact-weapon, #redline-combat-hud .redline-compact-target { min-width: 0; font-size: 12px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 #redline-combat-hud .redline-compact-target { margin-left: auto; color: var(--redline-muted); }
-#redline-combat-hud .redline-actor { display: grid; grid-template-columns: minmax(0, 1.07fr) minmax(0, 1.1fr) minmax(0, .95fr); align-items: stretch; gap: 16px; padding: 15px 12px 12px; }
+#redline-combat-hud .redline-actor { display: grid; grid-template-columns: minmax(0, 1.07fr) minmax(0, 1.1fr) minmax(0, .95fr); align-items: stretch; gap: 16px; padding: 15px 12px 12px; max-height: calc(var(--redline-dock-max-height, 80vh) - var(--redline-status-height, 0px) - 2px); overflow-y: auto; }
 #redline-combat-hud .redline-identity { display: flex; gap: 13px; align-items: stretch; min-width: 0; }
 #redline-combat-hud .redline-identity-text { flex: 1; min-width: 0; align-self: center; }
 #redline-combat-hud .redline-identity h2 { color: var(--redline-text); font-size: 23px; font-weight: 700; line-height: 1.2; margin: 0 0 5px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
@@ -112,6 +116,8 @@
 #redline-combat-hud .redline-empty { display: block; padding: 12px 44px 12px 16px; }
 #redline-combat-hud .redline-empty h2 { margin: 3px 0; color: var(--redline-text); font-size: 16px; }
 #redline-combat-hud .redline-empty p { color: var(--redline-muted); font-size: 12px; }
+#redline-combat-hud .is-dock-compact .redline-empty { min-height: 55px; padding-right: 88px; }
+#redline-combat-hud .is-dock-compact .redline-empty :is(h2,p) { display: none; }
 @media (max-width: 1300px) {
   #redline-combat-hud .redline-unit { flex-basis: 155px; }
   #redline-combat-hud .redline-combat { gap: 8px; }
@@ -126,7 +132,7 @@
   #redline-combat-hud .redline-armor { font-size: 10px; gap: 3px 7px; }
 }
 @container (max-width: 720px) {
-  #redline-combat-hud .redline-actor { grid-template-columns: 1fr 1fr; max-height: min(52vh, 340px); overflow-y: auto; }
+  #redline-combat-hud .redline-actor { grid-template-columns: 1fr 1fr; }
   #redline-combat-hud .redline-primary-actions { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; align-items: center; border-left: 0; border-top: 1px solid var(--redline-line); padding: 8px 0 0; }
   #redline-combat-hud .redline-secondary-actions { grid-column: 1 / -1; grid-template-columns: repeat(4, 1fr); }
   #redline-combat-hud .redline-portrait-large { width: 64px; height: 112px; flex-basis: 64px; }

@@ -1,4 +1,25 @@
-# Blackglass Dock design QA — REDLINE COMBAT 0.3.0
+# Compact interface QA — REDLINE COMBAT 0.3.1
+
+Scope: the user's three screenshots request a smaller actor dock, configurable scale, an initiative strip only after combat starts, and a movable/collapsible/hideable Players panel. These requested proportions intentionally supersede the earlier 0.3.0 concept sizing.
+
+Environment: isolated `deadline-test`, Foundry 12.331 / CPR 0.92.4, REDLINE 0.3.1 / Night City UI 0.3.5. Current evidence is in `docs/compact/`; parent-workspace delivery is `outputs/compact-foundry-ui/`.
+
+- Before and after wide viewport: `before-idle-wide.png` and `idle-80-wide.png`, both 1672 × 941 CSS/pixel captures. Round0, own Vi and pistol. The old queue at round0 and full-width dock are removed/reduced as requested. Native chat history, target selection and map zoom are test data.
+- At 80%: dock880 ×156.36, started queue880 ×64.36; macro gap10px. At55%: dock605 ×108.11. Applied125% survives reload and reset returns80%.
+- `combat-80-wide.png` shows the active strip; native0→1 mounted it and1→0 unmounted it. No inactive placeholder remains.
+- `players-moved.png` records the header moved to234,223; personal position persisted, and the actor dock did not move. Disclosure, native offline toggle, More hide/reset and NCU disable/re-enable were checked. The final preview hides Players through its personal checkbox.
+- `narrow-125-timer.png` is a 1024 ×768 capture with expanded timer and125%: queue ends345.5, Skills begins357 and ends657, macros begin668. Inner scrolling keeps controls reachable.
+- `scale-settings.png` records the slider. `idle-80-default.png` is an additional capture in the ordinary app viewport; `idle-80-1280.png` records1280 ×720, dock880 ×153.16.
+
+Typography uses the existing family/weights at the chosen personal scale; foreground/background tokens, native Font Awesome icons and document images are preserved. The smaller three-column grouping and widths are intentional requested changes. Long names retain full native select options. Collapse/settings controls retain a minimum28px footprint, keyboard access and labels. No new artwork substitutes or tutorial copy was introduced.
+
+99 REDLINE and85 Night City UI tests passed; syntax/diff checks passed. Native Attack opened and Cancel retained5/8. Final browser errors: none. Current live checks used GM; prior Player validation below is historical. No live AV or third-party trade integration was available; native/foreign content preservation is covered by controller tests. The tested scope has no remaining actionable P0/P1/P2 finding. The only visual follow-up is optional spacing polish after user feedback.
+
+final result: passed
+
+---
+
+# Historical: Blackglass Dock design QA — REDLINE COMBAT 0.3.0
 
 Date: 2026-10-16. Implementation in the existing Foundry module; no standalone replacement of Foundry or the CPR system.
 

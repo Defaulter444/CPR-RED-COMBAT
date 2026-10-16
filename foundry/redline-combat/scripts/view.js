@@ -1,5 +1,5 @@
 /** HTML presentation only. All permissions and native actions belong to the host. */
-import { selectedWeapon } from './presentation.js';
+import { selectedWeapon, normalizeInterfaceScale } from './presentation.js';
 
 const escapeHTML = value => String(value ?? '').replace(/[&<>"']/g, char => ({
   '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;',
@@ -93,11 +93,17 @@ export function renderHUD(model = {}) {
   const combatants = Array.isArray(combat.combatants) ? combat.combatants : [];
   const targets = Array.isArray(model.targets) ? model.targets : [];
   const expanded = Boolean(model.dockExpanded);
+  const scale = normalizeInterfaceScale(model.interfaceScale);
   const notices = [model.error ? `<p class="redline-status redline-error" role="alert">${escapeHTML(model.error)}</p>` : '', !model.supported ? `<p class="redline-status" role="status">Система ${escapeHTML(model.systemName || 'мира')} не поддерживается. Действия доступны для Cyberpunk RED.</p>` : ''].join('');
-  return `<div class="redline-interface redline-blackglass${expanded ? ' is-dock-expanded' : ' is-dock-compact'}${model.hasHostBar ? ' has-host-bar' : ''}" data-layout="blackglass-dock">
+  return `<div class="redline-interface redline-blackglass${expanded ? ' is-dock-expanded' : ' is-dock-compact'}${model.hasHostBar ? ' has-host-bar' : ''}" data-layout="blackglass-dock" data-scale="${scale}">
     <header class="redline-header redline-panel"><div class="redline-brand">REDLINE <span>/ COMBAT</span></div><nav class="redline-toolbar" aria-label="Управление REDLINE"><button type="button" data-action="refresh" class="redline-small" aria-label="Обновить данные" title="Перечитать данные мира без изменения документов">${icon('fa-rotate-right')}</button><button type="button" data-action="close" class="redline-small" aria-label="Закрыть REDLINE" title="Закрыть REDLINE">${icon('fa-xmark')}</button></nav></header>
-    <section class="redline-combat redline-panel" aria-label="Очередь инициативы"><div class="redline-round"><span class="redline-label">РАУНД</span><strong>${numberLabel(combat.round)}</strong></div><div class="redline-queue" aria-label="Участники боя">${combatants.length ? combatants.map(combatantView).join('') : '<p class="redline-muted redline-no-combat">Активного боя нет. Начните бой через трекер Foundry.</p>'}</div><div class="redline-turn-control"><button type="button" data-action="next-turn" class="redline-next" title="GM: сменить текущий ход через трекер Foundry"${combat.canAdvance && !combat.pending ? '' : ' disabled'}>${combat.pending ? 'Обновление…' : 'Следующий ход'}</button></div></section>
+    ${combat.started ? `<section class="redline-combat redline-panel" aria-label="Очередь инициативы"><div class="redline-round"><span class="redline-label">РАУНД</span><strong>${numberLabel(combat.round)}</strong></div><div class="redline-queue" aria-label="Участники боя">${combatants.map(combatantView).join('')}</div><div class="redline-turn-control"><button type="button" data-action="next-turn" class="redline-next" title="GM: сменить текущий ход через трекер Foundry"${combat.canAdvance && !combat.pending ? '' : ' disabled'}>${combat.pending ? 'Обновление…' : 'Следующий ход'}</button></div></section>` : ''}
     ${notices ? `<aside class="redline-notices" aria-label="Состояние модуля">${notices}</aside>` : ''}
-    <div class="redline-bottom"><div class="redline-dock redline-panel"><button type="button" class="redline-dock-toggle" data-action="toggle-dock" aria-expanded="${expanded}" aria-controls="redline-dock-content" aria-label="${expanded ? 'Свернуть панель персонажа' : 'Развернуть панель персонажа'}" title="${expanded ? 'Свернуть панель персонажа' : 'Развернуть панель персонажа'}">${icon(expanded ? 'fa-chevron-down' : 'fa-chevron-up')}</button>${actorView(model.selected, targets, expanded, Boolean(model.skillsOpen))}</div></div>
+    <div class="redline-bottom"><div class="redline-dock redline-panel"><nav class="redline-dock-utilities" aria-label="Вид панели персонажа"><button type="button" class="redline-dock-settings" data-action="scale-settings" aria-label="Настроить размер REDLINE" title="Размер панели: ${scale}%">${icon('fa-gear')}</button><button type="button" class="redline-dock-toggle" data-action="toggle-dock" aria-expanded="${expanded}" aria-controls="redline-dock-content" aria-label="${expanded ? 'Свернуть панель персонажа' : 'Развернуть панель персонажа'}" title="${expanded ? 'Свернуть панель персонажа' : 'Развернуть панель персонажа'}">${icon(expanded ? 'fa-chevron-down' : 'fa-chevron-up')}</button></nav>${actorView(model.selected, targets, expanded, Boolean(model.skillsOpen))}</div></div>
   </div>`;
+}
+
+export function renderScaleSettings(value) {
+  const scale = normalizeInterfaceScale(value);
+  return `<form class="redline-scale-form"><div class="form-group"><label for="redline-interface-scale">Масштаб REDLINE, %</label><div class="form-fields"><input id="redline-interface-scale" name="scale" type="range" min="55" max="125" step="5" value="${scale}" aria-describedby="redline-scale-note"><output for="redline-interface-scale">${scale}%</output></div></div><p id="redline-scale-note" class="notes">Размер панели персонажа и очереди боя сохраняется только для вас. По умолчанию — 80%.</p></form>`;
 }

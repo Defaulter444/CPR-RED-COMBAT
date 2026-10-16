@@ -4,7 +4,21 @@ export function selectedWeapon(actor) {
   return weapons.find(item => String(item.id) === String(actor?.selectedWeaponId)) || weapons[0] || null;
 }
 
-export function safeInsets({width, height, controls, sidebar, hotbar, hostBar, navigation, timer, queueHeight = 78} = {}) {
+export const DEFAULT_INTERFACE_SCALE = 80;
+export function normalizeInterfaceScale(value) {
+  if (!['number','string'].includes(typeof value) || String(value).trim() === '' || !Number.isFinite(Number(value))) return DEFAULT_INTERFACE_SCALE;
+  return Math.min(125, Math.max(55, Math.round(Number(value) / 5) * 5));
+}
+
+/** The preferred dock width is measured before its client zoom is applied. */
+export function panelSizing({availableWidth, scale} = {}) {
+  const percent = normalizeInterfaceScale(scale), factor = percent / 100;
+  const width = Number.isFinite(availableWidth) ? Math.max(1, availableWidth) : 1100 * factor;
+  const layoutWidth = Math.min(1100, width / factor);
+  return {percent,factor,layoutWidth,actualWidth:layoutWidth * factor};
+}
+
+export function safeInsets({width, height, controls, sidebar, hotbar, hostBar, navigation, timer, queueHeight = 78, queueWidth} = {}) {
   const w = Number.isFinite(width) ? Math.max(width, 1) : 1280;
   const h = Number.isFinite(height) ? Math.max(height, 1) : 720;
   const visible = rect => rect && rect.width > 0 && rect.height > 0 && rect.bottom > 0 && rect.right > 0 && rect.left < w && rect.top < h;
@@ -15,7 +29,8 @@ export function safeInsets({width, height, controls, sidebar, hotbar, hostBar, n
   const safeLeft = Math.min(left, w / 3), safeRight = Math.min(right, w / 2);
   // A user-dragged timer only reserves space when it intersects this queue's region.
   // Never reposition the timer or write its stored placement from REDLINE.
-  const overlapsHorizontally = visible(timer) && timer.right > safeLeft && timer.left < w - safeRight;
+  const queueRight = Number.isFinite(queueWidth) ? Math.min(w - safeRight, safeLeft + Math.max(0, queueWidth)) : w - safeRight;
+  const overlapsHorizontally = visible(timer) && timer.right > safeLeft && timer.left < queueRight;
   const queueSize = Number.isFinite(queueHeight) ? Math.max(0, queueHeight) : 78;
   if (overlapsHorizontally && timer.bottom + 12 > top && timer.top < top + queueSize + 12) top = Math.max(top, timer.bottom + 12);
   return {left:Math.round(safeLeft), right:Math.round(safeRight), top:Math.round(top), bottom:Math.round(Math.min(bottom,h / 3))};

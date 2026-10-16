@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { renderHUD } from '../scripts/view.js';
+import { renderHUD, renderScaleSettings } from '../scripts/view.js';
 
 const actor = overrides => ({
   key:'Actor.owned|Scene.a.Token.b', revision:7, name:'Ви', canOpenSheet:true,
@@ -25,7 +25,7 @@ test('production HUD has no tutorial and retains toolbar and character controls'
       assert.match(tag,/type="button"/);
       assert.doesNotMatch(tag,/ disabled/);
     }
-    assert.ok(action(html,'next-turn'));
+    assert.equal(action(html,'next-turn'),undefined);
   }
   const html=view(actor());
   for (const name of ['sheet','weapon-attack','weapon-damage','weapon-reload','weapon-load','skill','selected-skill','initiative']) {
@@ -33,6 +33,29 @@ test('production HUD has no tutorial and retains toolbar and character controls'
     assert.ok(tag,name);
     assert.doesNotMatch(tag,/ disabled/);
   }
+});
+
+test('initiative is rendered only during a started combat and never leaves an idle placeholder', () => {
+  const combat={round:9,combatants:[{id:'one',name:'Ви',selectable:true}],canAdvance:true};
+  for(const state of [undefined,false]){
+    const html=renderHUD({supported:true,selected:actor(),combat:{...combat,started:state}});
+    assert.doesNotMatch(html,/aria-label="Очередь инициативы"|data-action="next-turn"|Активного боя нет/);
+  }
+  const active=renderHUD({supported:true,selected:actor(),combat:{...combat,started:true}});
+  assert.match(active,/aria-label="Очередь инициативы"/);
+  assert.ok(action(active,'next-turn'));
+  assert.match(active,/data-action="select-combatant" data-id="one"/);
+});
+
+test('scale control is available in both dock states and settings default to a bounded client scale', () => {
+  for(const dockExpanded of [false,true]) {
+    const html=renderHUD({supported:true,selected:actor(),dockExpanded});
+    assert.match(action(html,'scale-settings'),/aria-label="Настроить размер REDLINE"/);
+    assert.match(html,/data-scale="80"/);
+  }
+  assert.match(renderScaleSettings(undefined),/type="range" min="55" max="125" step="5" value="80"/);
+  assert.match(renderScaleSettings(60),/<output[^>]*>60%<\/output>/);
+  assert.doesNotMatch(renderScaleSettings('" onload="alert(1)'),/onload|alert/);
 });
 
 test('weapon and character commands retain the exact subject and revision', () => {

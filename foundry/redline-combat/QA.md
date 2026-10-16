@@ -1,4 +1,29 @@
-# REDLINE COMBAT 0.3.0 — Blackglass Dock verification scope
+# REDLINE COMBAT 0.3.1 — compact interface verification
+
+Date: 2026-10-16. Foundry 12.331 / Cyberpunk RED Core 0.92.4, Night City UI 0.3.5, isolated disposable `deadline-test`, loopback port 30001. Only the test world and module repositories were changed.
+
+## Current changes and live scope
+
+- Client `interfaceScale` defaults to 80%, accepts 55–125% in steps of 5, and is available through the dock gear and Foundry module settings. No Actor/Item data is written by resizing. Both actor dock and initiative use the same scale; preferred layout width is capped at 1100 before scaling.
+- At 1672 × 941 / 80%, actor dock was 880 × 156.36, compared with the former 1288 × 195. Started queue was 880 × 64.36. At 55%, dock was 605 × 108.11. Applied 125% persisted after page reload; reset restored 80%.
+- At 1280 × 720 / 80%, dock was 880 × 153.16, ending at y656 while macro bar began at y666.
+- Prepared combat at round 0 had no `.redline-combat` element. Native Begin Combat changed round 0 → 1 and mounted the queue. Native Previous Round changed 1 → 0 and removed it again. Clicking the NCU Battle navigation alone did not start the combat. The delete/end-confirmation flow was not exercised in this pass; absent and inactive combat are covered by projection/view tests.
+- At 1024 × 768 / 125% with expanded DEADLINE, timer ended at y223.72; queue y236–345.5; dock y358–658; macro bar began at y668. Actor content scrolled within its height limit. Skills overlay y357–657, height300, retained a usable scroll area and cleared queue/macros. Escape closed it.
+- A click from open Skills to Attack opened the native dialog on the first click. Cancel preserved 5/8 ammunition. Native action implementations were not changed.
+- NCU Players defaulted to a 160 × 38 compact header. Own disclosure expanded/collapsed it; native header still toggled offline Player visibility. Drag moved x64,y893 → x234,y223 without moving the actor dock. Position and 125% scale survived reload. More's visibility toggle hid the entire Players panel; reset showed it, collapsed it and restored x64,y893. Disable NCU removed own Players controls/classes and restored the native header; re-enable restored the personal preference. The final preview uses 80% with Players hidden and timer ready/collapsed.
+- Final browser error log was empty. Fresh live checks in this release used Gamemaster; prior Player checks below remain historical.
+
+## Automated scope and evidence
+
+**99 REDLINE tests and 85 Night City UI tests passed**, with no failures/skips. Syntax and diff checks passed. Native `actions.js` and `capabilities.js` are unchanged. New tests cover scale normalization/sizing, explicit combat-start visibility, client settings, Players pointer/cancel/blur/lifecycle behavior, async-save races and preservation of native/foreign child listeners.
+
+Current screenshots are [docs/compact](https://github.com/Defaulter444/CPR-RED-COMBAT/tree/main/docs/compact). Hero: `idle-80-wide.png`; active queue: `combat-80-wide.png`; moved Players: `players-moved.png`; constrained view: `narrow-125-timer.png`; settings: `scale-settings.png`. The project-root `design-qa.md` records the current visual scope separately from historical 0.3.0 fidelity work.
+
+Limits: no live AV-dock session or the user's third-party trade button was present. The controller preserves that existing content and its listeners in independent tests; it never replaces the native list. Mobile widths below 1024 px and arbitrary third-party combinations are not claimed. System/Foundry compatibility limits remain unchanged.
+
+---
+
+# Historical: REDLINE COMBAT 0.3.0 — Blackglass Dock verification scope
 
 Date: 2026-10-16. Environment: isolated disposable deadline-test world, Foundry VTT 12.331 / Cyberpunk RED Core v0.92.4, loopback port 30001. Night City UI 0.3.4 compatibility layer. Production campaigns were not changed.
 

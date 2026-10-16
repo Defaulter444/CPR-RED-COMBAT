@@ -412,3 +412,13 @@ test('hidden target portrait is never read while projecting visible target icons
   Object.defineProperty(hidden.document,'texture',{get(){throw new Error('hidden target portrait accessed');}});
   assert.deepEqual(projectHUD(context({targets:[hidden]})).targets,[]);
 });
+
+test('started combat state is explicit and independent of a retained round or prepared combatants', () => {
+  const own=token('own',actor());
+  const rows=[combatant('row',own)];
+  const prepared=combat(rows,rows[0],{started:false});
+  prepared.round=8;
+  assert.equal(projectHUD(context({combat:prepared})).combat.started,false);
+  assert.equal(projectHUD(context({combat:combat(rows)})).combat.started,true);
+  assert.equal(projectHUD(context()).combat.started,false);
+});

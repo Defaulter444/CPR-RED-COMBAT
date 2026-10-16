@@ -1,8 +1,8 @@
 import { MODULE_ID, projectHUD, resolveSubject, ownsActor, visibleCombatant } from "./state.js";
-import { renderHUD } from "./view.js";
+import { renderHUD, renderScaleSettings } from "./view.js";
 import { createActionRunner, ActionRejected, resolveActionSubject } from './actions.js';
 import { weaponCapabilities, equippedWeapons } from './capabilities.js';
-import { safeInsets, skillPopupLayout } from './presentation.js';
+import { safeInsets, skillPopupLayout, panelSizing, normalizeInterfaceScale, DEFAULT_INTERFACE_SCALE } from './presentation.js';
 
 const modulePath = `modules/${MODULE_ID}`;
 let hud = null;
@@ -16,6 +16,7 @@ const weaponModes = new Map();
 const selectedSkills = new Map();
 const selectedWeapons = new Map();
 let skillsSubject = null;
+let scaleDialog = null;
 let systemAdapter;
 const executeAction = createActionRunner({
   getContext: worldContext,
@@ -54,6 +55,7 @@ class RedlineHUD extends Application {
       dockExpanded: Boolean(game.settings.get(MODULE_ID, 'dockExpanded')),
       skillsOpen: Boolean(model.selected && skillsSubject === model.selected.key),
       hasHostBar: Boolean(document.querySelector('#ncu-shell .ncu-bar')),
+      interfaceScale: normalizeInterfaceScale(game.settings.get(MODULE_ID, 'interfaceScale')),
     }) };
   }
   refresh() {
@@ -78,14 +80,29 @@ class RedlineHUD extends Application {
         const element = document.querySelector(selector);
         return element && getComputedStyle(element).display !== 'none' && getComputedStyle(element).visibility !== 'hidden' ? element.getBoundingClientRect() : null;
       };
-      const insets = safeInsets({width:window.innerWidth,height:window.innerHeight,controls:rect('#controls'),sidebar:rect('#sidebar'),hotbar:rect('#hotbar'),hostBar:rect('#ncu-shell .ncu-bar'),navigation:rect('#navigation'),timer:rect('#cpr-deadline-hud'),queueHeight:root.querySelector('.redline-combat')?.getBoundingClientRect().height});
+      const chrome = {width:window.innerWidth,height:window.innerHeight,controls:rect('#controls'),sidebar:rect('#sidebar'),hotbar:rect('#hotbar'),hostBar:rect('#ncu-shell .ncu-bar'),navigation:rect('#navigation')};
+      const baseInsets = safeInsets(chrome);
+      const sizing = panelSizing({availableWidth:window.innerWidth-baseInsets.left-baseInsets.right,scale:game.settings.get(MODULE_ID,'interfaceScale')});
+      root.style.setProperty('--redline-scale', sizing.factor);
+      root.style.setProperty('--redline-panel-width', `${sizing.layoutWidth}px`);
+      root.style.setProperty('--redline-panel-footprint', `${sizing.actualWidth}px`);
+      root.style.setProperty('--redline-skill-gap', `${8/sizing.factor}px`);
+      const queue = root.querySelector('.redline-combat');
+      const timer = rect('#cpr-deadline-hud');
+      const insets = safeInsets({...chrome,timer:queue ? timer : null,queueHeight:queue?.getBoundingClientRect().height ?? 0,queueWidth:sizing.actualWidth});
       for (const [edge, value] of Object.entries(insets)) root.style.setProperty(`--redline-${edge}`, `${value}px`);
       root.querySelector('.redline-interface')?.classList.toggle('has-host-bar', Boolean(rect('#ncu-shell .ncu-bar')));
+      let queueBottom = queue?.getBoundingClientRect().bottom ?? insets.top;
+      const timerOverPanel = timer && timer.width > 0 && timer.height > 0 && timer.right > insets.left && timer.left < insets.left+sizing.actualWidth;
+      if (timerOverPanel && !queue && timer.top < insets.top+90) queueBottom = Math.max(queueBottom, timer.bottom);
+      const dockSpace = Math.max(80, window.innerHeight-insets.bottom-queueBottom-12);
+      root.style.setProperty('--redline-dock-max-height', `${dockSpace/sizing.factor}px`);
+      const statusHeight = root.querySelector('.redline-action-status')?.getBoundingClientRect().height || 0;
+      root.style.setProperty('--redline-status-height', `${statusHeight/sizing.factor}px`);
       const dock = root.querySelector('.redline-dock')?.getBoundingClientRect();
-      const queueBottom = root.querySelector('.redline-combat')?.getBoundingClientRect().bottom;
       const skillLayout = skillPopupLayout({dockTop:dock?.top,dockBottom:dock?.bottom,queueBottom,viewportHeight:window.innerHeight});
-      root.style.setProperty('--redline-skill-height', `${skillLayout.height}px`);
-      root.style.setProperty('--redline-skill-bottom', skillLayout.placement === 'dock' ? '0px' : 'calc(100% + 8px)');
+      root.style.setProperty('--redline-skill-height', `${skillLayout.height/sizing.factor}px`);
+      root.style.setProperty('--redline-skill-bottom', skillLayout.placement === 'dock' ? '0px' : 'calc(100% + var(--redline-skill-gap, 8px))');
     };
     geometry();
     window.addEventListener('resize', geometry, {signal:this._listeners.signal});
@@ -193,6 +210,7 @@ async function dispatch(action, id, request) {
   if(action.startsWith('weapon-') || ['skill','selected-skill','initiative','death-save'].includes(action)) return executeAction(request);
   if (action === "close") return setEnabled(false);
   if (action === "refresh") return hud?.refresh();
+  if (action === 'scale-settings') return openScaleSettings();
   if (action === 'toggle-dock') {
     skillsSubject = null;
     hud._focusNext = '[data-action="toggle-dock"]';
@@ -231,7 +249,33 @@ async function dispatch(action, id, request) {
   }
 }
 
+function openScaleSettings() {
+  if (scaleDialog?.rendered) return scaleDialog.bringToTop();
+  scaleDialog = new Dialog({
+    title:'REDLINE COMBAT — размер панели',
+    content:renderScaleSettings(game.settings.get(MODULE_ID,'interfaceScale')),
+    buttons:{
+      apply:{icon:'<i class="fas fa-check"></i>',label:'Применить',callback:html=>game.settings.set(MODULE_ID,'interfaceScale',normalizeInterfaceScale(html[0].querySelector('[name="scale"]').value))},
+      reset:{icon:'<i class="fas fa-rotate-left"></i>',label:'Сбросить до 80%',callback:()=>game.settings.set(MODULE_ID,'interfaceScale',DEFAULT_INTERFACE_SCALE)},
+      cancel:{label:'Отмена'},
+    },
+    default:'apply',
+    render:html=>{
+      const slider=html[0].querySelector('[name="scale"]'),output=html[0].querySelector('output');
+      slider.addEventListener('input',()=>{output.textContent=`${normalizeInterfaceScale(slider.value)}%`;});
+    },
+    close:()=>{scaleDialog=null;},
+  },{width:400});
+  return scaleDialog.render(true);
+}
+
 Hooks.once("init", () => {
+  game.settings.register(MODULE_ID, 'interfaceScale', {
+    name:'REDLINE COMBAT: масштаб панели, %',
+    hint:'Размер панели персонажа и очереди боя только для вас. По умолчанию 80%.',
+    scope:'client',config:true,type:Number,default:DEFAULT_INTERFACE_SCALE,
+    range:{min:55,max:125,step:5},onChange:()=>hud?.refresh(),
+  });
   game.settings.register(MODULE_ID, 'dockExpanded', {
     name:'REDLINE COMBAT: развернуть панель персонажа', scope:'client', config:false,
     type:Boolean, default:false, onChange:() => hud?.refresh(),

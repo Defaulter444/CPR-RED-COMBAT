@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {selectedWeapon,safeInsets,skillPopupHeight,skillPopupLayout} from '../scripts/presentation.js';
+import {selectedWeapon,safeInsets,skillPopupHeight,skillPopupLayout,normalizeInterfaceScale,panelSizing} from '../scripts/presentation.js';
 
 test('weapon selection is read-only, exact, and falls back after deletion or unequipping', () => {
   const weapons=Object.freeze([Object.freeze({id:'a'}),Object.freeze({id:'b'})]);
@@ -81,4 +81,26 @@ test('skills stay above the dock when the map has room and drawer fallback never
   assert.deepEqual(skillPopupLayout({dockTop:383,dockBottom:658,queueBottom:150,viewportHeight:768}),{placement:'above',height:213});
   assert.deepEqual(skillPopupLayout({dockTop:500,dockBottom:680,queueBottom:120,viewportHeight:768}),{placement:'above',height:322});
   assert.deepEqual(skillPopupLayout({dockTop:160,dockBottom:161,queueBottom:150,viewportHeight:600}),{placement:'above',height:0});
+});
+
+test('client scale defaults to 80%, rounds to 5%, and limits invalid or out-of-range values', () => {
+  for(const value of [undefined,null,NaN,Infinity,'',{},'bad']) assert.equal(normalizeInterfaceScale(value),80);
+  assert.equal(normalizeInterfaceScale(83),85);
+  assert.equal(normalizeInterfaceScale('60'),60);
+  assert.equal(normalizeInterfaceScale(0),55);
+  assert.equal(normalizeInterfaceScale(900),125);
+});
+test('default panels occupy at most 880 actual pixels, and every supported scale fits the available map width', () => {
+  assert.deepEqual(panelSizing({availableWidth:1288}),{percent:80,factor:.8,layoutWidth:1100,actualWidth:880});
+  for(const scale of [55,80,100,125]) for(const availableWidth of [630,900,1600]) {
+    const size=panelSizing({availableWidth,scale});
+    assert.ok(size.layoutWidth<=1100);
+    assert.ok(size.actualWidth<=availableWidth+.0001);
+    assert.ok(Math.abs(size.actualWidth-size.layoutWidth*size.factor)<.0001);
+  }
+});
+test('a narrower scaled initiative strip does not reserve a nonintersecting timer column', () => {
+  const base={width:1672,height:941,hostBar:rect(0,0,1672,48),controls:rect(8,70,42,600),sidebar:rect(1362,50,300,880),queueHeight:64,timer:rect(1052,58,300,54)};
+  assert.equal(safeInsets({...base,queueWidth:880}).top,60);
+  assert.equal(safeInsets({...base,queueWidth:1288}).top,124);
 });

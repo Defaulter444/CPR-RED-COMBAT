@@ -97,6 +97,7 @@ export function projectHUD({ user, system, generation, combat, controlled = [], 
     systemName: system?.title ?? system?.id ?? "Неизвестная система",
     selected,
     combat: {
+      started: Boolean(combat?.started),
       round: number(combat?.round),
       turn: visibleRows.some(row => row.id === current) ? visibleRows.findIndex(row => row.id === current) : null,
       // A hidden turn's identifier/name is never included in the player DTO.
