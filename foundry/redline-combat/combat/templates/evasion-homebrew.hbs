@@ -1,0 +1,24 @@
+<form autocomplete="off">
+  <h2>{{localize 'PNEUMA_COMBAT_TOOLS.EvasionConfigHeading'}}</h2>
+  <table>
+    <thead><tr><th scope="col">{{localize 'PNEUMA_COMBAT_TOOLS.EvasionQualifierHeading'}}</th><th scope="col">{{localize 'PNEUMA_COMBAT_TOOLS.EvasionQualifies'}}</th><th scope="col">{{localize 'PNEUMA_COMBAT_TOOLS.EvasionFree'}}</th><th scope="col">{{localize 'PNEUMA_COMBAT_TOOLS.EvasionStacks'}}</th></tr></thead>
+    <tbody>{{#each rows}}
+      <tr><th scope="row">{{label}}</th>
+        <td><input type="checkbox" name="{{key}}.qualifies" {{checked qualifies}} aria-label="{{label}}: {{localize 'PNEUMA_COMBAT_TOOLS.EvasionQualifies'}}"></td>
+        <td><input type="checkbox" name="{{key}}.free" {{checked free}} aria-label="{{label}}: {{localize 'PNEUMA_COMBAT_TOOLS.EvasionFree'}}"></td>
+        <td><input type="checkbox" name="{{key}}.stacks" {{checked stacks}} aria-label="{{label}}: {{localize 'PNEUMA_COMBAT_TOOLS.EvasionStacks'}}"></td>
+      </tr>
+    {{/each}}</tbody>
+  </table>
+  <p class="notes">{{localize 'PNEUMA_COMBAT_TOOLS.EvasionCheckboxHint'}}</p>
+  <div class="form-group stacked">
+    <label for="pneuma-evasion-rule">{{localize 'PNEUMA_COMBAT_TOOLS.EvasionRuleLabel'}}</label>
+    <select id="pneuma-evasion-rule" name="rule">{{selectOptions rules selected=rule}}</select>
+  </div>
+  <p class="notes">{{localize 'PNEUMA_COMBAT_TOOLS.EvasionAfterFreeHint'}}</p>
+  <div class="form-group">
+    <label for="pneuma-evasion-luck">{{localize 'PNEUMA_COMBAT_TOOLS.EvasionLuckLabel'}}</label>
+    <div class="form-fields"><input id="pneuma-evasion-luck" type="number" name="luckCost" value="{{luckCost}}" min="1" step="1" required></div>
+  </div>
+  <footer class="sheet-footer flexrow"><button type="submit"><i class="fas fa-save"></i> Сохранить</button></footer>
+</form>

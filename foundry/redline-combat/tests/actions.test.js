@@ -9,7 +9,7 @@ const deferred = () => {
   return { promise, resolve, reject };
 };
 
-function fixture() {
+function fixture({ combatAttack = null } = {}) {
   const calls = [], busy = [], statuses = [];
   const items = [];
   items.get = id => items.find(item => item.id === id);
@@ -72,6 +72,7 @@ function fixture() {
   const run = createActionRunner({
     getContext: () => ctx,
     getSystem: async () => { calls.push(['system']); return behavior.getSystem(); },
+    combatAttack,
     onBusy: value => busy.push(value), onStatus: value => statuses.push(value)
   });
   const request = (overrides = {}) => ({
@@ -405,4 +406,37 @@ test('equipped capability list supports CPR cyberweapons and falls back only to 
   delete f.actor.system.weapons;
   f.items.push({ id: 'carried', type: 'weapon', system: { equipped: 'carried' } });
   assert.deepEqual(equippedWeapons(f.actor), [f.weapon]);
+});
+
+test('dock attacks go to the combat card workflow when it accepts them', async () => {
+  const received = [];
+  const f = fixture({ combatAttack: async request => { received.push(request); return true; } });
+  const target = { id: 'target', name: 'Цель', isVisible: true, document: { hidden: false } };
+  f.ctx.targets = [target];
+  const result = await f.run(f.request({ mode: 'aimed' }));
+  assert.deepEqual(result, { status: 'completed' });
+  assert.equal(received.length, 1);
+  assert.equal(received[0].item, f.weapon);
+  assert.equal(received[0].mode, 'aimed');
+  assert.deepEqual(received[0].targets, [target]);
+  assertNoEffect(f);
+  assert.equal(f.names().includes('dialog'), false);
+  assert.match(f.statuses.at(-1), /карточку боя/);
+});
+
+test('dock attacks fall back to the native roll when the combat workflow declines', async () => {
+  const f = fixture({ combatAttack: async () => false });
+  const result = await f.run(f.request());
+  assert.equal(result.status, 'completed');
+  assert.ok(f.names().includes('dialog'));
+  assert.ok(f.names().includes('discharge'));
+  assert.ok(f.names().includes('chat'));
+});
+
+test('hidden targets are not offered to the combat workflow', async () => {
+  const received = [];
+  const f = fixture({ combatAttack: async request => { received.push(request); return false; } });
+  f.ctx.targets = [{ id: 'ghost', isVisible: false, document: { hidden: true } }];
+  await f.run(f.request());
+  assert.deepEqual(received[0].targets, []);
 });

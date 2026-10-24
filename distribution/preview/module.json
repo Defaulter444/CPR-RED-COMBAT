@@ -1,0 +1,75 @@
+{
+  "id": "redline-combat",
+  "title": "REDLINE COMBAT",
+  "description": "Боевой док Cyberpunk RED: арсенал, навыки, состояния и результаты бросков — и полноценный бой: уклонение цели до раскрытия попадания, урон и критические травмы в карточке, гранаты и подавление, захваты, квикхаки, ЭМИ, Биомонитор, счётчики движения и индикатор хода. Адаптер CPR 0.92.4.",
+  "version": "0.5.0",
+  "compatibility": {
+    "minimum": "12",
+    "verified": "12.331",
+    "maximum": "12.999"
+  },
+  "relationships": {
+    "systems": [
+      {
+        "id": "cyberpunk-red-core",
+        "type": "system",
+        "compatibility": {
+          "minimum": "v0.92.4",
+          "verified": "v0.92.4",
+          "maximum": "v0.92.4"
+        }
+      }
+    ],
+    "requires": [
+      {
+        "id": "lib-wrapper",
+        "type": "module",
+        "manifest": "https://github.com/ruipin/fvtt-lib-wrapper/releases/latest/download/module.json"
+      }
+    ]
+  },
+  "esmodules": [
+    "scripts/main.js",
+    "combat/scripts/main.js",
+    "combat/scripts/homebrew-badge.js"
+  ],
+  "styles": [
+    "styles/redline.css",
+    "styles/host.css",
+    "combat/styles/pneuma-combattools.css",
+    "combat/styles/homebrew-badge.css",
+    "styles/combat-theme.css"
+  ],
+  "languages": [
+    {
+      "lang": "ru",
+      "name": "Русский",
+      "path": "combat/lang/ru.json"
+    },
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "combat/lang/ru.json"
+    }
+  ],
+  "socket": true,
+  "url": "https://github.com/Defaulter444/CPR-RED-COMBAT",
+  "readme": "https://github.com/Defaulter444/CPR-RED-COMBAT/blob/v0.5.0/foundry/redline-combat/README.md",
+  "bugs": "https://github.com/Defaulter444/CPR-RED-COMBAT/issues",
+  "manifest": "https://raw.githubusercontent.com/Defaulter444/CPR-RED-COMBAT/refs/heads/claude/pensive-rubin-8opsg3/distribution/preview/module.json",
+  "download": "https://raw.githubusercontent.com/Defaulter444/CPR-RED-COMBAT/refs/heads/claude/pensive-rubin-8opsg3/distribution/preview/redline-combat.zip",
+  "changelog": "https://github.com/Defaulter444/CPR-RED-COMBAT/blob/v0.5.0/CHANGELOG.md",
+  "authors": [
+    {
+      "name": "Defaulter444",
+      "url": "https://github.com/Defaulter444"
+    },
+    {
+      "name": "GMPneuma",
+      "url": "https://github.com/GMPneuma",
+      "flags": {
+        "note": "Pneuma's Combat Tools — боевые механики, встроены с разрешения автора"
+      }
+    }
+  ]
+}

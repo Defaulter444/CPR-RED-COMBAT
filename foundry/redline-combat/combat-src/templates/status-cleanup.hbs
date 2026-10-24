@@ -1,0 +1,17 @@
+<form autocomplete="off">
+  <p><strong>{{label}}</strong></p>
+  <p>Актёры в начатом бою заблокированы. Связанные токены делят эффекты с актёром. Постоянные критические травмы сохраняются, если не включить их ниже.</p>
+  <div class="form-group"><label for="pneuma-cleanup-injuries">Включить постоянные критические травмы</label><input id="pneuma-cleanup-injuries" type="checkbox" name="includeInjuries" {{checked includeInjuries}}></div>
+  <p class="notes">Удаление критической травмы убирает её предмет и механику. Неучтённые эффекты нужно отметить вручную. «Мёртв», зависимости и активные захваты защищены.</p>
+  <div style="max-height:380px;overflow:auto">
+    {{#each rows}}
+    <div class="form-group">
+      <label><input type="checkbox" name="effects" value="{{id}}" {{checked selected}} {{#if blocked}}disabled{{/if}}> <strong>{{actor}}</strong> — {{name}}</label>
+      <p class="notes">{{reason}}. {{operation}}.</p>
+    </div>
+    {{/each}}
+    {{#if empty}}<p>В этой области состояний нет.</p>{{/if}}
+  </div>
+  {{#if results}}<h3>Результаты очистки</h3><ul>{{#each results}}<li>{{this}}</li>{{/each}}</ul>{{/if}}
+  <footer class="sheet-footer flexrow"><button type="button" data-cleanup-refresh><i class="fas fa-sync"></i> Обновить</button><button type="submit"><i class="fas fa-broom"></i> Очистить выбранное</button></footer>
+</form>

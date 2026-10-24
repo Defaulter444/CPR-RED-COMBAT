@@ -1,0 +1,34 @@
+<form class="pneuma-area-editor" autocomplete="off">
+  <div class="pneuma-area-editor-body">
+    <p class="notes">Выберите тип атаки для настройки. Расстояния — в метрах, ширина — в клетках сцены.</p>
+    {{#each profiles}}
+    <details class="pneuma-area-profile" data-area-profile="{{prefix}}" {{#if @first}}open{{/if}}>
+      <summary><span>{{label}}</span><output data-area-summary="{{prefix}}" aria-live="polite"></output></summary>
+      <div class="pneuma-area-profile-body">
+      <p class="notes">{{hint}}</p>
+      <div class="pneuma-area-fields">
+        <div class="form-group"><label for="pct-{{prefix}}-shape">Форма</label><select id="pct-{{prefix}}-shape" name="{{prefix}}Shape">{{selectOptions shapes selected=shape}}</select></div>
+        <div class="form-group"><label for="pct-{{prefix}}-size">Сторона (м)</label><input id="pct-{{prefix}}-size" type="number" name="{{prefix}}Size" value="{{size}}" min="1" max="100" step="any"></div>
+        {{#if blast}}<div class="form-group"><label for="pct-blast-radius">Радиус (м)</label><input id="pct-blast-radius" type="number" name="blastRadius" value="{{radius}}" min="1" max="100" step="any"></div>{{else}}
+        <div class="form-group"><label for="pct-{{prefix}}-range">{{rangeLabel}} (м)</label><input id="pct-{{prefix}}-range" type="number" name="{{prefix}}Range" value="{{range}}" min="1" max="500" step="any"></div>
+        <div class="form-group"><label for="pct-{{prefix}}-angle">Угол (градусы)</label><input id="pct-{{prefix}}-angle" type="number" name="{{prefix}}Angle" value="{{angle}}" min="1" max="179" step="any"><div class="pneuma-area-presets" aria-label="Готовые углы конуса"><button type="button" data-area-field="{{prefix}}Angle" data-area-value="45">45°</button><button type="button" data-area-field="{{prefix}}Angle" data-area-value="90">90°</button></div></div>
+        <div class="form-group"><label for="pct-{{prefix}}-width">Ширина (клетки)</label><input id="pct-{{prefix}}-width" type="number" name="{{prefix}}Width" value="{{width}}" min="1" max="25" step="any"><div class="pneuma-area-presets" aria-label="Готовая ширина луча"><button type="button" data-area-field="{{prefix}}Width" data-area-value="1">1 клетка</button><button type="button" data-area-field="{{prefix}}Width" data-area-value="3">3 клетки</button></div></div>
+        {{/if}}
+        {{#if suppression}}<div class="form-group"><label for="pct-corridor-max">Дальность луча (м)</label><input id="pct-corridor-max" type="number" name="corridorMax" value="{{rayRange}}" min="0" max="1000" step="any"><small>0 — до края сцены</small></div>{{/if}}
+      </div>
+      </div>
+    </details>
+    {{/each}}
+    <p class="notes">Области учитывают стены. Эти расстояния задают зону поражения, а не дальность оружия.</p>
+    <details class="pneuma-area-rules"><summary>Уклонение и укрытие</summary>
+      <p class="notes">Уклонившийся должен покинуть область. По правилам уклонение от взрыва должно превысить атаку; при дроби ничья означает уклонение. Плата ДВИЖ и заём из следующего хода — необязательные домашние правила.</p>
+      <div class="form-group"><label for="pct-evade-move">Списывать движение при уклонении с ДВИЖ</label><input id="pct-evade-move" type="checkbox" name="evadeMove" {{checked evadeMove}}></div>
+      <div class="form-group"><label for="pct-evade-borrow">Занимать недостающее из следующего хода</label><input id="pct-evade-borrow" type="checkbox" name="evadeBorrow" {{checked evadeBorrow}}></div>
+      <div class="form-group"><label for="pct-evade">Право на уклонение</label><select id="pct-evade" name="evade">{{selectOptions evadeChoices selected=evade}}</select></div>
+      <div class="form-group"><label for="pct-evade-penalty">Модификатор уклонения</label><input id="pct-evade-penalty" type="number" name="evadePenalty" value="{{evadePenalty}}" min="-20" max="20"></div>
+      <div class="form-group"><label for="pct-cover-up" data-cover-up-label>Домашнее правило «Укрыться»</label><input id="pct-cover-up" type="checkbox" name="coverUp" {{checked coverUp}}></div>
+      <p class="notes">Добавляет «Укрыться» рядом с уклонением, уклонение остаётся. Выберите один ответ: бросить уклонение (если есть право) или укрыться без броска и без права на уклонение. Укрывшийся остаётся на месте, ложится и принимает удар с двойным SP брони. Вся надетая броня (голова и тело) изнашивается вдвое, даже если урон не пробил.</p>
+    </details>
+  </div>
+  <footer class="sheet-footer flexrow"><button type="submit"><i class="fas fa-save" aria-hidden="true"></i> Сохранить настройки площади</button></footer>
+</form>

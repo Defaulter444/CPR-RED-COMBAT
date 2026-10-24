@@ -1,0 +1,14 @@
+<form autocomplete="off">
+  <div class="form-group"><label for="qh-require-neuroport">Скрывать меню квикхаков без установленного нейропорта</label><div class="form-fields"><input id="qh-require-neuroport" type="checkbox" name="requireNeuroport" {{checked requireNeuroport}}></div></div>
+  <p class="notes">Меню квикхаков по цели скрыто, если у цели нет установленного нейропорта. Для всех игроков и Мастеров.</p>
+  <div class="form-group"><label>Режим правил</label><div class="form-fields"><select name="mode">{{selectOptions modes selected=mode}}</select></div></div>
+  <p class="notes">Броски атак НПС и результаты НПС против НПС скрыты у Мастера. Необнаруженные подключения НПС видит только Мастер. Броски атак игроков открыты.</p>
+  {{#each groups}}
+  <fieldset><legend>{{title}}</legend>
+  {{#each rows}}
+  <div class="form-group"><label for="qh-{{key}}">{{title}}</label><div class="form-fields"><select id="qh-{{key}}" name="{{key}}">{{selectOptions choices selected=value}}</select></div></div>
+  {{/each}}
+  </fieldset>
+  {{/each}}
+  <footer class="sheet-footer flexrow"><button type="submit"><i class="fas fa-save"></i> Сохранить</button></footer>
+</form>

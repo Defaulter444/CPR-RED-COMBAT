@@ -1,0 +1,116 @@
+{{#if standalone}}
+<div id="{{id}}" class="{{classes}}">
+{{/if}}
+<div class="col right pneuma-combat-column" {{#if selfCTH}}data-self-cth{{/if}}>
+{{#if medicalAvailable}}
+  <div class="control-icon" role="button" tabindex="0" data-medical-toggle title="Медицина" aria-label="Медицина" aria-expanded="false"><i class="fas fa-kit-medical" aria-hidden="true"></i></div>
+  <section class="pneuma-panel pneuma-combat-menu pneuma-self-menu" data-medical-menu hidden>
+    <strong class="combat-heading">Медицина</strong>
+    <ul>{{#each medical}}<li>{{#if submenu}}<details class="pneuma-medical-choices"><summary class="combat-weapon-name"><i class="fas fa-caret-right" aria-hidden="true"></i><span>{{label}}</span></summary><ul>{{#each choices}}<li><button type="button" class="combat-weapon-name" data-medical-action="{{action}}" data-medical-item="{{item}}" data-medical-skill="{{skill}}" title="{{title}}" {{#if disabled}}disabled{{/if}}><i class="fas fa-kit-medical" aria-hidden="true"></i><span>{{label}}</span></button></li>{{/each}}</ul></details>{{else}}{{#each choices}}<button type="button" class="combat-weapon-name" data-medical-action="{{action}}" data-medical-item="{{item}}" data-medical-skill="{{skill}}" title="{{title}}" {{#if disabled}}disabled{{/if}}><i class="fas fa-kit-medical" aria-hidden="true"></i><span>{{label}}</span></button>{{/each}}{{/if}}</li>{{/each}}</ul>
+    {{#if medicalQuickFix.length}}<strong class="pneuma-medical-subheading">Быстрое лечение</strong>
+    <ul>{{#each medicalQuickFix}}<li>{{#if submenu}}<details class="pneuma-medical-choices"><summary class="combat-weapon-name"><i class="fas fa-caret-right" aria-hidden="true"></i><span>{{label}}</span></summary><ul>{{#each choices}}<li><button type="button" class="combat-weapon-name" data-medical-action="{{action}}" data-medical-item="{{item}}" data-medical-skill="{{skill}}" title="{{title}}" {{#if disabled}}disabled{{/if}}><i class="fas fa-kit-medical" aria-hidden="true"></i><span>{{label}}</span></button></li>{{/each}}</ul></details>{{else}}{{#each choices}}<button type="button" class="combat-weapon-name" data-medical-action="{{action}}" data-medical-item="{{item}}" data-medical-skill="{{skill}}" title="{{title}}" {{#if disabled}}disabled{{/if}}><i class="fas fa-kit-medical" aria-hidden="true"></i><span>{{label}}</span></button>{{/each}}{{/if}}</li>{{/each}}</ul>{{/if}}
+    {{#if canWake}}<button type="button" class="combat-weapon-name" data-wake-action title="Разбудить действием"><i class="fas fa-hand" aria-hidden="true"></i><span>Разбудить действием</span></button>{{/if}}
+    {{#unless medical.length}}{{#unless canWake}}<p class="combat-empty">Нет доступных медицинских действий.</p>{{/unless}}{{/unless}}
+  </section>
+{{/if}}
+{{#if selfCTH}}
+  <div class="control-icon" role="button" tabindex="0" data-self-settings-toggle title="Настройки" aria-label="Настройки" aria-expanded="false"><i class="fas fa-gear" aria-hidden="true"></i></div>
+  <section class="pneuma-panel pneuma-combat-menu pneuma-self-menu" data-self-settings-menu hidden>
+    <strong class="combat-heading">Настройки</strong>
+    <ul><li><button type="button" class="combat-weapon-name" data-turn-animation><i class="fas fa-circle-notch" aria-hidden="true"></i><span>Индикатор хода</span></button></li></ul>
+  </section>
+  {{#if grappleActions.length}}
+  <div class="control-icon" role="button" tabindex="0" data-self-close-toggle aria-expanded="false" title="Ближний бой" aria-label="Ближний бой"><i class="fas fa-hand-back-fist" aria-hidden="true"></i></div>
+  <section class="pneuma-panel pneuma-combat-menu pneuma-self-menu" data-self-close-menu hidden>
+    <strong class="combat-heading">Ближний бой</strong>
+    <ul>{{#each grappleActions}}<li><button type="button" class="combat-weapon-name" data-self-grapple="{{action}}" title="{{title}}" {{#if disabled}}disabled{{/if}}><i class="fas fa-hand-back-fist" aria-hidden="true"></i><span>{{label}}</span></button></li>{{/each}}</ul>
+  </section>
+  {{/if}}
+  <div class="control-icon" role="button" tabindex="0" data-self-thrown-toggle aria-expanded="false" title="Метательное оружие и гранаты" aria-label="Метательное оружие и гранаты"><i class="fas fa-bomb" aria-hidden="true"></i></div>
+  <section class="pneuma-panel pneuma-combat-menu pneuma-self-menu pneuma-self-thrown" data-self-thrown-menu hidden>
+    <strong class="combat-heading">Метательное оружие и гранаты</strong>
+    <ul>{{#each selfThrown}}<li><button type="button" class="combat-weapon-name" data-self-throw="{{id}}" title="{{name}}">{{#if img}}<img src="{{img}}" alt="" width="24" height="24">{{else}}<i class="fas fa-bomb" aria-hidden="true"></i>{{/if}}<span>{{name}}</span></button></li>{{else}}<li class="combat-empty">Нет метательного оружия и гранат.</li>{{/each}}
+    <li><button type="button" class="combat-weapon-name" data-self-throw="__improvised" title="Подручный предмет (нужна цель)"><img src="systems/cyberpunk-red-core/icons/compendium/weapons/thrown_weapon.svg" alt="" width="24" height="24"><span>Подручный предмет (нужна цель)</span></button></li></ul>
+  </section>
+  <div class="control-icon" role="button" tabindex="0" data-self-actions-toggle title="Свои действия" aria-label="Свои действия" aria-expanded="false"><i class="fas fa-person" aria-hidden="true"></i></div>
+  <section class="pneuma-panel pneuma-combat-menu pneuma-self-menu" data-self-actions-menu hidden>
+    <strong class="combat-heading">Свои действия</strong>
+    <ul>
+      {{#if selfInitiative.show}}<li><button type="button" class="combat-weapon-name" data-self-initiative title="{{selfInitiative.title}}" aria-disabled="{{selfInitiative.disabled}}" {{#if selfInitiative.disabled}}disabled{{/if}}><i class="fas fa-dice-d10" aria-hidden="true"></i><span>Перебросить инициативу</span></button></li>{{/if}}
+      {{#each selfEscapes}}<li><button type="button" class="combat-weapon-name" data-self-grapple="{{action}}" title="{{title}}" {{#if disabled}}disabled{{/if}}><i class="fas fa-hand-back-fist" aria-hidden="true"></i><span>{{label}}</span></button></li>{{/each}}
+      {{#each selfActions}}<li><button type="button" class="combat-weapon-name" data-self-action="{{action}}" data-message="{{message}}" {{#if disabled}}disabled title="Персонаж не лежит"{{/if}}><i class="fas {{icon}}" aria-hidden="true"></i><span>{{label}}</span></button></li>{{/each}}
+      {{#unless selfInitiative.show}}{{#unless selfActions.length}}{{#unless selfEscapes.length}}<li class="combat-empty">Нет доступных действий.</li>{{/unless}}{{/unless}}{{/unless}}
+    </ul>
+  </section>
+{{else}}
+{{#each controls}}
+<div class="control-icon {{#if active}}active{{/if}}" role="button" tabindex="0"
+  data-combat-action="{{action}}" data-combat-control title="{{title}}" aria-label="{{title}}"
+  aria-expanded="false">
+  {{#if (eq action "melee")}}
+  <i class="fas" aria-hidden="true"><svg class="pneuma-close-combat-icon" focusable="false" viewBox="0 0 64 64" fill="currentColor"><circle cx="16" cy="10" r="5.5"/><circle cx="48" cy="10" r="5.5"/><path d="M11 19Q15 16 20 19L26 25 30 20Q32 17 35 20Q37 22 34 25L28 32Q25 35 22 32L20 30 21 40 27 51 27 58Q26 62 22 61Q19 61 19 57V53L14 45 10 58Q9 62 5 61Q2 60 3 56L9 39 8 26 5 33Q3 36 0 34L1 28 7 20Z"/><path d="M53 19Q49 16 44 19L39 25 37 30 33 27Q30 25 28 28Q26 31 30 33L37 37Q41 39 43 34L45 30 43 40 37 51 37 58Q38 62 42 61Q45 61 45 57V53L50 45 54 58Q55 62 59 61Q62 60 61 56L55 39 56 27 59 33Q61 36 64 34L63 28 57 20Z"/></svg></i>
+  {{else}}<i class="fas {{icon}}" aria-hidden="true"></i>{{/if}}
+</div>
+{{/each}}
+<section class="pneuma-target-menu pneuma-combat-menu pneuma-panel">
+  <strong class="combat-heading"></strong>
+  <div class="combat-weapons" hidden>
+    <ul>
+      {{#each weapons}}
+      <li data-attack-category="{{category}}" {{#if gunAmmo}}data-weapon-ammo="{{id}}"{{/if}}>
+        <button type="button" {{#if deferred}}disabled{{/if}} class="combat-weapon-name" data-item-id="{{id}}" data-roll-type="attack" data-attack-mode="attack" title="{{name}}">
+          {{#if img}}<img src="{{img}}" alt="" width="24" height="24">{{/if}}<span>{{name}}</span><small data-weapon-ammo-detail {{#unless ammoDetail}}hidden{{/unless}}>{{ammoDetail}}</small>
+        </button>
+        {{#unless thrown}}<button type="button" {{#if deferred}}disabled{{/if}} {{#if area}}disabled{{/if}} class="combat-weapon-mode" data-item-id="{{id}}" data-roll-type="attack" data-attack-mode="aimed" title="{{localize 'PNEUMA_COMBAT_TOOLS.Aimed'}}: {{name}}" aria-label="{{localize 'PNEUMA_COMBAT_TOOLS.Aimed'}}: {{name}}"><i class="fas fa-crosshairs" aria-hidden="true"></i></button>
+        {{#if doubleAttack}}<button type="button" class="combat-weapon-mode" data-item-id="{{id}}" data-roll-type="attack" data-attack-mode="attack" data-attack-count="2" title="Две атаки по одной цели: {{name}}" aria-label="Две атаки по одной цели: {{name}}">x2</button>{{/if}}
+        {{#if autofire}}
+        <button type="button" class="combat-weapon-mode" data-item-id="{{id}}" data-roll-type="attack" data-attack-mode="autofire" title="{{localize 'PNEUMA_COMBAT_TOOLS.Autofire'}}: {{name}}" aria-label="{{localize 'PNEUMA_COMBAT_TOOLS.Autofire'}}: {{name}}"><svg viewBox="0 4 32 20" aria-hidden="true"><path fill="currentColor" d="M1 7h5V5h3v2h14v2h8v3h-8v3h-7l2 8h-5l-2-8H8v5H4V11H1zm8 4v2h4v-2z"/></svg></button>
+        <button type="button" class="combat-weapon-mode pneuma-suppressive" data-item-id="{{id}}" data-attack-mode="suppressive" title="Огонь на подавление: {{name}}" aria-label="Огонь на подавление: {{name}}"><i class="fas fa-bars-staggered" aria-hidden="true"></i></button>
+        {{/if}}
+        {{/unless}}
+        {{#if gunAmmo}}
+        <span class="combat-ammo-count" data-weapon-ammo-count><span data-ammo-type></span> <span data-ammo-quantity></span></span>
+        <div class="combat-ammo-menu" hidden role="group" aria-label="Управление боеприпасами">
+          <button type="button" class="combat-weapon-mode" data-ammo-action="reload" title="Перезарядить текущими боеприпасами" aria-label="Перезарядить"><i class="fas fa-rotate-right" aria-hidden="true"></i></button>
+          <button type="button" class="combat-weapon-mode" data-ammo-action="change" title="Сменить боеприпасы" aria-label="Сменить боеприпасы"><i class="fas fa-exchange-alt" aria-hidden="true"></i></button>
+        </div>
+        {{/if}}
+      </li>
+      {{/each}}
+      {{#each grappleActions}}
+      <li data-attack-category="brawling" hidden>
+        <button type="button" class="combat-weapon-name" data-grapple-action="{{action}}" title="{{title}}" {{#if disabled}}disabled{{/if}}><i class="fas fa-hand-back-fist" aria-hidden="true"></i><span>{{label}}</span></button>
+      </li>
+      {{/each}}
+      {{#each grenades}}
+      <li data-attack-category="thrown" hidden>
+        <button type="button" class="combat-weapon-name" data-item-id="{{id}}" data-attack-mode="attack" title="Бросить гранату: {{name}}">{{#if img}}<img src="{{img}}" alt="" width="24" height="24">{{/if}}<span>{{name}}</span></button>
+      </li>
+      {{/each}}
+      <li data-attack-category="thrown" hidden>
+        <button type="button" class="combat-weapon-name" data-item-id="__improvised" data-attack-mode="attack"><img src="systems/cyberpunk-red-core/icons/compendium/weapons/thrown_weapon.svg" alt="" width="24" height="24"><span>Подручный предмет</span></button>
+      </li>
+      <li class="combat-empty">{{weaponEmpty}}</li>
+    </ul>
+  </div>
+  <div class="combat-quickhacks" hidden>
+    {{#if offensiveQuickhacks}}
+    <p class="notes">{{quickhackNote}}</p>
+    {{#if selfIce}}<p class="notes">Собственный ЛЁД · Passwall пройдено {{selfIce.cleared}}/{{selfIce.walls}} · DV{{selfIce.dv}}</p>{{/if}}
+    {{#if canBreach}}<button type="button" class="combat-weapon-name" data-quickhack-id="breach" title="Проверка Интерфейса; стоит 1 сетевое действие (потратьте вручную). Shift+щелчок — без параметров броска."><i class="fas fa-shield-halved" aria-hidden="true"></i><span>Взломать Passwall</span><small>1 сетевое действие</small></button>{{/if}}
+    {{#if gmBreach}}<button type="button" class="combat-weapon-name" data-breach-override><i class="fas fa-gear" aria-hidden="true"></i><span>Мастер: изменить пройденные стены</span></button>{{/if}}
+    <ul>
+      <li><button type="button" class="combat-weapon-name" data-quickhack-id="{{quickhackJackAction}}" {{#if quickhackJackInDisabled}}disabled{{/if}}><i class="fas fa-network-wired" aria-hidden="true"></i><span>Подключиться / отключиться</span></button></li>
+      {{#each quickhacks}}
+      <li><button type="button" class="combat-weapon-name" data-quickhack-id="{{id}}" {{#unless ../quickhackConnected}}disabled{{/unless}}><img src="{{img}}" alt="" width="24" height="24"><span>{{name}}</span><small>DV{{dv}}</small></button></li>
+      {{else}}<li>В текущем режиме правил квикхаки недоступны.</li>{{/each}}
+    </ul>
+    {{/if}}
+  </div>
+  <p class="combat-description" hidden></p>
+</section>
+{{/if}}
+</div>
+{{#if standalone}}
+</div>
+{{/if}}

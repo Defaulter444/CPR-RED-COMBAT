@@ -1,0 +1,41 @@
+<form autocomplete="off" class="pneuma-emp-settings">
+  <div class="pneuma-emp-settings-body">
+    <fieldset><legend>Выбор</legend>
+    {{#each profiles}}
+    <div data-emp-profile="{{side}}">
+
+      <div class="form-group"><label for="emp-{{side}}-method">{{title}}</label><select id="emp-{{side}}-method" name="{{side}}.method" data-method>{{selectOptions methods selected=method}}</select></div>
+      <div data-shortlist-options>
+        <p class="notes">Короткий список вытягивается один раз — до двойного нужного числа. Игрок выбирает из этого списка.</p>
+      </div>
+      <div data-random-options>
+        <div class="form-group"><label for="emp-{{side}}-overlap">Не выбирать пересекающееся</label><input id="emp-{{side}}-overlap" type="checkbox" name="{{side}}.skipAffected" {{checked skipAffected}}></div>
+        <p class="notes">Не выбирать одновременно основу и опцию, которую она отключает. Меньше независимых предметов — меньше выборов.</p>
+      </div>
+    </div>
+    {{/each}}
+    </fieldset>
+    <p class="notes">ЭМИ обычно отключает два предмета. У других эффектов свои количество, выбирающий, исключения и длительность. Выбор идёт среди подходящих предметов ниже.</p>
+    <fieldset><legend>Подходящие предметы</legend>
+      <div class="form-group"><label for="emp-fashionware">Модная электроника</label><input id="emp-fashionware" type="checkbox" name="includeFashionware" {{checked includeFashionware}}></div>
+      <div class="form-group"><label for="emp-bioware" data-bioware-label>Биоимпланты (домашнее правило)</label><input id="emp-bioware" type="checkbox" name="includeBioware" {{checked includeBioware}}></div>
+      <p class="notes">Биоимпланты: привитые мышцы и костное кружево, улучшенные антитела. Снимите отметку, чтобы исключить.</p>
+      <div class="form-group"><label for="emp-foundational">Базовые</label><input id="emp-foundational" type="checkbox" name="includeFoundational" {{checked includeFoundational}}></div>
+      <div class="form-group" data-foundation-weight><label for="emp-weight">Вес базовых</label><select id="emp-weight" name="foundationWeight">{{selectOptions foundationWeights selected=foundationWeight}}</select></div>
+      <p class="notes">Общее для обоих способов выбора. Вес влияет на случайный выбор и короткий список. Защиты источников действуют.</p>
+    </fieldset>
+    <details class="pneuma-emp-section" {{#if protectionConfigured}}open{{/if}}><summary>Защита и исключения</summary>
+    <div class="form-group"><label for="emp-hardened">Защищённые от ЭМИ</label><select id="emp-hardened" name="hardened">{{selectOptions hardenedMethods selected=hardened}}</select></div>
+    <p class="notes">Только ЭМИ/микроволновик. Включённые защищённые предметы занимают выбор, но не отключаются и не перебрасываются. От квикхаков защита не спасает. Учитывается штатное экранирование самого предмета, вложенных и соседних.</p>
+    <div class="form-group"><label for="emp-immunity">Неуязвимые предметы</label><textarea id="emp-immunity" name="immunity" rows="2">{{immunity}}</textarea><p class="notes">Точные названия предметов или UUID источников в компендиуме через точку с запятой. Действует на прямой выбор ЭМИ/микроволновика; отключение основы всё равно затрагивает установленные опции.</p></div>
+    </details>
+    <details class="pneuma-emp-section" {{#if frameConfigured}}open{{/if}}><summary data-frame-label>Последствия для внутреннего каркаса</summary>
+      <div class="form-group"><label for="emp-frame-move">Владелец не может двигаться</label><input id="emp-frame-move" type="checkbox" name="frameNoMove" {{checked frameNoMove}}></div>
+      <div class="form-group" data-frame-movement><label for="emp-frame-reduce">ДВИЖ снижается на</label><input id="emp-frame-reduce" type="checkbox" name="frameReduceMove" {{checked frameReduceMove}}><input data-frame-reduction aria-label="На сколько снижается ДВИЖ" type="number" min="0" step="1" name="frameMoveReduction" value="{{frameMoveReduction}}"></div>
+      <div class="form-group"><label for="emp-frame-actions">Штраф ко всем действиям</label><input id="emp-frame-actions" type="checkbox" name="frameActionPenalty" {{checked frameActionPenalty}}></div>
+      <div class="form-group" data-frame-penalty><label for="emp-frame-penalty">Размер штрафа (вычитается)</label><input id="emp-frame-penalty" type="number" min="0" step="1" name="framePenalty" value="{{framePenalty}}"></div>
+      <p class="notes">Необязательные последствия для установленных внутренних линейных каркасов. По умолчанию всё выключено. Запрет движения важнее снижения ДВИЖ; ДВИЖ не опускается ниже нуля. Штрафы от повторных попаданий не суммируются и заканчиваются вместе с отключением. Мастер может переставлять токены.</p>
+    </details>
+  </div>
+  <footer class="sheet-footer flexrow"><button type="submit"><i class="fas fa-save"></i> Сохранить настройки ЭМИ</button></footer>
+</form>

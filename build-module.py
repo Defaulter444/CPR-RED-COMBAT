@@ -16,6 +16,9 @@ assert manifest['download'].endswith(f"/v{manifest['version']}/redline-combat.zi
 
 # Package only the production HUD. Historical prototype sources stay in the repository.
 paths = ['module.json', 'README.md', 'QA.md', 'scripts/main.js', 'scripts/state.js', 'scripts/view.js', 'scripts/presentation.js', 'scripts/skills.js', 'scripts/preferences.js', 'scripts/motion.js', 'scripts/actions.js', 'scripts/capabilities.js', 'scripts/encounter.js', 'styles/redline.css', 'styles/host.css', 'templates/hud.hbs', 'assets/redline-signature.png']
+# Embedded combat tools: compiled output and assets built by `npm run build:combat`.
+paths += sorted(str(path.relative_to(MODULE)).replace('\\', '/') for path in (MODULE / 'combat').rglob('*') if path.is_file())
+paths.append('styles/combat-theme.css')
 for name in paths:
     assert (MODULE / name).is_file(), name
 for name in manifest['esmodules'] + manifest['styles']:

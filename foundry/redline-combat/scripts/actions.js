@@ -24,7 +24,7 @@ export function resolveActionSubject(ctx, request) {
 }
 
 /** Native CPR roll pipeline, dependency-injected so permission/cancel/ammo handling is testable. */
-export function createActionRunner({ getContext, getSystem, onBusy = () => {}, onStatus = () => {} }) {
+export function createActionRunner({ getContext, getSystem, combatAttack = null, onBusy = () => {}, onStatus = () => {} }) {
   let busy = false;
   return async function run(request) {
     if (busy) return { status: 'busy' };
@@ -67,6 +67,15 @@ export function createActionRunner({ getContext, getSystem, onBusy = () => {}, o
         }
         if (request.action === 'weapon-attack') {
           if (!capability.canAttack) reject(capability.reason);
+          if (combatAttack) {
+            validate();
+            const targets = Array.from(getContext().targets ?? []).filter(t => visibleTarget(t, getContext().user));
+            // Combat tools own defense choice, damage and criticals; false keeps the native roll below.
+            if (await combatAttack({ actor, token, item, mode: request.mode, targets })) {
+              onStatus('Атака передана в карточку боя: защита цели и урон — в чате.');
+              return { status: 'completed' };
+            }
+          }
           type = request.mode;
         } else if (request.action === 'weapon-damage') {
           if (!capability.canDamage) reject('Для подавления нет отдельного броска урона.');

@@ -1,0 +1,29 @@
+/** Reuse CPR's existing reverse-ablation path on its head/body armor arrows. */
+export function registerArmorShortcut() {
+    const bound = new WeakSet();
+    Hooks.on("renderActorSheet", (sheet, html) => {
+        if (!sheet.isEditable || !sheet.actor.isOwner)
+            return;
+        html.find('.ablate[data-location="head"], .ablate[data-location="body"]').each((_index, arrow) => {
+            if (bound.has(arrow))
+                return;
+            bound.add(arrow);
+            const icon = arrow.querySelector("[data-tooltip]") ?? arrow;
+            const hint = game.i18n.localize("PNEUMA_COMBAT_TOOLS.RestoreArmorHint");
+            icon.dataset.tooltip = [icon.dataset.tooltip, hint].filter(Boolean).join(" · ");
+            arrow.addEventListener("click", event => {
+                if (!event.shiftKey)
+                    return;
+                event.preventDefault();
+                event.stopImmediatePropagation();
+                if (!sheet.actor.isOwner)
+                    return;
+                const actor = sheet.actor;
+                void actor._ablateArmor(arrow.dataset.location, -1).catch(error => {
+                    console.error("redline-combat | Restore armor", error);
+                    ui.notifications.error(game.i18n.localize("PNEUMA_COMBAT_TOOLS.RestoreArmorFailed"));
+                });
+            }, { capture: true });
+        });
+    });
+}

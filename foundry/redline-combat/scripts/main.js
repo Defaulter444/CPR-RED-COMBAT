@@ -37,6 +37,13 @@ const executeAction = createActionRunner({
       .then(({default:chat}) => ({renderRollCard: roll => chat.RenderRollCard(roll)}));
     return systemAdapter;
   },
+  combatAttack: async ({token, item, mode, targets}) => {
+    const api = game.modules.get(MODULE_ID)?.api?.combat;
+    if (!api?.attack || !game.settings.get(MODULE_ID, 'routeDockAttacks')) return false;
+    const tokenId = token?.object?.id ?? token?.id;
+    if (!tokenId) return false;
+    return api.attack({tokenId, targetIds: targets.map(target => target.id), itemId: item.id, mode});
+  },
   onBusy: value => {actionBusy=value;hud?.refresh();},
   onStatus: value => {actionStatus=value;actionStatusTone='info';hud?.scheduleRefresh();},
 });
@@ -531,6 +538,11 @@ Hooks.once("init", () => {
     type: Boolean, default: true,
     onChange: enabled => enabled ? hud?.refresh() : hud?.close(),
   });
+  game.settings.register(MODULE_ID, "routeDockAttacks", {
+    name: "REDLINE COMBAT: атаки из дока — через боевые карточки", scope: "world", config: true,
+    hint: "Кнопка «Атака» при одной видимой цели (или оружии по площади) запускает боевую карточку: цель выбирает уклонение, урон и критические травмы считаются в карточке. Без цели или без активного Мастера — обычный бросок системы.",
+    type: Boolean, default: true,
+  });
   game.keybindings.register(MODULE_ID, "toggleHUD", {
     name: "REDLINE COMBAT: показать / скрыть HUD",
     editable: [{ key: "KeyR", modifiers: ["Shift"] }],
@@ -552,7 +564,9 @@ Hooks.on("getSceneControlButtons", controls => {
 Hooks.once("ready", () => {
   ready = true;
   hud = new RedlineHUD();
-  game.modules.get(MODULE_ID).api = Object.freeze({
+  if (game.user.isGM && game.modules.get('cpred-evasion-workflow')?.active && game.modules.get('lib-wrapper')?.active && !game.modules.get('pneuma-combattools')?.active)
+    ui.notifications.warn('REDLINE сам предлагает цели уклониться. Выключите модуль Evasion Workflow, иначе выбор защиты появится дважды.', {permanent:true});
+  game.modules.get(MODULE_ID).api = Object.freeze({...game.modules.get(MODULE_ID).api,
     open: () => setEnabled(true), close: () => setEnabled(false),
     toggle: () => setEnabled(!game.settings.get(MODULE_ID, "enabled")),
     refresh: () => hud.refresh(),

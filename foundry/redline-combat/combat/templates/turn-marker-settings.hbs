@@ -1,0 +1,17 @@
+<form autocomplete="off">
+  <p class="notes">Предпросмотр виден только вам — на выбранном токене или назначенном персонаже, даже вне боя. Закрытие окна возвращает обычный индикатор. Параметры показа — в настройках.</p>
+  <nav class="flexrow" aria-label="Настройки индикатора">
+    <button type="button" data-indicator-mode="default" aria-pressed="{{isDefault}}">По умолчанию</button>
+    <button type="button" data-indicator-mode="personal" aria-pressed="{{isPersonal}}">Мой индикатор</button>
+    {{#if hasToken}}<button type="button" data-indicator-mode="token" {{#unless tokenName}}disabled{{/unless}} aria-pressed="{{isToken}}">Этот токен</button>{{/if}}
+  </nav>
+  {{#if isDefault}}{{#if isGM}}<p class="notes">Вариант Мастера по умолчанию для тех, у кого нет своего.</p>{{else}}<p class="notes">Ваш вариант для токенов без своего индикатора. Только для вас. «Индикатор по умолчанию для всех» применяет его ко всем токенам.</p><div class="form-group"><label>Как у Мастера</label><input type="checkbox" data-use-gm-default {{checked useGMDefault}}></div>{{/if}}{{/if}}{{#if isToken}}<p class="notes">Только для <strong>{{tokenName}}</strong>. Изменения сохраняются автоматически.</p><div class="form-group"><label>Унаследовать настройки</label><input type="checkbox" data-use-inherited {{checked useInherited}}></div>{{/if}}{{#if isPersonal}}<p class="notes">Эти настройки видят все, когда ходит ваш персонаж. Изменения сохраняются автоматически.</p>
+  <div class="form-group"><label>Мой индикатор по умолчанию</label><input type="checkbox" data-use-default {{checked useDefault}}></div>{{/if}}
+  <fieldset {{#if readOnly}}disabled{{/if}}>
+    <legend>{{#if isToken}}Этот токен — {{tokenName}}{{else}}{{#if isDefault}}Индикатор по умолчанию{{else}}Мой индикатор{{/if}}{{/if}}</legend>
+    <div class="form-group"><label>Стиль</label><div class="form-fields"><select name="redline-combat.turnMarkerStyle">{{selectOptions styles selected=profile.turnMarkerStyle}}</select></div></div>
+    <div class="form-group"><label>Цвет</label><div class="form-fields"><input type="text" name="redline-combat.turnMarkerColor" value="{{profile.turnMarkerColor}}" placeholder="#ffc36a"><input type="color" data-edit="redline-combat.turnMarkerColor" value="{{profile.turnMarkerColor}}"></div></div>
+    {{#each ranges}}<div class="form-group"><label>{{label}}</label><div class="form-fields"><input type="range" name="redline-combat.{{key}}" min="{{range.min}}" max="{{range.max}}" step="{{range.step}}" value="{{value}}"><span class="range-value">{{displayValue}}</span></div></div>{{/each}}
+  </fieldset>
+  <footer class="sheet-footer flexrow"><button type="button" data-close>Закрыть</button></footer>
+</form>

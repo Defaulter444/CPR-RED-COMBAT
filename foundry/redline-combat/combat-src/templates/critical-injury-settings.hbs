@@ -1,0 +1,12 @@
+<form autocomplete="off">
+  <p class="notes">Показывать кнопку броска травмы, когда в уроне выпало две шестёрки и больше. Штатный бонусный урон не меняется.</p>
+  <table>
+    <thead><tr><th scope="col">Тип урона</th><th scope="col">Критические травмы</th></tr></thead>
+    <tbody>
+      {{#each rows}}
+      <tr><th scope="row"><label for="pct-{{key}}">{{label}}</label></th><td style="text-align: center"><input type="checkbox" id="pct-{{key}}" name="{{key}}" {{checked enabled}}></td></tr>
+      {{/each}}
+    </tbody>
+  </table>
+  <footer class="sheet-footer flexrow"><button type="submit"><i class="fas fa-save"></i> Сохранить</button></footer>
+</form>

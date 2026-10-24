@@ -1,0 +1,13 @@
+<form>
+  <p class="notes">Свои состояния появляются рядом с основным списком Cyberpunk. Это эффекты актёра и значки токена; механику название не добавляет.</p>
+  <div class="pneuma-custom-status-rows">
+    {{#each rows}}<div class="pneuma-custom-status-row" data-status-id="{{id}}">
+      <label>Название<input class="status-name" aria-label="Название состояния" value="{{name}}" required></label>
+      <label>Путь к значку<input class="status-img" aria-label="Путь к значку" value="{{img}}" required></label>
+      <button type="button" data-pick-icon title="Выбрать значок"><i class="fas fa-image"></i></button>
+      <button type="button" data-remove-status title="Удалить"><i class="fas fa-trash"></i></button>
+    </div>{{/each}}
+  </div>
+  <footer class="sheet-footer flexrow"><button type="button" data-add-status><i class="fas fa-plus"></i> Добавить состояние</button>
+  <button type="submit"><i class="fas fa-save"></i> Сохранить состояния</button></footer>
+</form>

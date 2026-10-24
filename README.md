@@ -1,5 +1,13 @@
 # REDLINE COMBAT
 
+**REDLINE COMBAT 0.5.0 — предварительная сборка с боевыми инструментами.** Уклонение цели, урон и криты в карточке, гранаты и подавление, захваты, квикхаки, ЭМИ, Биомонитор и индикатор хода — всё на русском, внутри REDLINE. Установка для проверки (отдельно от стабильного канала):
+
+```text
+https://raw.githubusercontent.com/Defaulter444/CPR-RED-COMBAT/refs/heads/claude/pensive-rubin-8opsg3/distribution/preview/module.json
+```
+
+Нужен libWrapper; отдельные Pneuma's Combat Tools и Evasion Workflow выключите. Подробности — в [руководстве модуля](foundry/redline-combat/README.md#боевые-инструменты-050).
+
 **[REDLINE COMBAT 0.4.0](https://github.com/Defaulter444/CPR-RED-COMBAT/releases/tag/v0.4.0)** — обновление существующего модуля `redline-combat`. Арсенал, избранные навыки, состояния ранений и эффектов, результаты штатных бросков, история пяти действий и анимации доступны через обычное обновление Foundry.
 
 Если REDLINE уже установлен, откройте **Foundry Setup → Add-on Modules**, проверьте обновления и обновите **REDLINE COMBAT** до0.4.0. Повторная установка не нужна; прежний адрес манифеста сохранён:

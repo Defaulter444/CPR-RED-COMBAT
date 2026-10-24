@@ -1,0 +1,11 @@
+<form autocomplete="off">
+  <p class="notes">Настройки Мастера для всех игроков. «Прослушать» играет текущий выбор только у вас. Пустой файл или громкость 0 — без звука.</p>
+  {{#each sounds}}
+  <fieldset>
+    <legend>{{label}}</legend>
+    <div class="form-group"><label>Звуковой файл</label><div class="form-fields"><input type="text" name="{{pathKey}}" value="{{path}}">{{filePicker type="audio" target=pathKey}}</div></div>
+    <div class="form-group"><label>Громкость</label><div class="form-fields"><input type="range" name="{{volumeKey}}" value="{{volume}}" min="0" max="1" step="0.05"><span class="range-value">{{volume}}</span><button type="button" data-play-sound><i class="fas fa-play" aria-hidden="true"></i> Прослушать</button></div></div>
+  </fieldset>
+  {{/each}}
+  <footer class="sheet-footer flexrow"><button type="submit"><i class="fas fa-save" aria-hidden="true"></i> Сохранить</button></footer>
+</form>

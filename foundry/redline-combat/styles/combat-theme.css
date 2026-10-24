@@ -1,0 +1,30 @@
+/* REDLINE palette for the embedded combat tools: token menus, Biomonitor, panels and chat controls. */
+:root {
+  --pneuma-panel-background: #101114f2;
+  --pneuma-panel-color: #f3f0e9;
+  --pneuma-panel-border: 1px solid #3c3d45;
+  --pneuma-panel-radius: 2px;
+  --pneuma-panel-shadow: 0 10px 28px #00000073, inset 0 1px 0 #ffffff0a;
+  --pneuma-menu-hover-background: #f0445229;
+  --pneuma-menu-hover-outline: #f04452;
+  --pneuma-dv-green: #8cd6a8;
+  --pneuma-dv-yellow: #e4bc73;
+  --pneuma-dv-red: #f04452;
+}
+.chat-message {
+  --pneuma-chat-button-focus: #8cc6ca;
+  --pneuma-chat-button-selected: #191a1f;
+  --pneuma-chat-button-selected-border: #f04452;
+  --pneuma-chat-button-selected-color: #f3f0e9;
+  --pneuma-chat-button-icon-background: #191a1f;
+  --pneuma-chat-button-icon-color: #f3f0e9;
+  --pneuma-chat-button-icon-border: #3c3d45;
+  --pneuma-chat-success: #2f7d4a;
+  --pneuma-chat-failure: #c42b38;
+}
+.pneuma-panel .combat-heading,
+#token-hud .pneuma-combat-menu .combat-heading {
+  color: #e4bc73;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
