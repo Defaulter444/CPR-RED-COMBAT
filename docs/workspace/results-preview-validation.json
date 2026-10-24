@@ -1,0 +1,33 @@
+{
+  "kind": "offline-native-renderer-demo-validation",
+  "gameConnected": false,
+  "errors": [],
+  "externalRequests": [],
+  "attack": {
+    "total": "24",
+    "demo": "Демонстрационный бросок — не Foundry",
+    "followup": 1
+  },
+  "demoChatToast": "Предпросмотр: демонстрационная карточка. В настоящем Foundry откроется штатная карточка этого броска с её действиями.",
+  "damage": {
+    "total": "17",
+    "nextStep": "Применение урона и броня определяются в карточке системы. Здесь показан только бросок.",
+    "followup": 0
+  },
+  "historyRows": 2,
+  "skillTitle": "Проверка навыка\nВосприятие",
+  "conditions": "Тяжело ранен\nПовреждение руки\nСтимулятор",
+  "actorIsolation": true,
+  "returnHistory": true,
+  "historyExpansionPreserved": true,
+  "completedSkillClosesDrawer": true,
+  "narrow": {
+    "left": 72,
+    "top": 209,
+    "right": 762,
+    "bottom": 710,
+    "inside": true
+  },
+  "disabledAnimations": 0,
+  "passed": true
+}

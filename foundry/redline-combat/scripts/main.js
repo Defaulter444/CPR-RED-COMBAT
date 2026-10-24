@@ -4,6 +4,9 @@ import { skillCatalog } from './skills.js';
 import { createActionRunner, ActionRejected, resolveActionSubject } from './actions.js';
 import { weaponCapabilities, equippedWeapons } from './capabilities.js';
 import { safeInsets, skillPopupLayout, panelSizing, normalizeInterfaceScale, DEFAULT_INTERFACE_SCALE } from './presentation.js';
+import { favoriteSkillIds, toggleFavoriteSkill, favoriteStoreWith } from './preferences.js';
+import { captureHUD, animateHUD, animateSkillResults, closeDrawer } from './motion.js';
+import { describeAction, actionEntry, appendAction, projectRecentActions, canReadResultMessage } from './encounter.js';
 
 const modulePath = `modules/${MODULE_ID}`;
 let hud = null;
@@ -13,11 +16,18 @@ let turnPending = false;
 let revision = 0;
 let actionBusy = false;
 let actionStatus = '';
+let actionStatusTone = 'info';
+const recentActions = new Map();
+let actionSequence = 0;
+const historyOpen = new Map();
 const weaponModes = new Map();
 const selectedSkills = new Map();
 const selectedWeapons = new Map();
 const skillStates = new Map();
 let skillsSubject = null;
+let arsenalSubject = null;
+let drawerSequence = 0;
+let favoriteWrites = Promise.resolve();
 let scaleDialog = null;
 let systemAdapter;
 const executeAction = createActionRunner({
@@ -28,8 +38,28 @@ const executeAction = createActionRunner({
     return systemAdapter;
   },
   onBusy: value => {actionBusy=value;hud?.refresh();},
-  onStatus: value => {actionStatus=value;hud?.scheduleRefresh();},
+  onStatus: value => {actionStatus=value;actionStatusTone='info';hud?.scheduleRefresh();},
 });
+
+async function runNativeAction(request) {
+  if (actionBusy) return {status:'busy'};
+  const context = worldContext();
+  const {actor} = resolveActionSubject(context,request);
+  const description = describeAction(request,actor,context.localizeSkill);
+  const remember = result => {
+    if (result?.status === 'busy') return;
+    const entry = actionEntry(description,result,++actionSequence);
+    recentActions.set(request.subject,appendAction(recentActions.get(request.subject),entry));
+  };
+  try {
+    const result = await executeAction(request);
+    remember(result);
+    if (result?.status === 'completed') { skillsSubject = null; arsenalSubject = null; drawerSequence++; }
+    actionStatusTone = result?.status === 'completed' ? 'success' : 'info';
+    hud?.scheduleRefresh();
+    return result;
+  } catch (error) { remember({status:'error'});actionStatusTone = 'error';throw error; }
+}
 
 function worldContext() {
   return {
@@ -47,6 +77,42 @@ function worldContext() {
   };
 }
 
+function favoriteStore() {
+  const stored = game.settings.get(MODULE_ID, 'favoriteSkills');
+  return stored && typeof stored === 'object' && !Array.isArray(stored) ? stored : {};
+}
+
+function withFavorites(actor) {
+  if (!actor) return actor;
+  const stored = favoriteStore();
+  return {...actor, statusTone:actionStatusTone, historyOpen:Boolean(historyOpen.get(actor.key)),
+    recentActions:projectRecentActions(recentActions.get(actor.key), {
+      user:game.user,getMessage:id => game.messages.get(id),
+      canDamage:entry => entry.mode !== 'suppressive' && actor.weapons.some(weapon => weapon.id === entry.weaponId
+        && weapon.modes.some(mode => mode.id === entry.mode)),
+    }),
+    favoriteSkillIds:favoriteSkillIds(actor, Object.hasOwn(stored,actor.key) ? stored[actor.key] : [])};
+}
+
+function markDrawersClosed(root) {
+  root?.querySelectorAll('[data-action="toggle-skills"],[data-action="toggle-arsenal"]').forEach(button => {
+    button.setAttribute('aria-expanded','false');
+    if (button.hasAttribute('aria-pressed')) button.setAttribute('aria-pressed','false');
+  });
+  root?.querySelectorAll('[data-action="close-drawers"]').forEach(button => button.setAttribute('aria-pressed','true'));
+}
+
+async function closeDrawers({focus, refresh = true, root = hud?.element?.[0]} = {}) {
+  const sequence = ++drawerSequence;
+  skillsSubject = null; arsenalSubject = null;
+  markDrawersClosed(root);
+  if (focus) root?.querySelector(focus)?.focus({preventScroll:true});
+  await Promise.all(['#redline-skills-panel','#redline-arsenal-panel'].map(selector => closeDrawer(root?.querySelector(selector))));
+  if (sequence !== drawerSequence || !refresh) return;
+  if (focus && hud) hud._focusNext = focus;
+  hud?.refresh();
+}
+
 class RedlineHUD extends Application {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
@@ -56,14 +122,20 @@ class RedlineHUD extends Application {
   getData() {
     const model = projectHUD(worldContext());
     return { content: renderHUD({...model,
+      selected:withFavorites(model.selected),
       dockExpanded: Boolean(game.settings.get(MODULE_ID, 'dockExpanded')),
       skillsOpen: Boolean(model.selected && skillsSubject === model.selected.key),
+      arsenalOpen: Boolean(model.selected && arsenalSubject === model.selected.key),
+      animationsEnabled: game.settings.get(MODULE_ID, 'animationsEnabled') !== false,
       skillState: skillStates.get(model.selected?.key),
       hasHostBar: Boolean(document.querySelector('#ncu-shell .ncu-bar')),
       interfaceScale: normalizeInterfaceScale(game.settings.get(MODULE_ID, 'interfaceScale')),
     }) };
   }
   refresh() {
+    const root = this.element?.[0];
+    const body = root?.querySelector('.redline-workspace-body');
+    if (body) this._workspaceScroll = {actor:root.querySelector('.redline-dock')?.dataset.actorKey,top:body.scrollTop};
     const active = document.activeElement;
     if (!this._focusNext && active?.matches('#redline-combat-hud [data-skill-search]')) {
       this._focusNext = '[data-skill-search]';
@@ -73,7 +145,7 @@ class RedlineHUD extends Application {
   }
   refreshSkills({focus, resetList = false} = {}) {
     const panel = this.element?.[0]?.querySelector('#redline-skills-panel');
-    const actor = projectHUD(worldContext()).selected;
+    const actor = withFavorites(projectHUD(worldContext()).selected);
     if (!panel || !actor || skillsSubject !== actor.key) return this.refresh();
     const active = document.activeElement;
     const searching = active?.matches('[data-skill-search]');
@@ -90,6 +162,8 @@ class RedlineHUD extends Application {
     target?.focus({preventScroll:true});
     if (selection) target?.setSelectionRange?.(...selection);
     if (focus?.includes('choose-skill')) target?.scrollIntoView({block:'nearest'});
+    if (resetList && !searching) animateSkillResults(panel);
+    this._visualState = captureHUD(this.element?.[0]);
   }
   scheduleRefresh() {
     clearTimeout(this._refreshTimer);
@@ -169,21 +243,20 @@ class RedlineHUD extends Application {
       this._focusNext = null;
     }
     document.addEventListener('pointerdown', event => {
-      if (!skillsSubject || event.target.closest('#redline-skills-panel,[data-action="toggle-skills"]')) return;
-      skillsSubject = null;
+      if ((!skillsSubject && !arsenalSubject) || event.target.closest('#redline-skills-panel,#redline-arsenal-panel,[data-action="toggle-skills"],[data-action="toggle-arsenal"],[data-action="close-drawers"]')) return;
       // Keep the clicked control in the DOM until its click/change event arrives.
       // Rendering here would swallow an attack or selector interaction outside the popup.
-      const panel = root.querySelector('#redline-skills-panel');
-      if (panel) panel.hidden = true;
-      root.querySelector('.redline-primary-actions [data-action="toggle-skills"]')?.setAttribute('aria-expanded', 'false');
+      closeDrawers({refresh:false,root}).catch(error => console.error(`${MODULE_ID} | Drawer close failed`,error));
     }, {signal:this._listeners.signal});
     root.addEventListener('keydown', event => {
-      if (!skillsSubject) return;
+      if (!skillsSubject && !arsenalSubject) return;
       if (event.key === 'Escape') {
         event.preventDefault();event.stopPropagation();
-        skillsSubject = null;this._focusNext = '.redline-primary-actions [data-action="toggle-skills"]';this.refresh();
+        const focus = skillsSubject ? '.redline-primary-actions [data-action="toggle-skills"]' : '[data-action="toggle-arsenal"]';
+        closeDrawers({focus}).catch(error => console.error(`${MODULE_ID} | Drawer close failed`,error));
         return;
       }
+      if (!skillsSubject) return;
       if (!event.target.closest('[data-skill-search],.redline-skill-row')) return;
       event.stopPropagation();
       if (event.key === 'Enter') {
@@ -207,6 +280,11 @@ class RedlineHUD extends Application {
       } catch (error) { if (!(error instanceof ActionRejected)) console.error(error); this.refresh(); }
     }, {signal:this._listeners.signal});
     root.addEventListener('toggle', event => {
+      if (event.target.matches('[data-action-history]')) {
+        const selected = projectHUD(worldContext()).selected;
+        if (selected) historyOpen.set(selected.key,event.target.open);
+        return;
+      }
       if (!event.target.matches('[data-other-rolls]') || !skillsSubject) return;
       skillStates.set(skillsSubject, {...skillStates.get(skillsSubject),otherRolls:event.target.open});
     }, {capture:true,signal:this._listeners.signal});
@@ -215,13 +293,14 @@ class RedlineHUD extends Application {
       if (!button || button.disabled || event.detail > 1) return;
       event.preventDefault();
       event.stopPropagation();
-      const request = {action:button.dataset.action,id:button.dataset.id,subject:button.dataset.subject,revision:Number(button.dataset.revision)};
+      const request = {action:button.dataset.action,id:button.dataset.id,entryId:button.dataset.entryId,subject:button.dataset.subject,revision:Number(button.dataset.revision)};
       if(request.action === 'selected-skill') request.action='skill';
       if(request.action.startsWith('weapon-')) {
         const select=[...html[0].querySelectorAll('[data-weapon-mode]')].find(element=>element.dataset.id===request.id);
         request.mode=select?.value || 'attack';
       }
       dispatch(button.dataset.action, button.dataset.id, request).catch(error => {
+        actionStatusTone='error';
         if(error instanceof ActionRejected){actionStatus=error.message;ui.notifications.warn(error.message);hud?.refresh();return;}
         console.error(`${MODULE_ID} | Action failed`, error);
         actionStatus='Не удалось завершить действие. Проверьте чат и сообщения системы.';
@@ -245,6 +324,22 @@ class RedlineHUD extends Application {
         }
       } catch(error){if(!(error instanceof ActionRejected))console.error(error);hud?.refresh();}
     }, {signal:this._listeners.signal});
+    const body = root.querySelector('.redline-workspace-body');
+    const actorKey = root.querySelector('.redline-dock')?.dataset.actorKey;
+    if (body && this._workspaceScroll?.actor === actorKey) body.scrollTop = this._workspaceScroll.top;
+    const nextVisual = captureHUD(root);
+    if (body && !body.hidden && this._visualState?.actor === nextVisual?.actor
+      && nextVisual?.result && nextVisual.result !== this._visualState.result) {
+      const card = root.querySelector('[data-motion="result"]');
+      const area = body.getBoundingClientRect(), result = card?.getBoundingClientRect();
+      // Reveal new feedback only inside our own scroll area; keep Foundry's
+      // scene/sidebar position and the user's focus untouched.
+      if (result && (result.top < area.top || result.bottom > area.bottom)) {
+        const factor = Number(root.style.getPropertyValue('--redline-scale')) || 1;
+        body.scrollTop += (result.top-area.top)/factor;
+      }
+    }
+    this._visualState = animateHUD(root, this._visualState);
   }
   async close(options = {}) {
     clearTimeout(this._refreshTimer);
@@ -252,6 +347,9 @@ class RedlineHUD extends Application {
     this._geometryObserver?.disconnect();
     this._geometryMutation?.disconnect();
     this._geometryMount?.disconnect();
+    this._visualState = null;
+    this._workspaceScroll = null;
+    skillsSubject = null; arsenalSubject = null; drawerSequence++;
     return super.close(options);
   }
 }
@@ -262,16 +360,37 @@ async function setEnabled(enabled) {
   else await hud?.close();
 }
 async function dispatch(action, id, request) {
-  if (['skill-category','choose-skill'].includes(action)) {
+  if (['open-result-chat','result-damage'].includes(action)) {
+    const {actor} = resolveActionSubject(worldContext(),request);
+    const entry = recentActions.get(request.subject)?.find(row => row.id === request.entryId);
+    if (!entry) throw new ActionRejected('Запись больше недоступна. Повторите действие с панели.');
+    if (action === 'open-result-chat') {
+      const message = game.messages.get(entry.chatMessageId);
+      if (!canReadResultMessage(message,game.user)) throw new ActionRejected('Карточка больше недоступна для просмотра.');
+      return new ChatPopout(message).render(true);
+    }
+    if (actionBusy) return;
+    const weapon = equippedWeapons(actor).find(item => item.id === entry.weaponId);
+    const capability = weapon && weaponCapabilities(actor,weapon,entry.mode);
+    if (!entry.canRollDamage || !capability?.canDamage || !capability.modes.some(mode => mode.id === entry.mode)) {
+      throw new ActionRejected('Оружие или режим этой атаки больше недоступны. Выберите действие на панели.');
+    }
+    return runNativeAction({...request,action:'weapon-damage',id:entry.weaponId,mode:entry.mode});
+  }
+  if (['skill-category','choose-skill','skill-favorites'].includes(action)) {
     if (actionBusy) return;
     const context = worldContext();
     const {actor} = resolveActionSubject(context, request);
-    const selected = projectHUD(context).selected;
+    const selected = withFavorites(projectHUD(context).selected);
     if (!selected || skillsSubject !== selected.key) return;
     const state = skillStates.get(selected.key) || {};
+    if (action === 'skill-favorites') {
+      skillStates.set(selected.key, {...state,category:'all',favoritesOnly:!state.favoritesOnly});
+      return hud.refreshSkills({focus:'[data-action="skill-favorites"]',resetList:true});
+    }
     if (action === 'skill-category') {
       if (id !== 'all' && !selected.skillCategories.some(category => category.id === id)) return;
-      skillStates.set(selected.key, {...state,category:id});
+      skillStates.set(selected.key, {...state,category:id,favoritesOnly:false});
       return hud.refreshSkills({focus:`[data-action="skill-category"][data-id="${CSS.escape(id)}"]`,resetList:true});
     }
     const skill = actor.items.get(id);
@@ -279,16 +398,45 @@ async function dispatch(action, id, request) {
     selectedSkills.set(selected.key, id);
     return hud.refreshSkills({focus:`[data-action="choose-skill"][data-id="${CSS.escape(id)}"]`});
   }
+  if (action === 'toggle-skill-favorite') {
+    // Serialize preference writes and resolve again when each one executes.
+    favoriteWrites = favoriteWrites.catch(() => {}).then(async () => {
+      if (actionBusy) return;
+      resolveActionSubject(worldContext(),request);
+      const selected = withFavorites(projectHUD(worldContext()).selected);
+      if (!selected) return;
+      let ids;
+      try { ids = toggleFavoriteSkill(selected,selected.favoriteSkillIds,id); }
+      catch (error) { if (error instanceof RangeError) throw new ActionRejected(error.message); throw error; }
+      hud._focusNext = `[data-action="toggle-skill-favorite"][data-id="${CSS.escape(id)}"]`;
+      await game.settings.set(MODULE_ID,'favoriteSkills',favoriteStoreWith(favoriteStore(),selected.key,ids));
+    });
+    return favoriteWrites;
+  }
+  if (action === 'quick-skill') {
+    resolveActionSubject(worldContext(),request);
+    const selected = withFavorites(projectHUD(worldContext()).selected);
+    if (!selected?.favoriteSkillIds.includes(id)) throw new ActionRejected('Избранное изменилось. Выберите навык заново.');
+    return runNativeAction({...request,action:'skill'});
+  }
+  if (action === 'choose-weapon') {
+    if (actionBusy) return;
+    const {actor} = resolveActionSubject(worldContext(),request);
+    if (!equippedWeapons(actor).some(item => item.id === id)) throw new ActionRejected('Это оружие больше не экипировано. Обновите арсенал.');
+    selectedWeapons.set(request.subject,id);actionStatus='';
+    hud._focusNext = `[data-action="choose-weapon"][data-id="${CSS.escape(id)}"]`;
+    return hud.refresh();
+  }
   if (action === 'selected-skill') {
-    const selected = projectHUD(worldContext()).selected;
+    const selected = withFavorites(projectHUD(worldContext()).selected);
     if (!selected || skillCatalog(selected,skillStates.get(selected.key)).selected?.id !== request.id) throw new ActionRejected('Список навыков изменился. Выберите навык ещё раз.');
   }
-  if(action.startsWith('weapon-') || ['skill','selected-skill','initiative','death-save'].includes(action)) return executeAction(request);
+  if(action.startsWith('weapon-') || ['skill','selected-skill','initiative','death-save'].includes(action)) return runNativeAction(request);
   if (action === "close") return setEnabled(false);
   if (action === "refresh") return hud?.refresh();
   if (action === 'scale-settings') return openScaleSettings();
   if (action === 'toggle-dock') {
-    skillsSubject = null;
+    skillsSubject = null;arsenalSubject = null;drawerSequence++;
     hud._focusNext = '[data-action="toggle-dock"]';
     await game.settings.set(MODULE_ID, 'dockExpanded', !game.settings.get(MODULE_ID, 'dockExpanded'));
     return;
@@ -296,16 +444,26 @@ async function dispatch(action, id, request) {
   if (action === 'toggle-skills') {
     const selected = projectHUD(worldContext()).selected;
     if (!selected || !game.settings.get(MODULE_ID, 'dockExpanded')) return;
-    skillsSubject = skillsSubject === selected.key ? null : selected.key;
-    hud._focusNext = skillsSubject ? '[data-skill-search]' : '.redline-primary-actions [data-action="toggle-skills"]';
+    if (skillsSubject === selected.key) return closeDrawers({focus:'.redline-primary-actions [data-action="toggle-skills"]'});
+    drawerSequence++;skillsSubject = selected.key;arsenalSubject = null;
+    hud._focusNext = '[data-skill-search]';
     return hud.refresh();
   }
+  if (action === 'toggle-arsenal') {
+    const selected = projectHUD(worldContext()).selected;
+    if (!selected || !game.settings.get(MODULE_ID,'dockExpanded')) return;
+    if (arsenalSubject === selected.key) return closeDrawers({focus:'[data-action="toggle-arsenal"]'});
+    drawerSequence++;arsenalSubject = selected.key;skillsSubject = null;
+    hud._focusNext = `[data-action="choose-weapon"][data-id="${CSS.escape(selected.selectedWeaponId || selected.weapons?.[0]?.id || '')}"]`;
+    return hud.refresh();
+  }
+  if (action === 'close-drawers') return closeDrawers();
   if (action === "select-combatant") {
     const row = game.combat?.combatants?.get(id);
     if (!visibleCombatant(row, game.user) || !ownsActor(row?.actor, game.user)) return;
     // Selection affects this client only; the current turn is independent.
     selectedCombatantId = row.id;
-    skillsSubject = null;
+    skillsSubject = null;arsenalSubject = null;drawerSequence++;
     revision++;actionStatus='';
     hud?.refresh();
   }
@@ -329,9 +487,12 @@ function openScaleSettings() {
   if (scaleDialog?.rendered) return scaleDialog.bringToTop();
   scaleDialog = new Dialog({
     title:'REDLINE COMBAT — размер панели',
-    content:renderScaleSettings(game.settings.get(MODULE_ID,'interfaceScale')),
+    content:renderScaleSettings(game.settings.get(MODULE_ID,'interfaceScale'),game.settings.get(MODULE_ID,'animationsEnabled') !== false),
     buttons:{
-      apply:{icon:'<i class="fas fa-check"></i>',label:'Применить',callback:html=>game.settings.set(MODULE_ID,'interfaceScale',normalizeInterfaceScale(html[0].querySelector('[name="scale"]').value))},
+      apply:{icon:'<i class="fas fa-check"></i>',label:'Применить',callback:html=>Promise.all([
+        game.settings.set(MODULE_ID,'interfaceScale',normalizeInterfaceScale(html[0].querySelector('[name="scale"]').value)),
+        game.settings.set(MODULE_ID,'animationsEnabled',Boolean(html[0].querySelector('[name="animations"]')?.checked)),
+      ])},
       reset:{icon:'<i class="fas fa-rotate-left"></i>',label:'Сбросить до 80%',callback:()=>game.settings.set(MODULE_ID,'interfaceScale',DEFAULT_INTERFACE_SCALE)},
       cancel:{label:'Отмена'},
     },
@@ -346,6 +507,14 @@ function openScaleSettings() {
 }
 
 Hooks.once("init", () => {
+  game.settings.register(MODULE_ID,'animationsEnabled', {
+    name:'REDLINE COMBAT: плавные анимации',
+    hint:'Короткие переходы панелей и отклик на изменения. Системное уменьшение движения учитывается автоматически.',
+    scope:'client',config:true,type:Boolean,default:true,onChange:()=>hud?.refresh(),
+  });
+  game.settings.register(MODULE_ID,'favoriteSkills', {
+    name:'REDLINE COMBAT: избранные навыки',scope:'client',config:false,type:Object,default:{},onChange:()=>hud?.refresh(),
+  });
   game.settings.register(MODULE_ID, 'interfaceScale', {
     name:'REDLINE COMBAT: масштаб панели, %',
     hint:'Размер панели персонажа и очереди боя только для вас. По умолчанию 80%.',
@@ -396,7 +565,8 @@ for (const hook of [
   "updateActor", "createItem", "updateItem", "deleteItem", "updateToken", "targetToken",
   "createCombat", "updateCombat", "deleteCombat", "createCombatant", "updateCombatant",
   "deleteCombatant", "combatStart", "updateUser", "deleteActor", "deleteToken", "updateActiveEffect", "createActiveEffect", "deleteActiveEffect",
+  "updateChatMessage", "deleteChatMessage",
 ]) Hooks.on(hook, () => hud?.scheduleRefresh());
 for (const hook of ["controlToken", "canvasReady", "canvasTearDown"]) {
-    Hooks.on(hook, () => { selectedCombatantId = null; skillsSubject = null; revision++;actionStatus='';hud?.scheduleRefresh(); });
+    Hooks.on(hook, () => { selectedCombatantId = null; skillsSubject = null; arsenalSubject = null; drawerSequence++; revision++;actionStatus='';hud?.scheduleRefresh(); });
 }

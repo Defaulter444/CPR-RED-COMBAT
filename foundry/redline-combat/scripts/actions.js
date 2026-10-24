@@ -1,5 +1,6 @@
 import { ownsActor, resolveSubject, visibleCombatant, visibleTarget, SYSTEM_ID } from './state.js';
 import { equippedWeapons, subjectKey, weaponCapabilities } from './capabilities.js';
+import { nativeResultSummary } from './encounter.js';
 
 export class ActionRejected extends Error {}
 const reject = message => { throw new ActionRejected(message); };
@@ -112,10 +113,10 @@ export function createActionRunner({ getContext, getSystem, onBusy = () => {}, o
       roll.entityData = { actor: actor.id, token: token?.id ?? null,
         tokens: Array.from(getContext().targets ?? []).filter(t => visibleTarget(t, getContext().user)).sort((a,b) => String(a.name).localeCompare(String(b.name))) };
       if (item) roll.entityData.item = item.id;
-      await system.renderRollCard(roll);
+      const message = await system.renderRollCard(roll);
       if (type === 'aimed') await actor.setFlag(SYSTEM_ID, 'aimedLocation', roll.location);
-      onStatus('Бросок отправлен в чат. Урон применяется кнопками системы.');
-      return { status: 'completed' };
+      onStatus('Бросок отправлен в чат.');
+      return { status: 'completed', summary:nativeResultSummary(roll,message,getContext().user,request.action) };
     } finally { busy = false; onBusy(false); }
   };
 }

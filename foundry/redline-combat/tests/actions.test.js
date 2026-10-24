@@ -88,6 +88,19 @@ function assertNoEffect(f) {
   }
 }
 
+test('native completed roll returns only the accessible chat result, with blind-author redaction', async () => {
+  const normal = fixture();
+  normal.roll.resultTotal = 24;
+  normal.behavior.render = async () => ({id:'native-message',visible:true,isContentVisible:true,blind:false});
+  const result = await normal.run(normal.request());
+  assert.equal(result.summary.total,24);
+  assert.equal(result.summary.chatMessageId,'native-message');
+  const blind = fixture();
+  blind.roll.resultTotal = 29;
+  blind.behavior.render = async () => ({id:'blind-message',visible:true,isContentVisible:true,blind:true});
+  assert.deepEqual((await blind.run(blind.request())).summary,{total:null,chatMessageId:null});
+});
+
 test('unowned subjects are rejected before a system API is called; GM is allowed', async () => {
   const denied = fixture();
   denied.permissions.owned = false;

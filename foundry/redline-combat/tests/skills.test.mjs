@@ -92,8 +92,58 @@ test('search input is bounded to 200 characters and invalid local state uses saf
   assert.equal(catalog.category,'all');
   assert.equal(skillCatalog(model(),{query:42}).query,'');
   assert.deepEqual(skillCatalog(undefined,null),{
-    categories:[{id:'all',label:'Все навыки'}],category:'all',query:'',skills:[],selected:null,heading:'Все навыки'
+    categories:[{id:'all',label:'Все навыки'}],category:'all',query:'',skills:[],selected:null,heading:'Все навыки',favoritesOnly:false
   });
+});
+
+test('favorites filtering retains sheet category and skill order instead of preference ordering', () => {
+  const actor=model();
+  actor.favoriteSkillIds=['athletics','lock-b','lock-a','deleted','lock-b'];
+  const catalog=skillCatalog(actor,{favoritesOnly:true});
+  assert.equal(catalog.favoritesOnly,true);
+  assert.equal(catalog.heading,'Избранное');
+  assert.deepEqual(catalog.categories,[{id:'all',label:'Все навыки'},...actor.skillCategories]);
+  assert.deepEqual(catalog.skills.map(skill=>skill.id),['lock-a','lock-b','athletics']);
+  assert.equal(catalog.selected.id,'lock-b');
+  assert.deepEqual(skillCatalog(actor).skills,actor.skills,'turning favorites off restores the complete catalog');
+});
+
+test('favorites combine with category and normalized search without revealing a hidden selection', () => {
+  const actor=model();
+  actor.favoriteSkillIds=['lock-a','explosives','accounting','athletics'];
+  const catalog=skillCatalog(actor,{category:'techniqueSkills',query:'взлом',favoritesOnly:true});
+  assert.equal(catalog.category,'techniqueSkills');
+  assert.deepEqual(catalog.skills.map(skill=>skill.id),['lock-a']);
+  assert.equal(catalog.selected.id,'lock-a','a nonfavorite selected skill cannot be rolled');
+  assert.deepEqual(skillCatalog(actor,{category:'awarenessSkills',query:'УЧЕТ',favoritesOnly:true}).skills.map(skill=>skill.id),['accounting']);
+  const hidden=skillCatalog(actor,{category:'bodySkills',query:'взлом',favoritesOnly:true});
+  assert.deepEqual(hidden.skills,[]);
+  assert.equal(hidden.selected,null);
+});
+
+test('empty or stale favorites return no rollable selection and do not invent a category', () => {
+  const actor=model();
+  for (const ids of [undefined,[],['deleted'],null]) {
+    actor.favoriteSkillIds=ids;
+    const catalog=skillCatalog(actor,{category:'emptySkills',favoritesOnly:true});
+    assert.deepEqual(catalog.skills,[]);
+    assert.equal(catalog.selected,null);
+    assert.equal(catalog.category,'emptySkills');
+    assert.equal(catalog.heading,'Избранное');
+    assert.ok(!catalog.categories.some(category=>category.id==='favorites'));
+  }
+});
+
+test('favorites filtering uses stable IDs for duplicate skill names and never mutates saved preferences', () => {
+  const actor=model();
+  actor.favoriteSkillIds=Object.freeze(['lock-b','deleted']);
+  Object.freeze(actor);
+  const state=Object.freeze({favoritesOnly:true,query:'взлом'});
+  const before=JSON.stringify({actor,state});
+  const catalog=skillCatalog(actor,state);
+  assert.deepEqual(catalog.skills.map(skill=>skill.id),['lock-b']);
+  assert.equal(catalog.selected,actor.skills[2]);
+  assert.equal(JSON.stringify({actor,state}),before);
 });
 
 test('filtering frozen actor data and local state neither mutates inputs nor writes Documents', () => {

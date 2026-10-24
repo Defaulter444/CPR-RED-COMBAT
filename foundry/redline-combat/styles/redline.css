@@ -1,12 +1,14 @@
-/* Blackglass Dock: client presentation above the map and macro bar. */
+/* REDLINE tactical dock: client presentation above the map and macro bar. */
 #redline-combat-hud {
-  --redline-bg: #0b1116f5;
-  --redline-line: #42505a;
-  --redline-text: #eff3f6;
-  --redline-muted: #b8c2cc;
-  --redline-red: #fa3159;
-  --redline-cyan: #5bd8e9;
-  --redline-yellow: #f0c862;
+  --redline-bg: #101114f7;
+  --redline-surface: #191a1f;
+  --redline-line: #3c3d45;
+  --redline-text: #f3f0e9;
+  --redline-muted: #abacb4;
+  --redline-red: #f04452;
+  --redline-cyan: #8cc6ca;
+  --redline-yellow: #e4bc73;
+  --redline-numerals: "Bahnschrift", "Segoe UI", sans-serif;
   --redline-left: 76px;
   --redline-right: 320px;
   --redline-top: 76px;
@@ -27,122 +29,236 @@
   box-shadow: none;
   pointer-events: none;
   color: var(--redline-text);
-  font: 14px/1.35 Arial, sans-serif;
+  font: 14px/1.35 "Segoe UI", "Bahnschrift", sans-serif;
+  font-variant-numeric: tabular-nums;
+  color-scheme: dark;
   z-index: 60;
 }
 #redline-combat-hud *, #redline-combat-hud *::before, #redline-combat-hud *::after { box-sizing: border-box; }
 #redline-combat-hud [hidden] { display: none !important; }
 #redline-combat-hud .redline-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
 #redline-combat-hud .redline-interface { position: absolute; inset: var(--redline-top) var(--redline-right) var(--redline-bottom) var(--redline-left); display: flex; flex-direction: column; gap: 8px; pointer-events: none; min-width: 0; }
-#redline-combat-hud .redline-panel { pointer-events: auto; background: var(--redline-bg); border: 1px solid var(--redline-line); border-radius: 4px; box-shadow: 0 5px 18px #0008; backdrop-filter: blur(10px); }
-#redline-combat-hud button, #redline-combat-hud select { width: auto; min-height: 36px; margin: 0; padding: 6px 10px; border: 1px solid var(--redline-line); border-radius: 3px; background: #121c23; color: var(--redline-text); font: inherit; line-height: 1.25; text-shadow: none; box-shadow: none; }
-#redline-combat-hud button { cursor: pointer; }
-#redline-combat-hud button:hover { background: #24323b; border-color: var(--redline-cyan); }
-#redline-combat-hud :is(button, select):focus-visible { outline: 2px solid var(--redline-cyan); outline-offset: 2px; }
-#redline-combat-hud :is(button, select):disabled { opacity: .52; cursor: not-allowed; }
-#redline-combat-hud button:disabled:hover { background: #121c23; border-color: var(--redline-line); }
+#redline-combat-hud .redline-panel { pointer-events: auto; background: var(--redline-bg); border: 1px solid var(--redline-line); border-radius: 4px; box-shadow: 0 8px 24px #0007, inset 0 1px #ffffff06; backdrop-filter: blur(10px); }
+#redline-combat-hud button, #redline-combat-hud select { width: auto; min-height: 36px; margin: 0; padding: 6px 10px; border: 1px solid var(--redline-line); border-radius: 3px; background: var(--redline-surface); color: var(--redline-text); font: inherit; line-height: 1.25; text-shadow: none; box-shadow: none; }
+#redline-combat-hud button { cursor: pointer; transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease, box-shadow 150ms ease, transform 120ms ease; }
+#redline-combat-hud button:enabled:hover { background: #2b2c33; border-color: #777780; }
+#redline-combat-hud button:enabled:active { background: #35363e; transform: translateY(1px); }
+#redline-combat-hud :is(button, select):focus-visible { outline: 2px solid var(--redline-text); outline-offset: 2px; }
+#redline-combat-hud :is(button, select):disabled { opacity: .58; cursor: not-allowed; }
 #redline-combat-hud button i { flex: 0 0 auto; margin: 0; pointer-events: none; }
 #redline-combat-hud h2, #redline-combat-hud p { margin: 0; border: 0; }
-#redline-combat-hud .redline-small { padding: 5px 9px; font-size: 12px; }
-#redline-combat-hud .redline-label { display: block; color: var(--redline-muted); font-size: 10px; line-height: 1.3; letter-spacing: .04em; }
+#redline-combat-hud .redline-small { padding: 5px 9px; font-size: 13px; }
+#redline-combat-hud .redline-label { display: block; color: var(--redline-muted); font-size: 11px; line-height: 1.3; font-weight: 600; letter-spacing: .07em; }
 #redline-combat-hud .redline-muted { color: var(--redline-muted); }
+#redline-combat-hud .redline-section-label { display: flex; align-items: center; gap: 7px; min-width: 0; margin: 0 0 6px; color: var(--redline-muted); font-size: 10px; font-weight: 600; line-height: 1.2; letter-spacing: .08em; }
+#redline-combat-hud .redline-section-label b { color: var(--redline-red); font: 600 10px/1 var(--redline-numerals); letter-spacing: .02em; }
+#redline-combat-hud .redline-primary-actions > .redline-section-label { margin-bottom: 0; }
+#redline-combat-hud .redline-eyebrow { display: block; margin-bottom: 3px; color: var(--redline-muted); font-size: 10px; font-weight: 600; letter-spacing: .08em; line-height: 1.25; }
 #redline-combat-hud .redline-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 7px 10px; }
 #redline-combat-hud .has-host-bar .redline-header { display: none; }
-#redline-combat-hud .redline-brand { font-size: 17px; font-weight: 800; letter-spacing: .04em; }
+#redline-combat-hud .redline-brand { font-family: "Bahnschrift", "Segoe UI", sans-serif; font-size: 17px; font-weight: 700; letter-spacing: .07em; }
 #redline-combat-hud .redline-brand span { color: var(--redline-red); }
 #redline-combat-hud .redline-toolbar { display: flex; gap: 6px; }
-#redline-combat-hud .redline-combat { display: flex; flex: 0 0 auto; align-self: flex-start; align-items: center; gap: 12px; min-height: 78px; padding: 9px 11px; width: var(--redline-panel-width); zoom: var(--redline-scale); }
+#redline-combat-hud .redline-combat { display: flex; flex: 0 0 auto; align-self: flex-start; align-items: center; gap: 12px; min-height: 78px; padding: 9px 11px; width: var(--redline-panel-width); zoom: var(--redline-scale); border-top-color: #6c3038; }
 #redline-combat-hud .redline-round { display: flex; align-items: center; gap: 9px; padding: 5px 14px 5px 2px; border-right: 1px solid var(--redline-line); }
-#redline-combat-hud .redline-round strong { font: 31px/1 monospace; }
-#redline-combat-hud .redline-queue { display: flex; align-items: center; gap: 9px; min-width: 0; flex: 1; overflow-x: auto; padding: 2px 3px; scrollbar-width: thin; scrollbar-color: #52616d #0c1318; }
+#redline-combat-hud .redline-round strong { color: var(--redline-text); font: 600 31px/1 var(--redline-numerals); }
+#redline-combat-hud .redline-queue { display: flex; align-items: center; gap: 9px; min-width: 0; flex: 1; overflow-x: auto; padding: 2px 3px; scrollbar-width: thin; scrollbar-color: #55565f #141519; }
 #redline-combat-hud .redline-unit { flex: 0 0 185px; display: flex; align-items: center; gap: 8px; height: 56px; padding: 5px 7px; text-align: left; overflow: hidden; }
+#redline-combat-hud .redline-unit:focus-visible { outline-offset: -3px; }
 #redline-combat-hud .redline-unit-name { min-width: 0; flex: 1; }
-#redline-combat-hud .redline-unit-name strong { display: block; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-#redline-combat-hud .redline-unit-name small { display: block; color: var(--redline-muted); font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-#redline-combat-hud .redline-unit.is-current { border-color: var(--redline-cyan); box-shadow: inset 3px 0 var(--redline-cyan); }
-#redline-combat-hud .redline-unit.is-current small, #redline-combat-hud .redline-unit.is-current .redline-initiative { color: var(--redline-cyan); }
-#redline-combat-hud .redline-unit.is-selected { background: #14252d; }
+#redline-combat-hud .redline-unit-name strong { display: block; font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#redline-combat-hud .redline-unit-name small { display: block; color: var(--redline-muted); font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#redline-combat-hud .redline-unit.is-current { border-color: #c34854; background: #2a1a1f; box-shadow: inset 3px 0 var(--redline-red); }
+#redline-combat-hud .redline-unit.is-current:enabled:hover { border-color: var(--redline-red); background: #3a242b; }
+#redline-combat-hud .redline-unit.is-current small, #redline-combat-hud .redline-unit.is-current .redline-initiative { color: #ff8992; }
+#redline-combat-hud .redline-unit.is-selected { border-bottom-color: var(--redline-cyan); background: #202a2c; }
+#redline-combat-hud .redline-unit.is-current.is-selected { background: #2a2024; }
+#redline-combat-hud .redline-unit.is-defeated { background: #15161a; }
 #redline-combat-hud .redline-unit.is-defeated strong { text-decoration: line-through; }
-#redline-combat-hud .redline-initiative { flex: 0 0 auto; font: 23px/1 monospace; color: var(--redline-yellow); }
-#redline-combat-hud .redline-portrait { display: flex; align-items: center; justify-content: center; flex: 0 0 38px; width: 38px; height: 44px; background: #111b22; color: var(--redline-cyan); font-size: 22px; overflow: hidden; border: 1px solid var(--redline-line); border-radius: 2px; }
+#redline-combat-hud .redline-initiative { flex: 0 0 auto; font: 500 23px/1 var(--redline-numerals); color: var(--redline-text); }
+#redline-combat-hud .redline-portrait { display: flex; align-items: center; justify-content: center; flex: 0 0 38px; width: 38px; height: 44px; background: #1d1e23; color: var(--redline-muted); font-size: 22px; overflow: hidden; border: 1px solid #55535a; border-radius: 2px; }
 #redline-combat-hud .redline-portrait img { display: block; width: 100%; height: 100%; object-fit: cover; border: 0; border-radius: 0; }
-#redline-combat-hud .redline-portrait-large { width: 108px; height: 157px; flex-basis: 108px; }
-#redline-combat-hud .redline-next { border-color: var(--redline-red); color: #ff6c88; min-height: 46px; font-size: 13px; white-space: nowrap; }
+#redline-combat-hud .redline-portrait-large { width: 108px; height: 157px; flex-basis: 108px; border-bottom: 3px solid var(--redline-red); box-shadow: 0 3px 8px #0003; }
+#redline-combat-hud .redline-next { border-color: #89404a; background: #291b20; color: #ffb0b6; min-height: 46px; font-size: 14px; font-weight: 600; white-space: nowrap; }
+#redline-combat-hud .redline-next:enabled:hover { background: #43252c; border-color: var(--redline-red); }
 #redline-combat-hud .redline-no-combat { padding: 8px; font-size: 12px; }
 #redline-combat-hud .redline-notices { align-self: flex-start; max-width: 560px; }
-#redline-combat-hud .redline-status { padding: 9px 12px; background: #111e26f5; border-left: 3px solid var(--redline-cyan); font-size: 12px; }
-#redline-combat-hud .redline-error { border-color: var(--redline-red); color: #ffb8bd; }
+#redline-combat-hud .redline-status { padding: 9px 12px; background: var(--redline-bg); border-left: 3px solid var(--redline-yellow); font-size: 12px; }
+#redline-combat-hud .redline-error { border-color: var(--redline-red); color: #ffc3c7; }
 #redline-combat-hud .redline-bottom { margin-top: auto; align-self: flex-start; width: var(--redline-panel-footprint); min-height: 0; pointer-events: none; }
-#redline-combat-hud .redline-dock { position: relative; container-type: inline-size; width: var(--redline-panel-width); zoom: var(--redline-scale); }
+#redline-combat-hud .redline-dock { position: relative; container-type: inline-size; width: var(--redline-panel-width); zoom: var(--redline-scale); border-top-color: #7c343d; }
+#redline-combat-hud .is-dock-expanded .redline-dock { display: flex; flex-direction: column; max-height: calc(var(--redline-dock-max-height, 80vh) - 30px); }
+#redline-combat-hud .redline-dock::before { content: ""; position: absolute; top: -29px; left: 12px; width: 176px; height: 29px; border: 1px solid var(--redline-line); border-bottom: 0; border-radius: 3px 3px 0 0; background: var(--redline-bg) url('../assets/redline-signature.png') center / 160px 24px no-repeat; pointer-events: none; }
+#redline-combat-hud .is-dock-compact .redline-dock::before { top: -1px; width: 56px; height: 2px; border: 0; border-radius: 0; background: var(--redline-red); }
 #redline-combat-hud .redline-dock-utilities { position: absolute; right: -1px; top: -14px; z-index: 3; display: flex; gap: 5px; }
-#redline-combat-hud .redline-dock-toggle, #redline-combat-hud .redline-dock-settings { position: static; width: max(36px, calc(28px / var(--redline-scale))); height: max(32px, calc(28px / var(--redline-scale))); min-height: max(32px, calc(28px / var(--redline-scale))); padding: 4px; background: #0c151c; }
+#redline-combat-hud .redline-dock-toggle, #redline-combat-hud .redline-dock-settings { position: static; width: max(36px, calc(28px / var(--redline-scale))); height: max(32px, calc(28px / var(--redline-scale))); min-height: max(32px, calc(28px / var(--redline-scale))); padding: 4px; background: #1b1c21; color: #d8d5cf; }
+#redline-combat-hud .redline-workspace-bar { display: flex; flex: 0 0 auto; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; padding: 6px 10px; border-bottom: 1px solid #35363f; border-radius: 3px 3px 0 0; background: #17181df5; }
+#redline-combat-hud .redline-workspace-nav { display: flex; gap: 4px; min-width: 0; }
+#redline-combat-hud .redline-workspace-tab { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 32px; padding: 5px 13px; border-color: transparent; background: transparent; font-size: 14px; font-weight: 600; color: #b5b4bd; }
+#redline-combat-hud .redline-workspace-tab small { min-width: 18px; padding: 1px 4px; border-radius: 2px; background: #33343c; color: #d6d4d0; font: 500 11px/1.2 var(--redline-numerals); }
+#redline-combat-hud .redline-workspace-tab:is([aria-pressed="true"],[aria-expanded="true"]) { border-color: #664047; background: #2b2228; color: var(--redline-text); box-shadow: inset 0 -2px var(--redline-red); }
+#redline-combat-hud .redline-workspace-tab:is([aria-pressed="true"],[aria-expanded="true"]) i { color: #ff8690; }
+#redline-combat-hud .redline-workspace-context { min-width: 0; max-width: 33%; color: var(--redline-muted); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* The dock reserves its signature tab; navigation and quick rolls stay visible. */
+#redline-combat-hud .redline-workspace-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #55565f #141519; }
 #redline-combat-hud .redline-compact-summary { display: flex; align-items: center; gap: 12px; min-height: 55px; padding: 7px 88px 7px 10px; }
 #redline-combat-hud .redline-compact-summary .redline-portrait { flex-basis: 29px; width: 29px; height: 36px; }
 #redline-combat-hud .redline-compact-summary > strong { flex: 0 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 23%; }
-#redline-combat-hud .redline-compact-hp { flex: 0 0 auto; color: var(--redline-muted); font-size: 12px; white-space: nowrap; }
-#redline-combat-hud .redline-compact-hp b { color: var(--redline-cyan); font-size: 17px; }
-#redline-combat-hud .redline-compact-weapon, #redline-combat-hud .redline-compact-target { min-width: 0; font-size: 12px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+#redline-combat-hud .redline-compact-hp { flex: 0 0 auto; color: var(--redline-muted); font-size: 13px; white-space: nowrap; }
+#redline-combat-hud .redline-compact-hp b { color: var(--redline-cyan); font-family: var(--redline-numerals); font-size: 17px; font-weight: 600; }
+#redline-combat-hud .redline-compact-weapon, #redline-combat-hud .redline-compact-target { min-width: 0; font-size: 13px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 #redline-combat-hud .redline-compact-target { margin-left: auto; color: var(--redline-muted); }
-#redline-combat-hud .redline-actor { display: grid; grid-template-columns: minmax(0, 1.07fr) minmax(0, 1.1fr) minmax(0, .95fr); align-items: stretch; gap: 16px; padding: 15px 12px 12px; max-height: calc(var(--redline-dock-max-height, 80vh) - var(--redline-status-height, 0px) - 2px); overflow-y: auto; }
-#redline-combat-hud .redline-identity { display: flex; gap: 13px; align-items: stretch; min-width: 0; }
+#redline-combat-hud .redline-actor { display: grid; grid-template-columns: minmax(0, 1.07fr) minmax(0, 1.06fr) minmax(0, 1fr); align-items: stretch; gap: 10px; padding: 12px; }
+#redline-combat-hud .redline-identity { display: flex; gap: 12px; align-items: center; min-width: 0; padding: 10px; border: 1px solid #343640; border-radius: 4px; background: linear-gradient(140deg, #202127, #191a1f); }
 #redline-combat-hud .redline-identity-text { flex: 1; min-width: 0; align-self: center; }
-#redline-combat-hud .redline-identity h2 { color: var(--redline-text); font-size: 23px; font-weight: 700; line-height: 1.2; margin: 0 0 5px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-#redline-combat-hud .redline-health { color: var(--redline-cyan); font: 38px/1.2 monospace; white-space: nowrap; }
-#redline-combat-hud .redline-health > .redline-label { display: inline; margin-right: 6px; font: 14px Arial, sans-serif; }
-#redline-combat-hud .redline-health small { color: #dce4e9; font-size: 24px; }
-#redline-combat-hud .redline-unavailable { font: 12px/1.4 Arial, sans-serif; color: var(--redline-muted); white-space: normal; }
-#redline-combat-hud .redline-meter { height: 10px; margin: 5px 0 8px; background: #19232b; border: 1px solid #3e4b55; border-radius: 2px; overflow: hidden; }
-#redline-combat-hud .redline-meter > span { display: block; height: 100%; background: var(--redline-cyan); }
+#redline-combat-hud .redline-identity h2 { color: var(--redline-text); font-size: 23px; font-weight: 650; line-height: 1.2; margin: 0 0 5px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+#redline-combat-hud .redline-vitals { --redline-vital: var(--redline-cyan); }
+#redline-combat-hud .redline-vitals[data-vital-tone="low"] { --redline-vital: var(--redline-yellow); }
+#redline-combat-hud .redline-vitals[data-vital-tone="critical"] { --redline-vital: #ff7a85; }
+#redline-combat-hud .redline-vitals[data-vital-tone="unknown"] { --redline-vital: var(--redline-muted); }
+#redline-combat-hud .redline-health { color: var(--redline-vital, var(--redline-cyan)); font: 500 38px/1.12 var(--redline-numerals); white-space: nowrap; }
+#redline-combat-hud .redline-health > .redline-label { display: inline; margin-right: 6px; font: 600 11px/1.3 "Segoe UI", sans-serif; letter-spacing: .05em; }
+#redline-combat-hud .redline-health small { color: var(--redline-muted); font-size: 21px; font-weight: 400; }
+#redline-combat-hud .redline-unavailable { font: 12px/1.4 "Segoe UI", sans-serif; color: var(--redline-muted); white-space: normal; }
+#redline-combat-hud .redline-meter { height: 7px; margin: 7px 0 9px; background: #27292f; border: 1px solid #43454d; border-radius: 1px; overflow: hidden; }
+#redline-combat-hud .redline-meter > span { display: block; height: 100%; background: var(--redline-vital, var(--redline-cyan)); }
 #redline-combat-hud .redline-armor { display: flex; flex-wrap: wrap; gap: 3px 9px; font-size: 12px; }
-#redline-combat-hud .redline-armor > .redline-label { flex: 0 0 100%; color: var(--redline-cyan); }
-#redline-combat-hud .redline-armor b { white-space: nowrap; font-weight: 600; }
-#redline-combat-hud .redline-weapons { min-width: 0; border-left: 1px solid var(--redline-line); padding-left: 16px; }
-#redline-combat-hud .redline-primary-actions { min-width: 0; border-left: 1px solid var(--redline-line); padding-left: 16px; display: flex; flex-direction: column; gap: 6px; }
-#redline-combat-hud .redline-targets { display: flex; align-items: center; gap: 9px; min-height: 33px; }
-#redline-combat-hud .redline-targets .redline-portrait { width: 31px; height: 33px; flex-basis: 31px; border-color: #8d3347; }
+#redline-combat-hud .redline-armor > .redline-label { flex: 0 0 100%; font-size: 10px; }
+#redline-combat-hud .redline-armor-item { display: flex; flex: 0 1 auto; align-items: baseline; gap: 5px; min-width: 0; }
+#redline-combat-hud .redline-armor-name { color: var(--redline-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#redline-combat-hud .redline-armor b { white-space: nowrap; font-size: 13px; font-weight: 600; }
+#redline-combat-hud .redline-weapons { min-width: 0; padding: 10px; border: 1px solid #343640; border-radius: 4px; background: #18191f; }
+#redline-combat-hud .redline-card-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 18px; margin-bottom: 8px; }
+#redline-combat-hud .redline-card-heading .redline-section-label { margin: 0; }
+#redline-combat-hud .redline-card-link { display: inline-flex; align-items: center; gap: 5px; min-height: 18px; padding: 0; border: 0; background: transparent; color: #db9ca4; font-size: 11px; }
+#redline-combat-hud .redline-card-link:enabled:hover { color: var(--redline-text); background: transparent; }
+#redline-combat-hud .redline-primary-actions { min-width: 0; padding: 10px; display: flex; flex-direction: column; gap: 7px; border: 1px solid #4c343c; border-radius: 4px; background: linear-gradient(145deg, #242027, #1a1a20); }
+#redline-combat-hud .redline-targets { display: flex; align-items: center; gap: 9px; min-height: 36px; padding: 3px 0; }
+#redline-combat-hud .redline-targets .redline-portrait { width: 31px; height: 33px; flex-basis: 31px; border-color: #9b4650; }
 #redline-combat-hud .redline-target-icon { display: grid; place-items: center; color: var(--redline-red); width: 28px; height: 30px; flex: 0 0 28px; font-size: 21px; }
 #redline-combat-hud .redline-target-copy { min-width: 0; }
-#redline-combat-hud .redline-target-list { display: block; font-weight: 600; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-#redline-combat-hud .redline-target-list .redline-muted { font-weight: 400; font-size: 12px; }
-#redline-combat-hud .redline-action-primary { width: 100%; min-height: 44px; border-color: #ff617e; background: #b51f40; font-size: 18px; font-weight: 700; }
-#redline-combat-hud .redline-action-primary:hover { background: #ce2b4e; border-color: #ff9aaf; }
-#redline-combat-hud .redline-action-primary:disabled, #redline-combat-hud .redline-action-primary:disabled:hover { background: #53202d; border-color: #77414e; }
-#redline-combat-hud .redline-secondary-actions { display: grid; grid-template-columns: 1fr 1.2fr; gap: 5px 7px; }
-#redline-combat-hud .redline-action-button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-width: 0; padding: 6px 8px; font-size: 12px; white-space: nowrap; }
+#redline-combat-hud .redline-target-list { display: block; font-weight: 600; font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#redline-combat-hud .redline-target-list .redline-muted { font-weight: 400; font-size: 13px; }
+#redline-combat-hud .redline-action-button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-width: 0; padding: 6px 7px; font-size: 14px; white-space: nowrap; }
 #redline-combat-hud .redline-action-button span { overflow: hidden; text-overflow: ellipsis; }
-#redline-combat-hud .redline-action-primary { font-size: 18px; }
+#redline-combat-hud .redline-action-primary { width: 100%; min-height: 48px; border-color: #ff6d78; background: var(--redline-red); color: #170c0e; font-size: 19px; font-weight: 750; }
+#redline-combat-hud .redline-action-primary:enabled:hover { background: #ff6471; border-color: #ff9aa2; }
+#redline-combat-hud .redline-action-primary:enabled:active { background: #d93544; }
+#redline-combat-hud .redline-action-primary:disabled { opacity: 1; color: #b6979b; background: #38262b; border-color: #604047; }
+#redline-combat-hud .redline-secondary-actions { display: grid; grid-template-columns: 1fr 1.2fr; gap: 5px 7px; }
 #redline-combat-hud .redline-action-primary i { font-size: 23px; }
 #redline-combat-hud .redline-action-icon { width: 32px; min-height: 30px; padding: 4px; }
+#redline-combat-hud .redline-attack-note { color: #afabb5; font-size: 11px; line-height: 1.35; overflow-wrap: anywhere; }
+#redline-combat-hud .redline-quick-skills { display: flex; flex: 0 0 auto; align-items: center; gap: 12px; min-height: 48px; padding: 8px 12px; border-top: 1px solid #34353d; background: #15161b; }
+#redline-combat-hud .redline-quick-label { display: flex; flex: 0 0 auto; align-items: center; gap: 7px; color: #b9b6c0; font-size: 12px; }
+#redline-combat-hud .redline-quick-label i { color: var(--redline-yellow); font-size: 11px; }
+#redline-combat-hud .redline-quick-list { display: flex; flex: 1; align-items: center; gap: 6px; min-width: 0; overflow-x: auto; padding: 2px; scrollbar-width: thin; scrollbar-color: #55565f #141519; }
+#redline-combat-hud .redline-quick-item { flex: 0 0 auto; }
+#redline-combat-hud .redline-quick-skill { min-height: 30px; padding: 5px 10px; border-color: #44454e; background: #24252d; font-size: 13px; }
+#redline-combat-hud .redline-quick-skill i { color: #b8d4d3; font-size: 12px; }
+#redline-combat-hud .redline-quick-hint { color: var(--redline-muted); font-size: 12px; }
 #redline-combat-hud .redline-empty { display: block; padding: 12px 44px 12px 16px; }
 #redline-combat-hud .redline-empty h2 { margin: 3px 0; color: var(--redline-text); font-size: 16px; }
 #redline-combat-hud .redline-empty p { color: var(--redline-muted); font-size: 12px; }
 #redline-combat-hud .is-dock-compact .redline-empty { min-height: 55px; padding-right: 88px; }
 #redline-combat-hud .is-dock-compact .redline-empty :is(h2,p) { display: none; }
+/* Read-only conditions and session-local results keep the next step beside its context. */
+#redline-combat-hud .redline-condition-strip { display: flex; flex-wrap: wrap; gap: 5px; min-width: 0; margin-top: 9px; }
+#redline-combat-hud .redline-health-state, #redline-combat-hud .redline-condition { display: inline-flex; align-items: center; gap: 5px; max-width: 100%; min-height: 22px; padding: 3px 6px; border: 1px solid #4b4c56; border-radius: 3px; background: #24252c; color: #cbc8d0; font-size: 10px; line-height: 1.3; overflow-wrap: anywhere; }
+#redline-combat-hud .redline-health-state { border-color: #3a5e60; background: #1c2c2e; color: #acd9d8; }
+#redline-combat-hud .redline-health-state[data-health-tone="low"] { border-color: #6f5939; background: #30291e; color: #e6c68c; }
+#redline-combat-hud .redline-health-state[data-health-tone="critical"] { border-color: #86414b; background: #38232a; color: #ffadb5; }
+#redline-combat-hud .redline-health-state[data-health-tone="unknown"] { border-color: #4b4c56; background: #24252c; color: #cbc8d0; }
+#redline-combat-hud .redline-result-onboarding { display: flex; align-items: center; gap: 10px; min-height: 56px; margin: 0 12px 12px; padding: 9px 11px; border: 1px dashed #3b3d46; border-radius: 4px; background: #17181d; }
+#redline-combat-hud .redline-result-onboarding-icon { display: grid; place-items: center; flex: 0 0 28px; width: 28px; height: 28px; border: 1px solid #464851; border-radius: 4px; color: #9dbabc; background: #22272d; }
+#redline-combat-hud .redline-result-onboarding p { display: flex; flex-wrap: wrap; gap: 3px 12px; align-items: baseline; min-width: 0; color: var(--redline-muted); font-size: 12px; line-height: 1.4; }
+#redline-combat-hud .redline-result-onboarding strong { color: #cbc8cf; font-size: 12px; font-weight: 600; }
+#redline-combat-hud .redline-result-onboarding p b { margin: 0 5px; color: #747985; font-weight: 400; }
+#redline-combat-hud .redline-result-onboarding-note { margin-left: auto; color: #8e919d; text-align: right; font-size: 11px; line-height: 1.4; }
+#redline-combat-hud .redline-action-feed { margin: 0 12px 12px; min-width: 0; }
+#redline-combat-hud .redline-result-card { --redline-result-accent: #99ced0; display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 6px 20px; align-items: center; min-width: 0; padding: 12px 14px; border: 1px solid #3d5359; border-left: 3px solid var(--redline-result-accent); border-radius: 4px; background: linear-gradient(110deg, #1d282e, #1a1d24 70%); }
+#redline-combat-hud .redline-result-card[data-result-status="cancelled"] { --redline-result-accent: #d3ba8b; border-color: #5d5142; border-left-color: var(--redline-result-accent); background: linear-gradient(110deg, #2b2720, #1d1d23 70%); }
+#redline-combat-hud .redline-result-card[data-result-status="error"] { --redline-result-accent: #fb97a2; border-color: #71404b; border-left-color: var(--redline-result-accent); background: linear-gradient(110deg, #302229, #201d24 70%); }
+#redline-combat-hud .redline-result-copy { min-width: 0; }
+#redline-combat-hud .redline-result-heading { display: flex; flex-wrap: wrap; gap: 3px 12px; align-items: center; margin-bottom: 5px; }
+#redline-combat-hud .redline-result-heading .redline-eyebrow { margin: 0; color: #a9b0b8; font-size: 9px; }
+#redline-combat-hud .redline-result-state { display: inline-flex; align-items: center; gap: 5px; color: var(--redline-result-accent); font-size: 10px; font-weight: 600; line-height: 1.3; }
+#redline-combat-hud .redline-result-title { display: flex; flex-wrap: wrap; gap: 2px 9px; min-width: 0; margin: 0 0 4px; border: 0; color: var(--redline-text); font-size: 16px; font-weight: 650; line-height: 1.3; overflow-wrap: anywhere; }
+#redline-combat-hud .redline-result-title > span { color: #b8bbc5; font-weight: 400; }
+#redline-combat-hud .redline-result-detail { color: #afb4be; font-size: 11px; line-height: 1.45; overflow-wrap: anywhere; }
+#redline-combat-hud .redline-result-value { min-width: 56px; text-align: center; color: var(--redline-result-accent); }
+#redline-combat-hud .redline-result-value .redline-label { color: #adb4bd; font-size: 9px; }
+#redline-combat-hud .redline-result-total { display: block; margin-top: 1px; font: 600 36px/1.05 var(--redline-numerals); }
+#redline-combat-hud .redline-result-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; max-width: 355px; }
+#redline-combat-hud .redline-result-button { min-height: 32px; padding: 6px 9px; border-color: #4c535e; background: #242a33; font-size: 12px; }
+#redline-combat-hud .redline-result-followup { border-color: #85515c; background: #38262f; color: #f3c5cc; }
+#redline-combat-hud .redline-result-next { display: flex; grid-column: 1 / -1; align-items: baseline; gap: 7px; margin-top: 3px; padding-top: 8px; border-top: 1px solid #424955; color: #c3c6ce; font-size: 11px; line-height: 1.45; overflow-wrap: anywhere; }
+#redline-combat-hud .redline-result-next > i { flex: 0 0 auto; color: var(--redline-result-accent); font-size: 10px; }
+#redline-combat-hud .redline-action-history { margin-top: 4px; border: 1px solid #363944; border-radius: 3px; background: #17191e; }
+#redline-combat-hud .redline-action-history > summary { display: flex; align-items: center; gap: 7px; min-height: 29px; padding: 6px 10px; color: #a8adb8; cursor: pointer; list-style: none; font-size: 11px; line-height: 1.3; }
+#redline-combat-hud .redline-action-history > summary::-webkit-details-marker { display: none; }
+#redline-combat-hud .redline-action-history > summary > i:first-child { color: #7e929c; font-size: 10px; }
+#redline-combat-hud .redline-action-history > summary > small { padding: 0 4px; border-radius: 2px; background: #30343f; color: #bfc4cd; font: 500 10px/1.4 var(--redline-numerals); }
+#redline-combat-hud .redline-action-history > summary > i:last-child { margin-left: auto; font-size: 9px; }
+#redline-combat-hud .redline-action-history[open] > summary > i:last-child { transform: rotate(180deg); }
+#redline-combat-hud .redline-action-history > summary:hover { background: #22262e; color: var(--redline-text); }
+#redline-combat-hud .redline-action-history > summary:focus-visible { outline: 2px solid var(--redline-text); outline-offset: -2px; }
+#redline-combat-hud .redline-action-history ol { display: grid; gap: 0; list-style: none; margin: 0; padding: 0 10px 3px; border-top: 1px solid #343944; }
+#redline-combat-hud .redline-action-history li { display: flex; align-items: center; gap: 8px; min-width: 0; padding: 7px 0; border-bottom: 1px solid #2b3039; }
+#redline-combat-hud .redline-action-history li:last-child { border: 0; }
+#redline-combat-hud .redline-history-state { flex: 0 0 16px; text-align: center; color: #99bcbf; font-size: 10px; }
+#redline-combat-hud .redline-action-history [data-result-status="cancelled"] .redline-history-state { color: #ccb58c; }
+#redline-combat-hud .redline-action-history [data-result-status="error"] .redline-history-state { color: #f69aa6; }
+#redline-combat-hud .redline-history-copy { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+#redline-combat-hud .redline-history-copy > strong { display: block; color: #c2c6cf; font-size: 11px; font-weight: 500; line-height: 1.35; }
+#redline-combat-hud .redline-history-copy > strong > span { color: #939aa8; font-weight: 400; }
+#redline-combat-hud .redline-history-copy > small { display: block; color: #959daa; font-size: 10px; line-height: 1.35; }
+#redline-combat-hud .redline-history-label { flex: 0 0 auto; color: #929aa8; font-size: 10px; }
 @media (max-width: 1300px) {
   #redline-combat-hud .redline-unit { flex-basis: 155px; }
   #redline-combat-hud .redline-combat { gap: 8px; }
   #redline-combat-hud .redline-round { padding-right: 10px; }
   #redline-combat-hud .redline-portrait-large { width: 74px; height: 134px; flex-basis: 74px; }
-  #redline-combat-hud .redline-actor { gap: 11px; padding: 13px 10px 10px; }
-  #redline-combat-hud .redline-weapons, #redline-combat-hud .redline-primary-actions { padding-left: 11px; }
-  #redline-combat-hud .redline-identity { gap: 9px; }
+  #redline-combat-hud .redline-actor { gap: 8px; padding: 10px; }
+  #redline-combat-hud .redline-weapons, #redline-combat-hud .redline-primary-actions { padding: 9px; }
+  #redline-combat-hud .redline-identity { gap: 9px; padding: 9px; }
   #redline-combat-hud .redline-identity h2 { font-size: 19px; }
   #redline-combat-hud .redline-health { font-size: 30px; }
   #redline-combat-hud .redline-health small { font-size: 19px; }
   #redline-combat-hud .redline-armor { font-size: 10px; gap: 3px 7px; }
+  #redline-combat-hud .redline-armor b { font-size: 12px; }
 }
 @container (max-width: 720px) {
+  #redline-combat-hud .redline-result-card { grid-template-columns: minmax(0, 1fr) auto; gap: 8px 12px; padding: 10px 11px; }
+  #redline-combat-hud .redline-result-actions { grid-column: 1 / -1; justify-content: flex-start; max-width: none; }
+  #redline-combat-hud .redline-result-onboarding-note { display: none; }
+  #redline-combat-hud .redline-result-onboarding p { display: block; }
+  #redline-combat-hud .redline-result-onboarding p > span { display: block; margin-top: 2px; }
+  #redline-combat-hud .redline-result-title { font-size: 15px; }
+  #redline-combat-hud .redline-result-total { font-size: 32px; }
   #redline-combat-hud .redline-actor { grid-template-columns: 1fr 1fr; }
-  #redline-combat-hud .redline-primary-actions { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; align-items: center; border-left: 0; border-top: 1px solid var(--redline-line); padding: 8px 0 0; }
+  #redline-combat-hud .redline-primary-actions { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; align-items: center; padding: 10px; }
+  #redline-combat-hud .redline-primary-actions > .redline-section-label { grid-column: 1 / -1; }
+  #redline-combat-hud .redline-primary-actions > .redline-attack-note { grid-column: 1 / -1; }
   #redline-combat-hud .redline-secondary-actions { grid-column: 1 / -1; grid-template-columns: repeat(4, 1fr); }
   #redline-combat-hud .redline-portrait-large { width: 64px; height: 112px; flex-basis: 64px; }
   #redline-combat-hud .redline-compact-target { display: none; }
+  #redline-combat-hud .redline-workspace-context { display: none; }
+  #redline-combat-hud .redline-workspace-tab { padding-inline: 11px; }
+  #redline-combat-hud .redline-quick-label { max-width: 90px; font-size: 11px; }
 }
 @container (max-width: 420px) {
+  #redline-combat-hud .redline-action-feed, #redline-combat-hud .redline-result-onboarding { margin-inline: 10px; }
+  #redline-combat-hud .redline-result-actions { display: grid; grid-template-columns: 1fr; width: 100%; }
+  #redline-combat-hud .redline-result-title { display: block; }
+  #redline-combat-hud .redline-result-title > span { display: block; font-size: 12px; }
+  #redline-combat-hud .redline-history-label { display: none; }
   #redline-combat-hud .redline-actor { grid-template-columns: 1fr; }
-  #redline-combat-hud .redline-weapons { border-left: 0; border-top: 1px solid var(--redline-line); padding: 8px 0 0; }
+  #redline-combat-hud .redline-weapons { padding: 10px; }
   #redline-combat-hud .redline-secondary-actions { grid-template-columns: 1fr 1fr; }
   #redline-combat-hud .redline-compact-weapon { display: none; }
+  #redline-combat-hud .redline-workspace-tab { gap: 6px; padding-inline: 9px; font-size: 13px; }
+  #redline-combat-hud .redline-quick-label span { display: none; }
 }
 @media (max-width: 1050px) {
   #redline-combat-hud .redline-round { display: block; min-width: 35px; }
@@ -151,4 +267,7 @@
 }
 @media (prefers-reduced-motion: reduce) {
   #redline-combat-hud *, #redline-combat-hud *::before, #redline-combat-hud *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  #redline-combat-hud button:enabled:active { transform: none; }
 }
+#redline-combat-hud [data-animations="false"] *, #redline-combat-hud [data-animations="false"] *::before, #redline-combat-hud [data-animations="false"] *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+#redline-combat-hud [data-animations="false"] button:enabled:active { transform: none; }

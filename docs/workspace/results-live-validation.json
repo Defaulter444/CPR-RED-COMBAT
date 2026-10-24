@@ -1,0 +1,102 @@
+{
+  "optionalCalendarHiddenInTestClient": true,
+  "pageErrors": [],
+  "initial": {
+    "foundry": "12.331",
+    "system": "v0.92.4",
+    "actorId": "Ax2cbetXmtniFPox",
+    "token": "Тест — Ви",
+    "rollMode": "publicroll"
+  },
+  "healthStrip": "01\nОПЕРАТОР\nТест — Ви\nHP28 / 40\nБРОНЯ\nГолова\nSP 11\nТело\nSP 11\nЛёгкое ранение",
+  "skill": {
+    "name": "Бросить — Accounting",
+    "id": "1",
+    "card": "ПОСЛЕДНЕЕ ДЕЙСТВИЕ\nВыполнено\nПроверка навыка\nAccounting\n\nБросок отправлен в чат.\n\nБРОСОК\n15\nОткрыть чат\n\nСравните результат со сложностью проверки или встречным броском.",
+    "messageId": "1cqMBFqhlMDYeIlP"
+  },
+  "chatLink": {
+    "nativePopout": true,
+    "messageId": "1cqMBFqhlMDYeIlP"
+  },
+  "cancel": {
+    "card": "ПОСЛЕДНЕЕ ДЕЙСТВИЕ\nОтменено\nБросок атаки\nAssault Rifle (Excellent)\n\nБросок отменён в диалоге системы.",
+    "unchanged": true
+  },
+  "attack": {
+    "weapon": {
+      "id": "spIrmYAr0ZqbYKZJ",
+      "name": "Assault Rifle (Excellent)",
+      "isRanged": true
+    },
+    "ammoBefore": 14,
+    "ammoAfter": 13,
+    "messageId": "OgLjiSGeXNlGHHKB",
+    "card": "ПОСЛЕДНЕЕ ДЕЙСТВИЕ\nВыполнено\nБросок атаки\nAssault Rifle (Excellent)\n\nБросок отправлен в чат.\n\nБРОСОК\n14\nОткрыть чат\nУрон при попадании…\n\nСравните результат с DV или защитой цели. При попадании переходите к урону."
+  },
+  "damage": {
+    "alternateSelected": "4ZZvOOMtIScobnmK",
+    "dialog": [
+      {
+        "title": "Assault Rifle (Excellent)",
+        "rollKeys": [
+          "_roll",
+          "_critRoll",
+          "mods",
+          "additionalMods",
+          "rollTitle",
+          "die",
+          "formula",
+          "faces",
+          "initialRoll",
+          "luck",
+          "calculateCritical",
+          "criticalRoll",
+          "resultTotal",
+          "rollPrompt",
+          "rollCard",
+          "rollCardExtraArgs",
+          "bonusDamage",
+          "isAimed",
+          "location",
+          "weaponType",
+          "isAutofire",
+          "autofireMultiplier",
+          "autofireMultiplierMax"
+        ]
+      }
+    ],
+    "messageId": "KiAboHf5frztiIyR",
+    "card": "ПОСЛЕДНЕЕ ДЕЙСТВИЕ\nВыполнено\nБросок урона\nAssault Rifle (Excellent)\n\nБросок отправлен в чат.\n\nБРОСОК\n19\nОткрыть чат\n\nПримените урон штатными кнопками в карточке чата.",
+    "ammoUnchanged": true,
+    "hpUnchanged": true
+  },
+  "narrow": {
+    "dock": {
+      "x": 62,
+      "y": 109.5,
+      "width": 640,
+      "height": 548.5,
+      "top": 109.5,
+      "right": 702,
+      "bottom": 658,
+      "left": 62
+    },
+    "inside": true,
+    "scrollable": true
+  },
+  "blind": {
+    "player": {
+      "foundry": "12.331",
+      "system": "v0.92.4",
+      "actorId": "Ax2cbetXmtniFPox",
+      "token": "Тест — Ви",
+      "rollMode": "publicroll"
+    },
+    "card": "ПОСЛЕДНЕЕ ДЕЙСТВИЕ\nВыполнено\nПроверка навыка\nAccounting\n\nБросок отправлен в чат.\n\nСравните результат со сложностью проверки или встречным броском.",
+    "visibleTotals": 0,
+    "chatLinks": 0,
+    "messageId": "pvFQ8S9ppwdcfiMG"
+  },
+  "status": "passed"
+}

@@ -1,6 +1,8 @@
 # Источники и внешние материалы
 
-Оригинальные игровые/интерфейсные исходники используются для исследования и отдельно подписанных браузерных реконструкций. Они не встроены в исполняющий REDLINE adapter: такого adapter пока нет. Сцена, портреты и замена значка оружия в `prototype/*.svg` созданы для этого прототипа.
+Текущий устанавливаемый REDLINE COMBAT содержит собственный интерфейс и адаптер штатных диалогов Cyberpunk RED Core. Код и UI доработаны при помощи OpenAI Codex (GPT-6); оригинальная PNG-подпись создана в ArtCraft EffectCraft 0.14.0. Foundry runtime, данные мира, ресурсы системы и исследованных модулей не входят в production ZIP.
+
+Ниже перечислены материалы исторического исследования и отдельно подписанных браузерных реконструкций в репозитории. Сцена и SVG-портреты демонстрационного стенда созданы для этого проекта. Предпросмотр использует Font Awesome Free 6.7.2; условия этой библиотеки приложены к материалам релиза отдельно.
 
 - **Cyberpunk RED — Combat HUD**, Vec97, Copyright 2026 Vec97, версия 1.1.3. [Источник](https://github.com/Vec97/cpr-combat-hud). Выбранные HBS, CSS, локализации и код сохранены в `sources/cpr-combat-hud`. [MIT LICENSE](sources/cpr-combat-hud/LICENSE). В реконструкции заменены окружение Foundry, шрифты, значки, portrait/weapon assets; обработчики Foundry не запускаются.
 - **Cyberpunk RED — Evasion Workflow**, автор manifest yioxar, Copyright 2026 yioxar, версия 0.6.0. [Источник](https://github.com/Vec97/cpred-evasion-workflow). [MIT LICENSE](sources/cpred-evasion-workflow/LICENSE). Запрос защиты реконструирован из HTML/CSS автора с условными данными.

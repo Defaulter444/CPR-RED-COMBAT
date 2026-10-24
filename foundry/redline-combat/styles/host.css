@@ -1,75 +1,132 @@
 /* Native selectors and the upward skills disclosure remain independent of NCU. */
 #redline-combat-hud .redline-weapon-pickers { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 8px; }
 #redline-combat-hud .redline-weapon-pickers label { min-width: 0; }
-#redline-combat-hud select { width: 100%; min-width: 0; height: 36px; background: #101920; color: var(--redline-text); font-size: 12px; padding: 5px 6px; }
-#redline-combat-hud option { color: #eff3f6; background: #15222b; }
-#redline-combat-hud .redline-weapon-preview { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); align-items: center; gap: 12px; min-height: 116px; padding-top: 8px; }
-#redline-combat-hud .redline-weapon-art { display: flex; align-items: center; justify-content: center; min-width: 0; height: 112px; border: 1px solid #25323b; border-radius: 5px; overflow: hidden; background: #101820; }
+#redline-combat-hud select { width: 100%; min-width: 0; height: 36px; background: #1c1d22; color: var(--redline-text); font-size: 14px; padding: 5px 6px; }
+#redline-combat-hud select:enabled:hover { border-color: #777780; }
+#redline-combat-hud option { color: var(--redline-text); background: #1c1d22; }
+#redline-combat-hud .redline-weapon-preview { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); align-items: center; gap: 12px; min-height: 104px; padding-top: 8px; }
+#redline-combat-hud .redline-weapon-art { display: flex; align-items: center; justify-content: center; min-width: 0; height: 96px; border: 1px solid #32343b; border-radius: 3px; overflow: hidden; background: radial-gradient(ellipse at center, #26272e, #16171b 75%); }
 #redline-combat-hud .redline-weapon-art img { width: 100%; height: 100%; object-fit: contain; border: 0; border-radius: 0; }
-#redline-combat-hud .redline-weapon-art i { font-size: 48px; color: var(--redline-muted); }
+#redline-combat-hud .redline-weapon-art i { font-size: 43px; color: #92939d; }
 #redline-combat-hud .redline-weapon-data { min-width: 0; }
 #redline-combat-hud .redline-ammo-line { display: flex; align-items: center; gap: 5px; }
-#redline-combat-hud .redline-weapon-ammo { display: block; color: var(--redline-text); font: 30px/1.4 monospace; white-space: nowrap; }
-#redline-combat-hud .redline-weapon-ammo small { color: #cdd7de; font-size: 21px; }
-#redline-combat-hud .redline-weapon-meta { display: flex; flex-wrap: wrap; gap: 5px 9px; margin-top: 4px; font-size: 13px; color: #d6dfe5; }
+#redline-combat-hud .redline-weapon-ammo { display: block; color: var(--redline-text); font: 500 32px/1.3 var(--redline-numerals); white-space: nowrap; }
+#redline-combat-hud .redline-weapon-ammo small { color: var(--redline-muted); font-size: 18px; font-weight: 400; }
+#redline-combat-hud .redline-weapons[data-ammo-state="low"] .redline-weapon-ammo { color: var(--redline-yellow); }
+#redline-combat-hud .redline-weapons[data-ammo-state="empty"] .redline-weapon-ammo { color: #ff7a85; }
+#redline-combat-hud .redline-weapons[data-ammo-state="empty"] .redline-weapon-art { border-color: #733d46; }
+#redline-combat-hud .redline-weapon-meta { display: flex; flex-wrap: wrap; gap: 5px 6px; margin-top: 4px; font-size: 12px; color: #d4d1cb; }
+#redline-combat-hud .redline-weapon-meta > span { padding: 2px 5px; border: 1px solid #383a42; border-radius: 2px; background: #202127; white-space: nowrap; }
 #redline-combat-hud .redline-no-weapon { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; text-align: center; }
 #redline-combat-hud .redline-no-weapon > i { font-size: 33px; color: var(--redline-muted); }
 #redline-combat-hud .redline-no-weapon p { font-size: 12px; }
-#redline-combat-hud .redline-skill-popover { position: absolute; z-index: 5; right: 0; bottom: var(--redline-skill-bottom, calc(100% + 8px)); display: flex; flex-direction: column; gap: 10px; width: min(660px, 100%); height: min(550px, var(--redline-skill-height, 60vh)); max-height: var(--redline-skill-height, 60vh); min-height: 0; overflow-y: auto; padding: 12px 14px; }
-#redline-combat-hud .redline-popover-header { display: flex; flex: 0 0 auto; align-items: center; justify-content: space-between; gap: 10px; border-left: 4px solid var(--redline-red); padding-left: 10px; }
+#redline-combat-hud .redline-drawer { position: absolute; z-index: 5; right: 0; bottom: var(--redline-skill-bottom, calc(100% + 8px)); display: flex; flex-direction: column; gap: 10px; width: min(720px, 100%); height: min(550px, var(--redline-skill-height, 60vh)); max-height: var(--redline-skill-height, 60vh); min-height: 0; overflow-y: auto; padding: 14px 16px; border-top: 2px solid var(--redline-red); background: linear-gradient(155deg, #202128fa, #131419fc 55%); box-shadow: 0 12px 30px #0009; transform-origin: right bottom; }
+#redline-combat-hud .redline-arsenal-popover { width: min(760px, 100%); }
+#redline-combat-hud .redline-popover-header { display: flex; flex: 0 0 auto; align-items: center; justify-content: space-between; gap: 10px; border-left: 3px solid var(--redline-red); padding-left: 10px; }
 #redline-combat-hud .redline-popover-header > div { min-width: 0; }
-#redline-combat-hud .redline-popover-header strong { display: block; font-size: 20px; line-height: 1.2; }
-#redline-combat-hud .redline-skill-actor { display: block; color: var(--redline-muted); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#redline-combat-hud .redline-popover-header strong { display: block; font-size: 22px; font-weight: 650; line-height: 1.2; }
+#redline-combat-hud .redline-skill-actor { display: block; margin-top: 3px; color: var(--redline-muted); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 #redline-combat-hud .redline-popover-header button { min-width: 32px; min-height: 32px; }
-#redline-combat-hud .redline-skill-search { display: flex; flex: 0 0 auto; align-items: center; gap: 9px; min-width: 0; padding: 0 10px; border: 1px solid var(--redline-line); border-radius: 3px; color: var(--redline-muted); background: #101920; }
-#redline-combat-hud .redline-skill-search:focus-within { border-color: var(--redline-cyan); outline: 1px solid var(--redline-cyan); }
+#redline-combat-hud .redline-skill-tools { display: flex; flex: 0 0 auto; gap: 8px; min-width: 0; }
+#redline-combat-hud .redline-skill-search { display: flex; flex: 1; align-items: center; gap: 9px; min-width: 0; padding: 0 10px; border: 1px solid #4a4b54; border-radius: 3px; color: var(--redline-muted); background: #202127; }
+#redline-combat-hud .redline-skill-search:focus-within { border-color: var(--redline-cyan); outline: 1px solid var(--redline-cyan); outline-offset: 1px; }
 #redline-combat-hud .redline-skill-search input { width: 100%; height: 36px; min-width: 0; margin: 0; padding: 5px 0; border: 0; outline: 0; box-shadow: none; color: var(--redline-text); background: transparent; font: inherit; }
 #redline-combat-hud .redline-skill-search input::placeholder { color: var(--redline-muted); opacity: 1; }
+#redline-combat-hud .redline-favorites-filter { display: inline-flex; flex: 0 0 auto; align-items: center; justify-content: center; gap: 7px; padding: 6px 10px; font-size: 13px; }
+#redline-combat-hud .redline-favorites-filter i { color: #afabb5; }
+#redline-combat-hud .redline-favorites-filter[aria-pressed="true"] { border-color: #8c7548; background: #342e22; color: #f5d8a0; }
+#redline-combat-hud .redline-favorites-filter[aria-pressed="true"] i { color: var(--redline-yellow); }
 #redline-combat-hud .redline-skill-catalog { display: grid; flex: 1 1 auto; grid-template-columns: minmax(0, .95fr) minmax(0, 1.25fr); min-height: 72px; border-block: 1px solid var(--redline-line); overflow: hidden; }
 #redline-combat-hud .redline-skill-categories { display: flex; flex-direction: column; min-width: 0; overflow-y: auto; padding: 5px 7px 5px 0; border-right: 1px solid var(--redline-line); }
-#redline-combat-hud .redline-skill-categories button { display: flex; flex: 0 0 auto; align-items: center; gap: 10px; width: 100%; min-height: 32px; border: 0; border-radius: 2px; padding: 6px 9px; background: transparent; font-size: 13px; text-align: left; }
-#redline-combat-hud .redline-skill-categories button i { width: 18px; text-align: center; }
+#redline-combat-hud .redline-skill-categories button { display: flex; flex: 0 0 auto; align-items: center; gap: 10px; width: 100%; min-height: 34px; border: 0; border-radius: 2px; padding: 7px 9px; background: transparent; font-size: 14px; text-align: left; }
+#redline-combat-hud .redline-skill-categories button i { width: 18px; color: #a3a4ad; text-align: center; }
 #redline-combat-hud .redline-skill-categories button span { min-width: 0; overflow-wrap: anywhere; }
-#redline-combat-hud .redline-skill-categories button[aria-pressed="true"] { background: #16343f; color: var(--redline-cyan); box-shadow: inset 3px 0 var(--redline-cyan); font-weight: 600; }
-#redline-combat-hud .redline-skill-categories button:hover, #redline-combat-hud .redline-skill-row:hover { background: #20323c; }
+#redline-combat-hud .redline-skill-categories button:enabled:hover, #redline-combat-hud .redline-skill-row:enabled:hover { background: #2a2c33; }
+#redline-combat-hud .redline-skill-categories button[aria-pressed="true"] { background: #233033; color: #b8e0e1; box-shadow: inset 3px 0 var(--redline-cyan); font-weight: 600; }
+#redline-combat-hud .redline-skill-categories button[aria-pressed="true"] i { color: var(--redline-cyan); }
 #redline-combat-hud .redline-skill-results { display: flex; flex-direction: column; min-width: 0; min-height: 0; padding: 8px 0 0 12px; }
 #redline-combat-hud .redline-skill-results > header { display: flex; flex: 0 0 auto; align-items: baseline; justify-content: space-between; gap: 8px; padding: 0 3px 8px; }
 #redline-combat-hud .redline-skill-results > header strong { font-size: 15px; line-height: 1.3; overflow-wrap: anywhere; }
-#redline-combat-hud .redline-skill-count { color: var(--redline-muted); font: 12px monospace; }
+#redline-combat-hud .redline-skill-count { min-width: 24px; padding: 2px 5px; border: 1px solid #3c3d45; border-radius: 2px; color: var(--redline-muted); font: 500 12px/1.2 var(--redline-numerals); text-align: center; }
 #redline-combat-hud .redline-skill-list { flex: 1; min-height: 0; overflow-y: auto; padding: 2px 3px 4px; }
-#redline-combat-hud .redline-skill-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; min-height: 35px; border: 0; border-bottom: 1px solid #293943; border-radius: 2px; padding: 7px 9px; background: transparent; font-size: 14px; text-align: left; }
+#redline-combat-hud .redline-skill-entry { display: grid; grid-template-columns: minmax(0, 1fr) 36px; align-items: stretch; margin-bottom: 2px; border: 1px solid transparent; border-bottom-color: #33343d; border-radius: 3px; }
+#redline-combat-hud .redline-skill-entry.is-selected { border-color: #557e82; background: #253336; }
+#redline-combat-hud .redline-skill-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; min-height: 38px; border: 0; border-radius: 2px; padding: 7px 9px; background: transparent; font-size: 14px; text-align: left; }
 #redline-combat-hud .redline-skill-row span { min-width: 0; overflow-wrap: anywhere; }
-#redline-combat-hud .redline-skill-row[aria-pressed="true"] { background: #16343f; color: var(--redline-cyan); box-shadow: inset 0 0 0 1px #4d7180; }
+#redline-combat-hud .redline-skill-row[aria-pressed="true"] { background: transparent; color: #c6e5e5; font-weight: 600; }
+#redline-combat-hud .redline-skill-row[aria-pressed="true"] i { color: var(--redline-cyan); }
+#redline-combat-hud .redline-skill-star { align-self: stretch; width: 36px; min-height: 36px; padding: 5px; border: 0; background: transparent; color: #888693; font-size: 13px; }
+#redline-combat-hud .redline-skill-star[aria-pressed="true"] { color: var(--redline-yellow); }
+#redline-combat-hud .redline-skill-star:enabled:hover { color: #f5d8a0; background: #3d3527; }
+#redline-combat-hud :is(.redline-skill-categories button,.redline-skill-row,.redline-skill-star,.redline-arsenal-card):focus-visible { outline-offset: -3px; }
 #redline-combat-hud .redline-skill-empty { padding: 10px 6px; color: var(--redline-muted); font-size: 13px; }
 #redline-combat-hud .redline-skill-footer { display: flex; flex: 0 0 auto; align-items: start; gap: 12px; }
 #redline-combat-hud .redline-skill-roll { flex: 1; min-width: 0; }
-#redline-combat-hud .redline-skill-primary { width: 100%; min-height: 38px; padding: 8px 10px; background: var(--redline-cyan); border-color: var(--redline-cyan); color: #071116; font-size: 15px; font-weight: 700; white-space: normal; text-align: left; }
+#redline-combat-hud .redline-skill-primary { width: 100%; min-height: 38px; padding: 8px 10px; background: #e7e4dd; border-color: #f3f0e9; color: #17181d; font-size: 15px; font-weight: 700; white-space: normal; text-align: left; }
 #redline-combat-hud .redline-skill-primary span { overflow: visible; overflow-wrap: anywhere; }
-#redline-combat-hud .redline-skill-primary:hover { background: #86e5f0; color: #071116; }
-#redline-combat-hud .redline-skill-primary:disabled { background: #20363e; color: var(--redline-muted); }
+#redline-combat-hud .redline-skill-primary:enabled:hover { background: #fffaf0; border-color: #fffaf0; color: #17181d; }
+#redline-combat-hud .redline-skill-primary:enabled:active { background: #c9c6c0; }
+#redline-combat-hud .redline-skill-primary:disabled { opacity: 1; background: #2a2b31; border-color: #41424a; color: var(--redline-muted); }
 #redline-combat-hud .redline-skill-roll .redline-action-note { margin-top: 4px; }
-#redline-combat-hud .redline-other-rolls { flex: 0 0 180px; min-width: 0; font-size: 12px; }
-#redline-combat-hud .redline-other-rolls summary { display: flex; align-items: center; justify-content: space-between; gap: 7px; min-height: 38px; padding: 7px 10px; border: 1px solid var(--redline-line); border-radius: 3px; cursor: pointer; list-style: none; }
+#redline-combat-hud .redline-other-rolls { flex: 0 0 180px; min-width: 0; font-size: 13px; }
+#redline-combat-hud .redline-other-rolls summary { display: flex; align-items: center; justify-content: space-between; gap: 7px; min-height: 38px; padding: 7px 10px; border: 1px solid var(--redline-line); border-radius: 3px; background: var(--redline-surface); cursor: pointer; list-style: none; }
 #redline-combat-hud .redline-other-rolls summary::-webkit-details-marker { display: none; }
-#redline-combat-hud .redline-other-rolls summary:hover { border-color: var(--redline-cyan); }
-#redline-combat-hud .redline-other-rolls summary:focus-visible { outline: 2px solid var(--redline-cyan); outline-offset: 2px; }
+#redline-combat-hud .redline-other-rolls summary:hover { border-color: #777780; background: #2b2c33; }
+#redline-combat-hud .redline-other-rolls summary:focus-visible { outline: 2px solid var(--redline-text); outline-offset: 2px; }
 #redline-combat-hud .redline-other-rolls[open] summary i { transform: rotate(180deg); }
 #redline-combat-hud .redline-character-actions { display: grid; gap: 5px; padding-top: 5px; }
-#redline-combat-hud :is(.redline-skill-categories,.redline-skill-list,.redline-skill-popover) { scrollbar-width: thin; scrollbar-color: #52616d #0c1318; }
+#redline-combat-hud .redline-drawer-intro { flex: 0 0 auto; color: #c3bfc8; font-size: 13px; line-height: 1.45; }
+#redline-combat-hud .redline-arsenal-grid { display: grid; flex: 1 1 auto; grid-template-columns: repeat(2, minmax(0, 1fr)); align-content: start; gap: 10px; min-height: 72px; overflow-y: auto; padding: 3px; }
+#redline-combat-hud .redline-arsenal-card { display: grid; grid-template-columns: 90px minmax(0, 1fr); align-items: center; gap: 10px; min-width: 0; padding: 10px; border-color: #44434f; border-radius: 5px; background: #24242cf5; text-align: left; }
+#redline-combat-hud .redline-arsenal-card[aria-pressed="true"] { border-color: #82b5b8; background: #243237; box-shadow: inset 0 0 0 1px #82b5b82e; }
+#redline-combat-hud .redline-arsenal-card:enabled:hover { border-color: #b2b0bd; background: #30313b; }
+#redline-combat-hud .redline-arsenal-card[aria-pressed="true"]:enabled:hover { border-color: #b0d5d7; background: #2d3c41; }
+#redline-combat-hud .redline-arsenal-art { display: flex; align-items: center; justify-content: center; height: 86px; min-width: 0; border: 1px solid #40414a; border-radius: 3px; background: radial-gradient(ellipse, #3b3b45, #191b22); color: #aaa7b1; font-size: 32px; overflow: hidden; }
+#redline-combat-hud .redline-arsenal-art img { display: block; width: 100%; height: 100%; object-fit: contain; border: 0; border-radius: 0; transition: transform 180ms ease; }
+#redline-combat-hud .redline-arsenal-card:enabled:hover .redline-arsenal-art img { transform: scale(1.04); }
+#redline-combat-hud .redline-arsenal-copy { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+#redline-combat-hud .redline-arsenal-name { font-size: 16px; font-weight: 650; line-height: 1.25; overflow-wrap: anywhere; }
+#redline-combat-hud .redline-arsenal-ammo { color: #b7b5c0; font-size: 12px; }
+#redline-combat-hud .redline-arsenal-ammo b { margin-left: 4px; color: var(--redline-text); font: 500 18px/1.2 var(--redline-numerals); white-space: nowrap; }
+#redline-combat-hud .redline-arsenal-ammo small { color: var(--redline-muted); font-size: 12px; }
+#redline-combat-hud .redline-arsenal-card[data-ammo-state="low"] .redline-arsenal-ammo b { color: var(--redline-yellow); }
+#redline-combat-hud .redline-arsenal-card[data-ammo-state="empty"] .redline-arsenal-ammo b { color: #ff8992; }
+#redline-combat-hud .redline-arsenal-selected { display: flex; grid-column: 1 / -1; align-items: center; gap: 6px; padding-top: 7px; border-top: 1px solid #45444e; color: #bcb8c4; font-size: 11px; }
+#redline-combat-hud .redline-arsenal-card[aria-pressed="true"] .redline-arsenal-selected { color: #b7e2e3; }
+#redline-combat-hud .redline-drawer-empty { display: flex; grid-column: 1 / -1; flex-direction: column; align-items: center; justify-content: center; gap: 10px; min-height: 150px; padding: 20px; border: 1px dashed #51505d; border-radius: 5px; color: #b7b3bf; text-align: center; }
+#redline-combat-hud .redline-drawer-empty > i { font-size: 30px; color: #da818b; }
+#redline-combat-hud .redline-drawer-empty strong { color: var(--redline-text); font-size: 16px; }
+#redline-combat-hud .redline-drawer-empty p { max-width: 330px; font-size: 13px; }
+#redline-combat-hud .redline-drawer-footer { display: flex; flex: 0 0 auto; align-items: baseline; gap: 8px; padding-top: 10px; border-top: 1px solid #41404b; color: var(--redline-muted); font-size: 12px; line-height: 1.4; }
+#redline-combat-hud :is(.redline-skill-categories,.redline-skill-list,.redline-drawer,.redline-arsenal-grid) { scrollbar-width: thin; scrollbar-color: #55565f #141519; }
 @container (max-width: 520px) {
-  #redline-combat-hud .redline-skill-popover { padding: 10px; }
+  #redline-combat-hud .redline-drawer { padding: 10px; }
   #redline-combat-hud .redline-skill-catalog { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); }
-  #redline-combat-hud .redline-skill-categories button { font-size: 12px; gap: 6px; padding-inline: 7px; }
+  #redline-combat-hud .redline-skill-categories button { font-size: 13px; gap: 6px; padding-inline: 7px; }
   #redline-combat-hud .redline-other-rolls { flex-basis: 145px; }
+  #redline-combat-hud .redline-arsenal-grid { grid-template-columns: minmax(0, 1fr); }
+  #redline-combat-hud .redline-favorites-filter { gap: 5px; padding-inline: 8px; font-size: 12px; }
 }
-#redline-combat-hud .redline-action-note { margin: 0; font-size: 11px; line-height: 1.45; }
-#redline-combat-hud .redline-action-status { padding: 0 12px 9px; color: var(--redline-cyan); font-size: 12px; line-height: 1.4; overflow-wrap: anywhere; }
+#redline-combat-hud .redline-action-note { margin: 0; font-size: 12px; line-height: 1.45; }
+#redline-combat-hud .redline-feedback { position: relative; flex: 0 0 auto; background: #191c22; }
+#redline-combat-hud .redline-feedback-icon { position: absolute; top: 10px; left: 13px; color: #b6c9c9; font-size: 12px; }
+#redline-combat-hud .redline-feedback[data-status-tone="success"]:not(.is-busy) { background: #1b2526; }
+#redline-combat-hud .redline-feedback[data-status-tone="success"] .redline-feedback-icon { color: #a9d1c4; }
+#redline-combat-hud .redline-feedback[data-status-tone="error"]:not(.is-busy) { background: #302128; }
+#redline-combat-hud .redline-feedback[data-status-tone="error"]:not(.is-busy) .redline-feedback-icon { color: #ff9da6; }
+#redline-combat-hud .redline-feedback[data-status-tone="error"]:not(.is-busy) .redline-action-status { color: #ffd1d5; }
+#redline-combat-hud .redline-feedback.is-busy { background: #2a2520; }
+#redline-combat-hud .redline-feedback.is-busy .redline-feedback-icon { color: var(--redline-yellow); }
+#redline-combat-hud [data-animations="true"] .redline-feedback.is-busy .redline-feedback-icon i { animation: redline-working 1.2s linear infinite; }
+#redline-combat-hud .redline-action-status { min-height: 34px; padding: 8px 12px 8px 35px; border-top: 1px solid #383943; color: #d3ced8; font-size: 12px; line-height: 1.4; overflow-wrap: anywhere; }
 #redline-combat-hud .redline-action-status:empty { display: none; }
+@keyframes redline-working { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { #redline-combat-hud .redline-arsenal-card:hover .redline-arsenal-art img { transform: none; } }
+#redline-combat-hud [data-animations="false"] .redline-arsenal-card:hover .redline-arsenal-art img { transform: none; }
 @media (max-width: 1300px) {
   #redline-combat-hud .redline-weapon-pickers { gap: 6px; }
-  #redline-combat-hud .redline-weapon-preview { gap: 8px; min-height: 105px; }
-  #redline-combat-hud .redline-weapon-art { height: 100px; }
+  #redline-combat-hud .redline-weapon-preview { gap: 8px; min-height: 96px; }
+  #redline-combat-hud .redline-weapon-art { height: 88px; }
   #redline-combat-hud .redline-weapon-ammo { font-size: 24px; }
   #redline-combat-hud .redline-weapon-ammo small { font-size: 16px; }
-  #redline-combat-hud .redline-weapon-meta { font-size: 12px; }
 }

@@ -1,5 +1,6 @@
 /** Public, read-only projection. Never returns raw Documents or enemy resources. */
 import { equippedWeapons, subjectKey, weaponCapabilities, QUICK_SKILLS } from './capabilities.js';
+import { projectConditions } from './encounter.js';
 export const MODULE_ID = "redline-combat";
 export const SYSTEM_ID = "cyberpunk-red-core";
 
@@ -78,6 +79,7 @@ export function projectActor(actor, token, user, options = {}) {
     name: token?.name ?? actor.name ?? "Персонаж",
     img: actor.img || token?.texture?.src || "",
     hp: resource(actor.system?.derivedStats?.hp),
+    ...projectConditions(actor),
     armor,
     weapons: weapons.map(item => {
       const ammo = resource(item.system?.magazine);

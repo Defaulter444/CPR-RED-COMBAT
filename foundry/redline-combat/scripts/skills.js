@@ -1,4 +1,5 @@
 /** A read-only view of the character sheet's skill groups and ordering. */
+import { favoriteSkillIds } from './preferences.js';
 export function skillName(skill) {
   return `${String(skill?.name ?? '')}${skill?.difficult ? ' (x2)' : ''}`;
 }
@@ -14,10 +15,13 @@ export function skillCatalog(actor, state = {}) {
   const query = typeof state?.query === 'string' ? state.query.slice(0, 200) : '';
   const search = normalized(query.trim());
   const actorSkills = Array.isArray(actor?.skills) ? actor.skills : [];
+  const favoritesOnly = state?.favoritesOnly === true;
+  const favorites = new Set(favoriteSkillIds(actor));
   const skills = actorSkills.filter(skill => skill
     && (category === 'all' || skill.category === category)
+    && (!favoritesOnly || favorites.has(skill.id))
     && (!search || normalized(skillName(skill)).includes(search)));
   const selectedId = actor?.selectedSkillId;
   const selected = (selectedId == null ? null : skills.find(skill => String(skill.id) === String(selectedId))) || skills[0] || null;
-  return {categories,category,query,skills,selected,heading:active.label};
+  return {categories,category,query,skills,selected,favoritesOnly,heading:favoritesOnly ? 'Избранное' : active.label};
 }

@@ -1,0 +1,55 @@
+{
+  "status": "passed",
+  "completedSkillClosesDrawer": true,
+  "narrowNewResult": {
+    "body": {
+      "x": 63,
+      "y": 166.5,
+      "width": 638,
+      "height": 388,
+      "top": 166.5,
+      "right": 701,
+      "bottom": 554.5,
+      "left": 63
+    },
+    "result": {
+      "x": 78,
+      "y": 358.5,
+      "width": 608,
+      "height": 193.5,
+      "top": 358.5,
+      "right": 686,
+      "bottom": 552,
+      "left": 78
+    },
+    "scrollTop": 225.60000610351562,
+    "visible": true,
+    "intersects": true
+  },
+  "refreshScrollTop": 225.60000610351562,
+  "openingResultAnimations": 1,
+  "afterRefresh": 1,
+  "afterDisabled": 1,
+  "afterReduced": 1,
+  "damagePopout": {
+    "messageId": "KiAboHf5frztiIyR",
+    "controls": [
+      {
+        "action": null,
+        "classes": "header-button control close",
+        "text": "Close"
+      },
+      {
+        "action": "applyDamage",
+        "classes": "clickable",
+        "text": ""
+      },
+      {
+        "action": "toggleVisibility",
+        "classes": "clickable",
+        "text": "19"
+      }
+    ]
+  },
+  "pageErrors": []
+}
