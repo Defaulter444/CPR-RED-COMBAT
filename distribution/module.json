@@ -1,8 +1,8 @@
 {
   "id": "redline-combat",
   "title": "REDLINE COMBAT",
-  "description": "Боевой док Cyberpunk RED: арсенал, избранные навыки, состояния персонажа, результаты штатных бросков и понятные следующие действия. Предварительный релиз для CPR 0.92.4.",
-  "version": "0.4.0-preview.2",
+  "description": "Боевой док Cyberpunk RED: арсенал, избранные навыки, состояния персонажа, результаты штатных бросков и понятные следующие действия. Адаптер CPR 0.92.4.",
+  "version": "0.4.0",
   "compatibility": {
     "minimum": "12",
     "verified": "12.331",
@@ -29,11 +29,11 @@
     "styles/host.css"
   ],
   "url": "https://github.com/Defaulter444/CPR-RED-COMBAT",
-  "readme": "https://github.com/Defaulter444/CPR-RED-COMBAT/blob/v0.4.0-preview.2/foundry/redline-combat/README.md",
+  "readme": "https://github.com/Defaulter444/CPR-RED-COMBAT/blob/v0.4.0/foundry/redline-combat/README.md",
   "bugs": "https://github.com/Defaulter444/CPR-RED-COMBAT/issues",
-  "manifest": "https://github.com/Defaulter444/CPR-RED-COMBAT/releases/download/v0.4.0-preview.2/module.json",
-  "download": "https://github.com/Defaulter444/CPR-RED-COMBAT/releases/download/v0.4.0-preview.2/redline-combat.zip",
-  "changelog": "https://github.com/Defaulter444/CPR-RED-COMBAT/blob/v0.4.0-preview.2/CHANGELOG.md",
+  "manifest": "https://raw.githubusercontent.com/Defaulter444/CPR-RED-COMBAT/main/distribution/module.json",
+  "download": "https://github.com/Defaulter444/CPR-RED-COMBAT/releases/download/v0.4.0/redline-combat.zip",
+  "changelog": "https://github.com/Defaulter444/CPR-RED-COMBAT/blob/v0.4.0/CHANGELOG.md",
   "authors": [
     {
       "name": "Defaulter444",

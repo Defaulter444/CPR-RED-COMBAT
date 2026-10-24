@@ -1,16 +1,20 @@
 # REDLINE COMBAT
 
-**[Предварительный релиз 0.4.0-preview.2](https://github.com/Defaulter444/CPR-RED-COMBAT/releases/tag/v0.4.0-preview.2).** Боевой док объединяет арсенал, избранные навыки, состояния ранений и эффектов, результаты штатных бросков, историю пяти действий и переход от атаки к урону тем же оружием. Карточка результата подсказывает следующий шаг и открывает оригинал в чате. Плавные переходы учитывают уменьшение движения; на узком экране новый результат становится видимым внутри дока. Подробности проверки и установки — в `foundry/redline-combat/README.md`. Ссылки на стабильный v0.3.2 ниже описывают предыдущий релиз.
+**[REDLINE COMBAT 0.4.0](https://github.com/Defaulter444/CPR-RED-COMBAT/releases/tag/v0.4.0)** — обновление существующего модуля `redline-combat`. Арсенал, избранные навыки, состояния ранений и эффектов, результаты штатных бросков, история пяти действий и анимации доступны через обычное обновление Foundry.
 
-Для установки preview в Foundry используйте отдельный **Manifest URL**:
+Если REDLINE уже установлен, откройте **Foundry Setup → Add-on Modules**, проверьте обновления и обновите **REDLINE COMBAT** до0.4.0. Повторная установка не нужна; прежний адрес манифеста сохранён:
 
 ```text
-https://github.com/Defaulter444/CPR-RED-COMBAT/releases/download/v0.4.0-preview.2/module.json
+https://raw.githubusercontent.com/Defaulter444/CPR-RED-COMBAT/main/distribution/module.json
 ```
 
-[Скачать ZIP](https://github.com/Defaulter444/CPR-RED-COMBAT/releases/download/v0.4.0-preview.2/redline-combat.zip) · [Демонстрация интерфейса](https://github.com/Defaulter444/CPR-RED-COMBAT/releases/download/v0.4.0-preview.2/REDLINE-results-motion.mp4) · [Проверки этой версии](docs/workspace/QA.md).
+[Релиз](https://github.com/Defaulter444/CPR-RED-COMBAT/releases/tag/v0.4.0) · [ZIP для ручной установки](https://github.com/Defaulter444/CPR-RED-COMBAT/releases/download/v0.4.0/redline-combat.zip) · [Демонстрация](https://github.com/Defaulter444/CPR-RED-COMBAT/releases/download/v0.4.0/REDLINE-results-motion.mp4) · [Проверки](docs/workspace/QA.md).
 
 ![Интерфейс REDLINE с демонстрационными данными](docs/workspace/preview.png)
+
+Совместимость: **Foundry12.331 / Cyberpunk RED Corev0.92.4**. Карточка результата подсказывает следующий шаг и открывает оригинал в чате; попадание подтверждается по правилам игры, урон применяется штатными кнопками системы. [Полная инструкция](foundry/redline-combat/README.md).
+
+## История стабильной версии 0.3.2
 
 **Каталог навыков — 0.3.2, 2026-10-17.** «Навыки» открывает поиск и два списка: разделы листа персонажа слева, их навыки справа. Названия, порядок девяти разделов и состав берутся из той же конфигурации системы и Item персонажа, что использует лист. «Все навыки» показывает полный список, включая пользовательские навыки. Выберите строку и нажмите «Бросить — название навыка»: откроется прежний системный диалог. Стрелки выбирают результат, Enter открывает бросок, Escape закрывает каталог и возвращает фокус. Поиск ограничен текущим разделом; пустой результат отключает бросок. «Другие броски» раскрывает инициативу и спасбросок смерти. Раздел, запрос и выбранный навык хранятся для данного персонажа/токена только в текущем сеансе страницы.
 

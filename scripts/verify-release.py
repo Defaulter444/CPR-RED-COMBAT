@@ -73,7 +73,9 @@ class PublicReader:
             remaining = self.deadline - time.monotonic()
             if remaining <= 0:
                 break
-            request = urllib.request.Request(url, headers={'User-Agent':'REDLINE-release-verifier/1.0'})
+            request = urllib.request.Request(url, headers={
+                'User-Agent':'REDLINE-release-verifier/1.0', 'Cache-Control':'no-cache',
+            })
             try:
                 with urllib.request.urlopen(request, timeout=min(8, remaining)) as response:
                     content = response.read()
@@ -161,13 +163,21 @@ def verify(dist: Path, remote: bool) -> dict:
         require(repository_url.scheme == 'https' and repository_url.hostname == 'github.com' and len(parts) == 2 and all(parts), 'Expected a public GitHub repository URL in the manifest.')
         repository = '/'.join(parts)
         release_base = f'https://github.com/{repository}/releases/download/v{version}'
-        require(manifest.get('manifest') == release_base + '/module.json', 'Release manifest must be pinned to this version, not a moving stable/latest URL.')
+        prerelease = '-' in version.partition('+')[0]
+        stable_manifest = f'https://raw.githubusercontent.com/{repository}/main/distribution/module.json'
+        expected_manifest = release_base + '/module.json' if prerelease else stable_manifest
+        require(manifest.get('manifest') == expected_manifest,
+            'Prereleases must use a version-pinned manifest; stable releases must use the existing main/distribution/module.json update channel.')
         require(manifest.get('download') == release_base + '/redline-combat.zip', 'Release ZIP URL must be pinned to this version.')
-        targets = [(release_base + '/' + urllib.parse.quote(name), content, 'public_asset:' + name)
+        targets = [(release_base + '/' + urllib.parse.quote(name), content,
+            'public_release_manifest' if name == 'module.json' else
+            'public_release_zip' if name == 'redline-combat.zip' else 'public_asset:' + name)
             for name,content in local_bytes.items()] + [
             (release_base + '/SHA256SUMS.txt', checksum_bytes, 'public_release_checksums'),
             (f'https://raw.githubusercontent.com/{repository}/v{version}/distribution/module.json', distribution_bytes, 'raw_tag_distribution_manifest'),
         ]
+        if not prerelease:
+            targets.append((stable_manifest,distribution_bytes,'stable_update_manifest'))
         reader = PublicReader()
         for url, expected, label in targets:
             require(reader.get(url) == expected, f'Remote bytes differ from the local build: {label}')
