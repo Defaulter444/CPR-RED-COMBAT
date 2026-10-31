@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {selectedWeapon,safeInsets,skillPopupHeight,skillPopupLayout,normalizeInterfaceScale,panelSizing} from '../scripts/presentation.js';
+import {selectedWeapon,safeInsets,cardMaxHeight,normalizeInterfaceScale,panelSizing,scaleFromDrag,hpSegments} from '../scripts/presentation.js';
 
 test('weapon selection is read-only, exact, and falls back after deletion or unequipping', () => {
   const weapons=Object.freeze([Object.freeze({id:'a'}),Object.freeze({id:'b'})]);
@@ -37,19 +37,6 @@ test('pathological host sizes cannot push dock edges beyond the viewport reserve
   assert.ok(insets.bottom<=200);
 });
 
-test('skills popup remains between the initiative queue and dock on the live 1024×768 geometry', () => {
-  const dockTop=383,queueBottom=150;
-  const height=skillPopupHeight({dockTop,queueBottom,viewportHeight:768});
-  assert.equal(height,213);
-  assert.equal(dockTop-8-height,queueBottom+12);
-  assert.ok(height<768*.42);
-});
-test('skills popup height follows dock expansion, respects its wide-screen cap, and handles no free gap', () => {
-  assert.equal(skillPopupHeight({dockTop:700,queueBottom:150,viewportHeight:1080}),430);
-  assert.equal(skillPopupHeight({dockTop:480,queueBottom:150,viewportHeight:720}),310);
-  assert.equal(skillPopupHeight({dockTop:160,queueBottom:150,viewportHeight:600}),0);
-  assert.equal(skillPopupHeight(),0);
-});
 
 test('running DEADLINE above the queue reserves its actual height on the live 1672×941 geometry', () => {
   const base={width:1672,height:941,hostBar:rect(0,0,1672,48),controls:rect(8,70,42,600),sidebar:rect(1362,50,300,880),queueHeight:80};
@@ -69,44 +56,64 @@ test('timer drag affects the queue only when rectangles would intersect, and hid
   assert.equal(safeInsets({...base,timer:rect(600,85,300,200)}).top,297,'expanded timer clears with its real height, beyond the generic top cap');
 });
 
-test('expanded timer at 1024×768 uses a usable skills drawer over the dock, clear of queue and macros', () => {
-  const dockTop=383,dockBottom=658,queueBottom=326;
-  assert.equal(skillPopupHeight({dockTop,queueBottom,viewportHeight:768}),37);
-  const layout=skillPopupLayout({dockTop,dockBottom,queueBottom,viewportHeight:768});
-  assert.deepEqual(layout,{placement:'dock',height:320});
-  assert.equal(dockBottom-layout.height,queueBottom+12);
-  assert.ok(layout.height>=180);
-});
-test('skills stay above the dock when the map has room and drawer fallback never reduces available space', () => {
-  assert.deepEqual(skillPopupLayout({dockTop:383,dockBottom:658,queueBottom:150,viewportHeight:768}),{placement:'dock',height:430});
-  assert.deepEqual(skillPopupLayout({dockTop:500,dockBottom:680,queueBottom:120,viewportHeight:768}),{placement:'above',height:360});
-  assert.deepEqual(skillPopupLayout({dockTop:160,dockBottom:161,queueBottom:150,viewportHeight:600}),{placement:'above',height:0});
-});
 
-test('catalog at 125% on 1024×768 uses the dock drawer so search and roll stay reachable', () => {
-  const layout=skillPopupLayout({dockTop:284,dockBottom:658,queueBottom:60,viewportHeight:768});
-  assert.deepEqual(layout,{placement:'dock',height:430});
-  assert.ok(658-layout.height>=60+12);
-});
 
-test('client scale defaults to 80%, rounds to 5%, and limits invalid or out-of-range values', () => {
-  for(const value of [undefined,null,NaN,Infinity,'',{},'bad']) assert.equal(normalizeInterfaceScale(value),80);
-  assert.equal(normalizeInterfaceScale(83),85);
-  assert.equal(normalizeInterfaceScale('60'),60);
-  assert.equal(normalizeInterfaceScale(0),55);
-  assert.equal(normalizeInterfaceScale(900),125);
-});
-test('default panels occupy at most 880 actual pixels, and every supported scale fits the available map width', () => {
-  assert.deepEqual(panelSizing({availableWidth:1288}),{percent:80,factor:.8,layoutWidth:1100,actualWidth:880});
-  for(const scale of [55,80,100,125]) for(const availableWidth of [630,900,1600]) {
-    const size=panelSizing({availableWidth,scale});
-    assert.ok(size.layoutWidth<=1100);
-    assert.ok(size.actualWidth<=availableWidth+.0001);
-    assert.ok(Math.abs(size.actualWidth-size.layoutWidth*size.factor)<.0001);
-  }
-});
 test('a narrower scaled initiative strip does not reserve a nonintersecting timer column', () => {
   const base={width:1672,height:941,hostBar:rect(0,0,1672,48),controls:rect(8,70,42,600),sidebar:rect(1362,50,300,880),queueHeight:64,timer:rect(1052,58,300,54)};
   assert.equal(safeInsets({...base,queueWidth:880}).top,60);
   assert.equal(safeInsets({...base,queueWidth:1288}).top,124);
+});
+
+test('cards fit between the initiative queue and the strip on the live 1024×768 geometry', () => {
+  const stripTop=383,queueBottom=150;
+  const height=cardMaxHeight({stripTop,queueBottom,viewportHeight:768});
+  assert.equal(height,213);
+  assert.equal(stripTop-8-height,queueBottom+12);
+});
+test('card height respects its wide-screen cap, the viewport share, and a missing gap', () => {
+  assert.equal(cardMaxHeight({stripTop:700,queueBottom:150,viewportHeight:1080}),430);
+  assert.equal(cardMaxHeight({stripTop:480,queueBottom:150,viewportHeight:720}),310);
+  assert.equal(cardMaxHeight({stripTop:160,queueBottom:150,viewportHeight:600}),0);
+  assert.equal(cardMaxHeight(),0);
+});
+test('expanded DEADLINE shortens cards instead of covering the queue', () => {
+  const height=cardMaxHeight({stripTop:658,queueBottom:326,viewportHeight:768});
+  assert.equal(height,312);
+  assert.ok(658-8-height>=326+12);
+});
+test('client scale defaults to 80%, keeps whole percents, and limits invalid or out-of-range values', () => {
+  for(const value of [undefined,null,NaN,Infinity,'',{},'bad']) assert.equal(normalizeInterfaceScale(value),80);
+  assert.equal(normalizeInterfaceScale(83),83);
+  assert.equal(normalizeInterfaceScale(83.4),83);
+  assert.equal(normalizeInterfaceScale('60'),60);
+  assert.equal(normalizeInterfaceScale(0),50);
+  assert.equal(normalizeInterfaceScale(49.6),50);
+  assert.equal(normalizeInterfaceScale(900),150);
+});
+test('dragging the grip right or up enlarges, left or down shrinks, four pixels per percent', () => {
+  assert.equal(scaleFromDrag({startScale:80,dx:40}),90);
+  assert.equal(scaleFromDrag({startScale:80,dy:-40}),90);
+  assert.equal(scaleFromDrag({startScale:80,dx:-40,dy:40}),60);
+  assert.equal(scaleFromDrag({startScale:149,dx:400}),150);
+  assert.equal(scaleFromDrag({startScale:'bad',dx:4}),81);
+  assert.equal(scaleFromDrag({startScale:80,dx:NaN}),80);
+  assert.equal(scaleFromDrag({startScale:80}),80);
+});
+test('HP segments light ceil(value/max × 10) while alive and none without usable data', () => {
+  assert.equal(hpSegments({value:8,max:40}),2);
+  assert.equal(hpSegments({value:1,max:40}),1);
+  assert.equal(hpSegments({value:40,max:40}),10);
+  assert.equal(hpSegments({value:41,max:40}),10);
+  assert.equal(hpSegments({value:0,max:40}),0);
+  assert.equal(hpSegments({value:-5,max:40}),0);
+  for(const hp of [null,undefined,{value:5,max:0},{value:NaN,max:40},{value:5}]) assert.equal(hpSegments(hp),null);
+});
+test('the default strip occupies at most 800 actual pixels, and every supported scale fits the available map width', () => {
+  assert.deepEqual(panelSizing({availableWidth:1288}),{percent:80,factor:.8,layoutWidth:1000,actualWidth:800});
+  for(const scale of [50,80,100,150]) for(const availableWidth of [630,900,1600]) {
+    const size=panelSizing({availableWidth,scale});
+    assert.ok(size.layoutWidth<=1000);
+    assert.ok(size.actualWidth<=availableWidth+.0001);
+    assert.ok(Math.abs(size.actualWidth-size.layoutWidth*size.factor)<.0001);
+  }
 });

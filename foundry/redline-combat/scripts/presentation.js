@@ -5,16 +5,34 @@ export function selectedWeapon(actor) {
 }
 
 export const DEFAULT_INTERFACE_SCALE = 80;
+export const MIN_INTERFACE_SCALE = 50;
+export const MAX_INTERFACE_SCALE = 150;
+/** Widest strip layout before client zoom; the real width is also limited by the free map area. */
+export const STRIP_MAX_WIDTH = 1000;
+
 export function normalizeInterfaceScale(value) {
   if (!['number','string'].includes(typeof value) || String(value).trim() === '' || !Number.isFinite(Number(value))) return DEFAULT_INTERFACE_SCALE;
-  return Math.min(125, Math.max(55, Math.round(Number(value) / 5) * 5));
+  return Math.min(MAX_INTERFACE_SCALE, Math.max(MIN_INTERFACE_SCALE, Math.round(Number(value))));
 }
 
-/** The preferred dock width is measured before its client zoom is applied. */
+/** Dragging the corner grip right or up enlarges the strip: four screen pixels per percent. */
+export function scaleFromDrag({startScale, dx = 0, dy = 0} = {}) {
+  const delta = (Number.isFinite(dx) ? dx : 0) - (Number.isFinite(dy) ? dy : 0);
+  return normalizeInterfaceScale(normalizeInterfaceScale(startScale) + delta / 4);
+}
+
+/** Lit HP segments: ceil(value / max × count) while HP is above zero; null without usable HP. */
+export function hpSegments(hp, count = 10) {
+  if (!hp || !Number.isFinite(hp.value) || !Number.isFinite(hp.max) || hp.max <= 0) return null;
+  if (hp.value <= 0) return 0;
+  return Math.min(count, Math.ceil(hp.value / hp.max * count));
+}
+
+/** The preferred strip width is measured before its client zoom is applied. */
 export function panelSizing({availableWidth, scale} = {}) {
   const percent = normalizeInterfaceScale(scale), factor = percent / 100;
-  const width = Number.isFinite(availableWidth) ? Math.max(1, availableWidth) : 1100 * factor;
-  const layoutWidth = Math.min(1100, width / factor);
+  const width = Number.isFinite(availableWidth) ? Math.max(1, availableWidth) : STRIP_MAX_WIDTH * factor;
+  const layoutWidth = Math.min(STRIP_MAX_WIDTH, width / factor);
   return {percent,factor,layoutWidth,actualWidth:layoutWidth * factor};
 }
 
@@ -36,22 +54,11 @@ export function safeInsets({width, height, controls, sidebar, hotbar, hostBar, n
   return {left:Math.round(safeLeft), right:Math.round(safeRight), top:Math.round(top), bottom:Math.round(Math.min(bottom,h / 3))};
 }
 
-/** The disclosure occupies only the map gap between initiative and the dock. */
-export function skillPopupHeight({dockTop, queueBottom, viewportHeight} = {}) {
-  if (!Number.isFinite(dockTop)) return 0;
+/** Cards open upward into the map gap between the initiative queue and the strip. */
+export function cardMaxHeight({stripTop, queueBottom, viewportHeight} = {}) {
+  if (!Number.isFinite(stripTop)) return 0;
   const ceiling = Math.max(12, Number.isFinite(queueBottom) ? queueBottom + 12 : 12);
-  const gap = Math.max(0, dockTop - 8 - ceiling);
+  const gap = Math.max(0, stripTop - 8 - ceiling);
   const viewportLimit = Number.isFinite(viewportHeight) ? Math.max(0, viewportHeight * .6) : 430;
   return Math.floor(Math.min(430, viewportLimit, gap));
-}
-
-/** A short map gap becomes a drawer over the dock, preserving queue and macros. */
-export function skillPopupLayout({dockTop, dockBottom, queueBottom, viewportHeight} = {}) {
-  const above = skillPopupHeight({dockTop,queueBottom,viewportHeight});
-  // The catalog needs its header, search and roll footer plus usable list space.
-  if (above >= 300 || !Number.isFinite(dockBottom)) return {placement:'above',height:above};
-  const ceiling = Math.max(12, Number.isFinite(queueBottom) ? queueBottom + 12 : 12);
-  const viewportLimit = Number.isFinite(viewportHeight) ? Math.max(0, viewportHeight * .6) : 430;
-  const drawer = Math.floor(Math.min(430, viewportLimit, Math.max(0, dockBottom - ceiling)));
-  return drawer > above ? {placement:'dock',height:drawer} : {placement:'above',height:above};
 }
