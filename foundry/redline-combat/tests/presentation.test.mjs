@@ -17,8 +17,8 @@ test('outer Foundry template carries the compatibility marker before host observ
   const template=await readFile(new URL('../templates/hud.hbs',import.meta.url),'utf8');
   const root=template.match(/<section\b[^>]*id="redline-combat-hud"[^>]*>/)?.[0];
   assert.ok(root);
-  assert.match(root,/class="[^"]*\bredline-blackglass\b[^"]*"/);
-  assert.match(root,/data-layout="blackglass-dock"/);
+  assert.match(root,/class="[^"]*\bredline-neon\b[^"]*"/);
+  assert.match(root,/data-layout="neon-strip"/);
 });
 
 const rect=(left,top,width,height)=>({left,top,width,height,right:left+width,bottom:top+height});
