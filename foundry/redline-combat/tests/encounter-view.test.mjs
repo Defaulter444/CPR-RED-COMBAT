@@ -1,15 +1,15 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { renderActionFeed, renderConditionStrip, renderHUD } from '../scripts/view.js';
+import { renderActionFeed, renderConditionStrip, renderResultToast, renderHUD } from '../scripts/view.js';
 
 const actor = overrides => ({key:'Actor.owned|Scene.a.Token.b', revision:7, name:'Ви', hp:{value:32,max:40}, skills:[], weapons:[], ...overrides});
-const entry = overrides => ({id:'event-1',kind:'weapon-attack',title:'Атака',itemName:'Пистолет',status:'completed',detail:'Бросок отправлен в чат.',nextStep:'Сверьте попадание с ведущим.',chatMessageId:'message-1',total:22,weaponId:'pistol',mode:'attack',canRollDamage:true,...overrides});
+const entry = overrides => ({id:'event-1',kind:'weapon-attack',title:'Атака',itemName:'Пистолет',status:'completed',detail:'Бросок отправлен в чат.',nextStep:'Сверьте попадание с ведущим.',total:22,chatMessageId:'msg-1',canRollDamage:true,weaponId:'pistol',...overrides});
 const button = (html,action) => [...html.matchAll(/<button\b[^>]*>/g)].map(match=>match[0]).find(tag=>tag.includes(`data-action="${action}"`));
 
 test('action card keeps follow-up actions attached to the exact session entry and current subject', () => {
   const html=renderActionFeed(actor({recentActions:[entry()]}));
   assert.match(html,/data-motion="result" data-result-id="event-1" data-result-status="completed"/);
-  assert.match(html,/class="redline-result-total">22<\/strong>/);
+  assert.match(html,/class="redline-result-total"[^>]*>22<\/strong>/);
   for(const action of ['open-result-chat','result-damage']) {
     const tag=button(html,action);
     assert.ok(tag,action);
@@ -46,11 +46,22 @@ test('activity history is bounded, starts with the newest event and has a compac
   const html=renderActionFeed(actor({recentActions:Array.from({length:8},(_,i)=>entry({id:`event-${i}`}))}));
   assert.match(html,/data-result-id="event-0"/);
   assert.equal([...html.matchAll(/<li\b/g)].length,4);
-  assert.match(html,/<details class="redline-action-history" data-action-history>/);
-  assert.match(renderActionFeed(actor({historyOpen:true,recentActions:[entry(),entry({id:'event-2'})]})),/<details class="redline-action-history" data-action-history open>/);
+  assert.match(html,/<ol class="redline-action-history" aria-label="Ранее в этой сессии">/);
   const empty=renderActionFeed(actor({recentActions:[]}));
-  assert.match(empty,/Атака <b[^>]*>→<\/b> диалог/);
+  assert.match(empty,/Здесь появятся действия этой сессии/);
   assert.doesNotMatch(empty,/data-result-id|data-action="result-damage"/);
+});
+
+test('the result toast shows only the newest entry the host asked for', () => {
+  const model=actor({recentActions:[entry({id:'event-2',total:17}),entry()]});
+  const toast=renderResultToast(model,'event-2');
+  assert.match(toast,/<aside class="redline-toast redline-panel" data-result-id="event-2"/);
+  assert.match(toast,/class="redline-result-total"[^>]*>17<\/strong>/);
+  assert.ok(button(toast,'result-damage'));
+  assert.equal(renderResultToast(model,'event-1'),'');
+  assert.equal(renderResultToast(model,null),'');
+  assert.equal(renderResultToast(actor({recentActions:[]}),'event-2'),'');
+  assert.doesNotMatch(renderResultToast(actor({recentActions:[entry({title:'<script>x</script>'})]}),'event-1'),/<script>/);
 });
 
 test('condition projection renders only supplied state and escapes effect labels', () => {
@@ -63,8 +74,12 @@ test('condition projection renders only supplied state and escapes effect labels
   assert.match(html,/&lt;script&gt;alert\(1\)&lt;\/script&gt;/);
 });
 
-test('activity stays inside the scrolling workspace before the fixed quick-skill row', () => {
-  const html=renderHUD({supported:true,dockExpanded:true,selected:actor({recentActions:[entry()]})});
-  assert.match(html,/<\/section><section class="redline-action-feed"/);
-  assert.match(html,/<\/article><\/section><\/div><section class="redline-quick-skills"/);
+test('the history card and its toggle appear only after an action in this session', () => {
+  const none=renderHUD({supported:true,selected:actor({recentActions:[]})});
+  assert.doesNotMatch(none,/data-action="toggle-card" data-id="history"|data-card="history"/);
+  const html=renderHUD({supported:true,selected:actor({recentActions:[entry()]}),resultEntryId:'event-1'});
+  assert.match(html,/data-action="toggle-card" data-id="history"/);
+  assert.match(html.slice(html.indexOf('data-card="history"')),/class="redline-action-feed"/);
+  assert.match(html,/class="redline-toast redline-panel" data-result-id="event-1"/);
+  assert.doesNotMatch(renderHUD({supported:true,selected:actor({recentActions:[entry()]})}),/redline-toast/);
 });
