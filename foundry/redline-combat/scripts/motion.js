@@ -20,22 +20,23 @@ function play(element, frames, options = {}) {
   return animation;
 }
 
+const rise = (element, distance = 8, options = {}) => play(element, [
+  {opacity:0, transform:`translateY(${distance}px)`}, {opacity:1, transform:'translateY(0)'}
+], {duration:120, ...options});
+
 export function captureHUD(root) {
   if (!root?.querySelector) return null;
   const query = selector => root.querySelector(selector);
-  const visible = selector => { const element = query(selector); return Boolean(element && !element.hidden); };
-  const actor = query('#redline-dock-content');
   return {
-    actor:actor?.dataset.actorKey || query('[data-subject]')?.dataset.subject || '',
-    expanded:Boolean(query('.is-dock-expanded')),
-    skills:visible('#redline-skills-panel'), arsenal:visible('#redline-arsenal-panel'),
-    weapon:query('.redline-weapons')?.dataset.weaponId || query('[data-weapon-select]')?.value || '',
-    hp:query('.redline-health')?.textContent || '',
-    hpPercent:query('.redline-meter > span')?.style.width || '0%',
-    ammo:query('.redline-weapon-ammo')?.textContent || '',
+    actor:query('.redline-strip')?.dataset.actorKey || '',
+    card:query('.redline-card:not([hidden])')?.dataset.card || '',
+    weapon:query('.redline-cell-weapon')?.dataset.weaponId || '',
+    hp:query('.redline-hp')?.dataset.hpValue ?? '',
+    lit:query('.redline-segments')?.dataset.lit ?? '',
+    ammo:query('[data-vital="ammo"]')?.textContent || '',
     current:query('.redline-unit.is-current')?.dataset.id || '',
     status:query('.redline-action-status')?.textContent || '',
-    result:query('[data-motion="result"]')?.dataset.resultId || '',
+    result:query('.redline-toast')?.dataset.resultId || '',
   };
 }
 
@@ -43,36 +44,28 @@ export function animateHUD(root, previous) {
   const next = captureHUD(root);
   if (!next || !motionAllowed(root)) return next;
   const query = selector => root.querySelector(selector);
-  const enter = (selector, delay = 0) => play(query(selector), [
-    {opacity:0, transform:'translateY(10px)'}, {opacity:1, transform:'translateY(0)'}
-  ], {duration:210,delay});
-  if (!previous) { enter('.redline-dock'); enter('.redline-combat',40); }
-  else if (next.expanded !== previous.expanded || next.actor !== previous.actor) {
-    enter(next.expanded ? '.redline-actor' : '.redline-compact-summary');
-    if (next.expanded) {
-      for (const [index, selector] of ['.redline-identity','.redline-weapons','.redline-primary-actions'].entries()) enter(selector,index*25);
-    }
+  if (!previous) {
+    rise(query('.redline-strip-wrap'), 10, {duration:200});
+    rise(query('.redline-combat'), -8, {duration:200, delay:40});
+    return next;
   }
-  if (next.skills && (!previous?.skills || next.actor !== previous.actor)) enter('#redline-skills-panel');
-  if (next.arsenal && (!previous?.arsenal || next.actor !== previous.actor)) {
-    enter('#redline-arsenal-panel');
-    root.querySelectorAll('.redline-arsenal-card').forEach((card,index) => play(card,[
-      {opacity:0,transform:'translateY(7px)'},{opacity:1,transform:'translateY(0)'}
-    ],{duration:170,delay:Math.min(index,5)*22}));
+  if (next.actor !== previous.actor) rise(query('.redline-strip-wrap'), 6, {duration:160});
+  if (next.card && (next.card !== previous.card || next.actor !== previous.actor)) rise(query(`.redline-card[data-card="${next.card}"]`));
+  if (next.result && next.result !== previous.result) {
+    rise(query('.redline-toast'), 10, {duration:180});
+    play(query('.redline-strip'), [{filter:'brightness(1.6)'}, {filter:'brightness(1)'}], {duration:320});
   }
-  if (previous && next.actor === previous.actor) {
-    if (next.weapon !== previous.weapon) {
-      play(query('.redline-weapon-art'),[{opacity:.25,transform:'translateX(-10px)'},{opacity:1,transform:'translateX(0)'}],{duration:200});
-      enter('.redline-weapon-data',35);
-    }
-    for (const [key, selector] of [['hp','.redline-health'],['ammo','.redline-weapon-ammo']]) {
-      if (next[key] !== previous[key]) play(query(selector),[{opacity:.4,transform:'translateY(-3px)'},{opacity:1,transform:'translateY(0)'}],{duration:220});
-    }
-    if (next.hpPercent !== previous.hpPercent) play(query('.redline-meter > span'),[{width:previous.hpPercent},{width:next.hpPercent}],{duration:300});
-    if (next.current !== previous.current) play(query('.redline-unit.is-current'),[{transform:'translateX(6px)',opacity:.5},{transform:'translateX(0)',opacity:1}],{duration:240});
-    if (next.status && next.status !== previous.status) enter('.redline-action-status');
-    if (next.result && next.result !== previous.result) enter('[data-motion="result"]');
+  if (next.actor !== previous.actor) return next;
+  if (next.weapon !== previous.weapon) play(query('.redline-cell-weapon'), [{opacity:.3}, {opacity:1}], {duration:160});
+  if (next.ammo !== previous.ammo) play(query('[data-vital="ammo"]'), [{opacity:.35, transform:'translateY(-3px)'}, {opacity:1, transform:'translateY(0)'}], {duration:200});
+  const before = Number(previous.lit), after = Number(next.lit);
+  if (previous.lit !== '' && next.lit !== '' && after < before) {
+    // Lost HP segments flash red, then fade to their unlit colour.
+    const segments = root.querySelectorAll('.redline-segments i');
+    for (let index = after; index < before; index++) play(segments[index], [{backgroundColor:'#f04452'}, {}], {duration:420, delay:(index - after) * 40});
   }
+  if (next.current !== previous.current) play(query('.redline-unit.is-current'), [{transform:'translateX(6px)', opacity:.5}, {transform:'translateX(0)', opacity:1}], {duration:240});
+  if (next.status && next.status !== previous.status) rise(query('.redline-feedback'), 4);
   return next;
 }
 
