@@ -2454,3 +2454,22 @@ cd C:/Users/Horusian/CPR-RED-COMBAT && git add CHANGELOG.md foundry/redline-comb
 ```
 
 Сборка архива, обновление `distribution/` и публикация на GitHub — только по отдельной команде пользователя (навык `foundry-release`).
+
+---
+
+## Отклонения при исполнении (2026-11-01)
+
+- **Task 1, навыки персонажа.** CPR отбрасывает предметы с `system.core` в `createEmbeddedDocuments`
+  («Do not try to add core items»): базовые навыки система выдаёт только в своём `CPRActor.create`. `redline.mjs`
+  добавляет недостающие навыки через путь миграций самой системы — `{ cprIsMigrating: true }`.
+  `foundry-dev/tools/bench/seed.mjs` теперь создаёт персонажей через `getDocumentClass("Actor")`, и новые миры стенда
+  получают навыки сразу.
+- **Task 1, запуск стенда.** Первый вход сразу после старта сервера зависал: ядро ещё ждало внешний IP от
+  `api.foundryvtt.com`, и `Express.getInvitationLinks` падал на `addresses = null`. Сервер стенда запускается
+  с `--noipdiscovery --noupdate`.
+- **Task 8, узкие экраны (доработка по снимкам).** На 1024×768 при 80% полосе нужно 850 px макета при 594 свободных —
+  имена сжимались до «H» и «Н.». Добавлены `STRIP_DENSITIES` и `chooseDensity` в `presentation.js` (тест в
+  `presentation.test.mjs`), измерение `measureStrip` в `main.js` и правила `data-density` в `redline.css`.
+  Сценарий проверяет плотность и отсутствие переполнения.
+- **Task 8, снимки.** Снимки с `animations: "disabled"`: без этого кадр ловил карточку на середине появления.
+  Снимок тоста — областью страницы вокруг тоста и полосы.
