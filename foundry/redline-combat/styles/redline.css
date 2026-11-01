@@ -96,6 +96,13 @@
 #redline-combat-hud .redline-action-button.is-urgent { border-color: var(--redline-red); color: var(--redline-red); }
 #redline-combat-hud .redline-strip-empty { display: inline-flex; align-items: center; gap: 8px; padding: 0 10px; color: var(--redline-muted); }
 
+/* Narrow free area (data-density from main.js): shed labels, keep icons and numbers. Names stay in tooltips. */
+#redline-combat-hud .redline-strip.is-measuring { width: max-content !important; max-width: none !important; }
+#redline-combat-hud[data-density="compact"] .redline-sp { display: none; }
+#redline-combat-hud[data-density="compact"] .redline-strip-text { max-width: 96px; }
+#redline-combat-hud[data-density="compact"] .redline-strip-name { max-width: 72px; }
+#redline-combat-hud[data-density="tight"] :is(.redline-sp, .redline-strip-name, .redline-cell-weapon .redline-strip-text, .redline-cell-target .redline-strip-text, .redline-action-primary span) { display: none; }
+
 /* Scale grip: drag right or up to enlarge */
 #redline-combat-hud .redline-scale-grip { position: absolute; right: 3px; bottom: 3px; width: 14px; height: 14px; border-right: 2px solid var(--redline-cyan); border-bottom: 2px solid var(--redline-cyan); opacity: .7; cursor: nesw-resize; touch-action: none; pointer-events: auto; }
 #redline-combat-hud .redline-scale-grip:hover, #redline-combat-hud.is-scaling .redline-scale-grip { opacity: 1; }

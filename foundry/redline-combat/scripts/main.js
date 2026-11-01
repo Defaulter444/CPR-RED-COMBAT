@@ -3,7 +3,7 @@ import { renderHUD, renderSkillsPanel, CARD_IDS } from "./view.js";
 import { skillCatalog } from './skills.js';
 import { createActionRunner, ActionRejected, resolveActionSubject } from './actions.js';
 import { weaponCapabilities, equippedWeapons } from './capabilities.js';
-import { safeInsets, cardMaxHeight, panelSizing, normalizeInterfaceScale, scaleFromDrag, DEFAULT_INTERFACE_SCALE, MIN_INTERFACE_SCALE, MAX_INTERFACE_SCALE } from './presentation.js';
+import { safeInsets, cardMaxHeight, chooseDensity, panelSizing, normalizeInterfaceScale, scaleFromDrag, DEFAULT_INTERFACE_SCALE, MIN_INTERFACE_SCALE, MAX_INTERFACE_SCALE } from './presentation.js';
 import { favoriteSkillIds, toggleFavoriteSkill, favoriteStoreWith } from './preferences.js';
 import { captureHUD, animateHUD, animateSkillResults, closeDrawer } from './motion.js';
 import { describeAction, actionEntry, appendAction, projectRecentActions, canReadResultMessage } from './encounter.js';
@@ -122,6 +122,16 @@ async function closeCard({focus, refresh = true, root = hud?.element?.[0]} = {})
   if (sequence !== drawerSequence || !refresh) return;
   if (focus && hud) hud._focusNext = focus;
   hud?.refresh();
+}
+
+/** Natural strip width for one density, in layout pixels before client zoom. */
+function measureStrip(root, strip, density) {
+  if (!strip) return NaN;
+  root.dataset.density = density;
+  strip.classList.add('is-measuring');
+  const width = strip.offsetWidth;
+  strip.classList.remove('is-measuring');
+  return width;
 }
 
 /** Corner grip: live client zoom while dragging, saved on release; keyboard arrows step by 1% (Shift — 10%). */
@@ -265,7 +275,10 @@ class RedlineHUD extends Application {
       let queueBottom = queue?.getBoundingClientRect().bottom ?? insets.top;
       const timerOverPanel = timer && timer.width > 0 && timer.height > 0 && timer.right > insets.left && timer.left < insets.left+sizing.actualWidth;
       if (timerOverPanel && !queue && timer.top < insets.top+90) queueBottom = Math.max(queueBottom, timer.bottom);
-      const strip = root.querySelector('.redline-strip')?.getBoundingClientRect();
+      // Narrow free area: drop secondary labels instead of squeezing names into unreadable fragments.
+      const stripElement = root.querySelector('.redline-strip');
+      root.dataset.density = chooseDensity(density => measureStrip(root, stripElement, density), sizing.layoutWidth);
+      const strip = stripElement?.getBoundingClientRect();
       const height = cardMaxHeight({stripTop:strip?.top,queueBottom,viewportHeight:window.innerHeight});
       root.style.setProperty('--redline-card-max-height', `${height/sizing.factor}px`);
     };

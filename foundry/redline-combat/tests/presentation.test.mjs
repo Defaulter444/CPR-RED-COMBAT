@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {selectedWeapon,safeInsets,cardMaxHeight,normalizeInterfaceScale,panelSizing,scaleFromDrag,hpSegments} from '../scripts/presentation.js';
+import {selectedWeapon,safeInsets,cardMaxHeight,normalizeInterfaceScale,panelSizing,scaleFromDrag,hpSegments,chooseDensity,STRIP_DENSITIES} from '../scripts/presentation.js';
 
 test('weapon selection is read-only, exact, and falls back after deletion or unequipping', () => {
   const weapons=Object.freeze([Object.freeze({id:'a'}),Object.freeze({id:'b'})]);
@@ -116,4 +116,19 @@ test('the default strip occupies at most 800 actual pixels, and every supported 
     assert.ok(size.actualWidth<=availableWidth+.0001);
     assert.ok(Math.abs(size.actualWidth-size.layoutWidth*size.factor)<.0001);
   }
+});
+
+test('the strip sheds secondary labels only when its full layout does not fit', () => {
+  assert.deepEqual(STRIP_DENSITIES,['full','compact','tight']);
+  const widths={full:850,compact:720,tight:560};
+  const measured=[];
+  const measure=density=>{measured.push(density);return widths[density];};
+  assert.equal(chooseDensity(measure,1000),'full');
+  assert.deepEqual(measured,['full'],'a fitting layout is measured once');
+  assert.equal(chooseDensity(measure,850),'full');
+  assert.equal(chooseDensity(measure,800),'compact');
+  assert.equal(chooseDensity(measure,600),'tight');
+  assert.equal(chooseDensity(measure,300),'tight','the tightest layout is the floor');
+  assert.equal(chooseDensity(()=>NaN,800),'full','without a strip nothing is hidden');
+  assert.equal(chooseDensity(measure,NaN),'full');
 });

@@ -62,3 +62,16 @@ export function cardMaxHeight({stripTop, queueBottom, viewportHeight} = {}) {
   const viewportLimit = Number.isFinite(viewportHeight) ? Math.max(0, viewportHeight * .6) : 430;
   return Math.floor(Math.min(430, viewportLimit, gap));
 }
+
+/** Strip layouts from richest to most compact: compact drops SP and shortens names, tight keeps icons and numbers. */
+export const STRIP_DENSITIES = Object.freeze(['full', 'compact', 'tight']);
+
+/** First layout whose natural width fits the free strip width; measure(density) returns layout pixels. */
+export function chooseDensity(measure, available) {
+  if (!Number.isFinite(available)) return STRIP_DENSITIES[0];
+  for (const density of STRIP_DENSITIES) {
+    const width = measure(density);
+    if (!Number.isFinite(width) || width <= available) return density;
+  }
+  return STRIP_DENSITIES.at(-1);
+}
