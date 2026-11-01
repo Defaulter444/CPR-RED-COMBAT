@@ -1,14 +1,14 @@
 # REDLINE COMBAT
 
-**[REDLINE COMBAT 0.5.1](https://github.com/Defaulter444/CPR-RED-COMBAT/releases/tag/v0.5.1)** — «Неоновая полоса»: широкий док заменён тонкой полосой внизу экрана. Персонаж, HP, броня, оружие и патроны, цель, атака и навыки — в одну строку, подробности — в карточках над элементами, результат броска всплывает и скрывается сам. Масштаб 50–150% меняется перетаскиванием уголка полосы. С 0.5.1 после обновления модуля новая версия появляется у игроков сама, даже если хостинг держит старые файлы в кэше, — без Ctrl+F5.
+**[REDLINE COMBAT 0.5.2](https://github.com/Defaulter444/CPR-RED-COMBAT/releases/tag/v0.5.2)** — «Неоновая полоса»: широкий док заменён тонкой полосой внизу экрана. Персонаж, HP, броня, оружие и патроны, цель, атака и навыки — в одну строку, подробности — в карточках над элементами, результат броска всплывает над кнопкой действия и скрывается сам. Масштаб 50–150% меняется перетаскиванием уголка полосы. С 0.5.1 после обновления модуля новая версия появляется у игроков сама, даже если хостинг держит старые файлы в кэше, — без Ctrl+F5.
 
-Если REDLINE уже установлен, откройте **Foundry Setup → Add-on Modules**, проверьте обновления и обновите **REDLINE COMBAT** до 0.5.1. Повторная установка не нужна; прежний адрес манифеста сохранён:
+Если REDLINE уже установлен, откройте **Foundry Setup → Add-on Modules**, проверьте обновления и обновите **REDLINE COMBAT** до 0.5.2. Повторная установка не нужна; прежний адрес манифеста сохранён:
 
 ```text
 https://raw.githubusercontent.com/Defaulter444/CPR-RED-COMBAT/main/distribution/module.json
 ```
 
-[Релиз](https://github.com/Defaulter444/CPR-RED-COMBAT/releases/tag/v0.5.1) · [ZIP для ручной установки](https://github.com/Defaulter444/CPR-RED-COMBAT/releases/download/v0.5.1/redline-combat.zip) · [Проверки](foundry/redline-combat/QA.md) · [Дизайн](docs/superpowers/specs/2026-11-01-neon-strip-design.md)
+[Релиз](https://github.com/Defaulter444/CPR-RED-COMBAT/releases/tag/v0.5.2) · [ZIP для ручной установки](https://github.com/Defaulter444/CPR-RED-COMBAT/releases/download/v0.5.2/redline-combat.zip) · [Проверки](foundry/redline-combat/QA.md) · [Дизайн](docs/superpowers/specs/2026-11-01-neon-strip-design.md)
 
 ![Интерфейс REDLINE с демонстрационными данными](docs/workspace/preview.png)
 

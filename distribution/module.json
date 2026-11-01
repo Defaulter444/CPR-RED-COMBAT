@@ -2,7 +2,7 @@
   "id": "redline-combat",
   "title": "REDLINE COMBAT",
   "description": "Боевая полоса Cyberpunk RED: персонаж, HP и броня, оружие и патроны, цель, атака и навыки в одну строку; подробности в карточках над элементами. Адаптер CPR 0.92.4.",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "compatibility": {
     "minimum": "12",
     "verified": "12.331",
@@ -30,11 +30,11 @@
     "styles/host.css"
   ],
   "url": "https://github.com/Defaulter444/CPR-RED-COMBAT",
-  "readme": "https://github.com/Defaulter444/CPR-RED-COMBAT/blob/v0.5.1/foundry/redline-combat/README.md",
+  "readme": "https://github.com/Defaulter444/CPR-RED-COMBAT/blob/v0.5.2/foundry/redline-combat/README.md",
   "bugs": "https://github.com/Defaulter444/CPR-RED-COMBAT/issues",
   "manifest": "https://raw.githubusercontent.com/Defaulter444/CPR-RED-COMBAT/main/distribution/module.json",
-  "download": "https://github.com/Defaulter444/CPR-RED-COMBAT/releases/download/v0.5.1/redline-combat.zip",
-  "changelog": "https://github.com/Defaulter444/CPR-RED-COMBAT/blob/v0.5.1/CHANGELOG.md",
+  "download": "https://github.com/Defaulter444/CPR-RED-COMBAT/releases/download/v0.5.2/redline-combat.zip",
+  "changelog": "https://github.com/Defaulter444/CPR-RED-COMBAT/blob/v0.5.2/CHANGELOG.md",
   "authors": [
     {
       "name": "Defaulter444",
