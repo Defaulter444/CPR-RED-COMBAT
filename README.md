@@ -1,14 +1,14 @@
 # REDLINE COMBAT
 
-**[REDLINE COMBAT 0.4.0](https://github.com/Defaulter444/CPR-RED-COMBAT/releases/tag/v0.4.0)** — обновление существующего модуля `redline-combat`. Арсенал, избранные навыки, состояния ранений и эффектов, результаты штатных бросков, история пяти действий и анимации доступны через обычное обновление Foundry.
+**[REDLINE COMBAT 0.5.0](https://github.com/Defaulter444/CPR-RED-COMBAT/releases/tag/v0.5.0)** — «Неоновая полоса»: широкий док заменён тонкой полосой внизу экрана. Персонаж, HP, броня, оружие и патроны, цель, атака и навыки — в одну строку, подробности — в карточках над элементами, результат броска всплывает и скрывается сам. Масштаб 50–150% меняется перетаскиванием уголка полосы.
 
-Если REDLINE уже установлен, откройте **Foundry Setup → Add-on Modules**, проверьте обновления и обновите **REDLINE COMBAT** до0.4.0. Повторная установка не нужна; прежний адрес манифеста сохранён:
+Если REDLINE уже установлен, откройте **Foundry Setup → Add-on Modules**, проверьте обновления и обновите **REDLINE COMBAT** до 0.5.0. Повторная установка не нужна; прежний адрес манифеста сохранён:
 
 ```text
 https://raw.githubusercontent.com/Defaulter444/CPR-RED-COMBAT/main/distribution/module.json
 ```
 
-[Релиз](https://github.com/Defaulter444/CPR-RED-COMBAT/releases/tag/v0.4.0) · [ZIP для ручной установки](https://github.com/Defaulter444/CPR-RED-COMBAT/releases/download/v0.4.0/redline-combat.zip) · [Демонстрация](https://github.com/Defaulter444/CPR-RED-COMBAT/releases/download/v0.4.0/REDLINE-results-motion.mp4) · [Проверки](docs/workspace/QA.md).
+[Релиз](https://github.com/Defaulter444/CPR-RED-COMBAT/releases/tag/v0.5.0) · [ZIP для ручной установки](https://github.com/Defaulter444/CPR-RED-COMBAT/releases/download/v0.5.0/redline-combat.zip) · [Проверки](foundry/redline-combat/QA.md) · [Дизайн](docs/superpowers/specs/2026-11-01-neon-strip-design.md)
 
 ![Интерфейс REDLINE с демонстрационными данными](docs/workspace/preview.png)
 
