@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {selectedWeapon,safeInsets,cardMaxHeight,normalizeInterfaceScale,panelSizing,scaleFromDrag,hpSegments,chooseDensity,STRIP_DENSITIES} from '../scripts/presentation.js';
+import {selectedWeapon,safeInsets,cardMaxHeight,normalizeInterfaceScale,panelSizing,scaleFromDrag,hpSegments,chooseDensity,STRIP_DENSITIES,toastAnchors,toastPlacement} from '../scripts/presentation.js';
 
 test('weapon selection is read-only, exact, and falls back after deletion or unequipping', () => {
   const weapons=Object.freeze([Object.freeze({id:'a'}),Object.freeze({id:'b'})]);
@@ -131,4 +131,37 @@ test('the strip sheds secondary labels only when its full layout does not fit', 
   assert.equal(chooseDensity(measure,300),'tight','the tightest layout is the floor');
   assert.equal(chooseDensity(()=>NaN,800),'full','without a strip nothing is hidden');
   assert.equal(chooseDensity(measure,NaN),'full');
+});
+
+test('the result pops up over the control that produced it', () => {
+  assert.deepEqual(toastAnchors('weapon-attack'),['[data-action="weapon-attack"]']);
+  assert.deepEqual(toastAnchors('weapon-damage'),['[data-action="weapon-damage"]']);
+  assert.deepEqual(toastAnchors('weapon-reload'),['[data-action="weapon-reload"]','[data-cell="weapon"]']);
+  assert.deepEqual(toastAnchors('weapon-load'),['[data-cell="weapon"]']);
+  assert.deepEqual(toastAnchors('skill'),['[data-cell="skills"]']);
+  for (const kind of ['initiative','death-save']) assert.deepEqual(toastAnchors(kind),['[data-cell="more"]']);
+  assert.deepEqual(toastAnchors('unknown'),[]);
+  assert.deepEqual(toastAnchors(),[]);
+});
+
+test('the result is centred over its control in strip layout pixels and never leaves the free area', () => {
+  const box=(left,right)=>({left,right});
+  // 80%: a 320px toast is 256px on screen; the attack button's centre is at x=900.
+  assert.deepEqual(toastPlacement({anchor:box(870,930),wrap:box(500,1100),bounds:box(232,1300),width:320,factor:.8}),{left:340,width:320});
+  // Near the left edge of the free area the toast stops at the edge plus a margin instead of going past it.
+  assert.deepEqual(toastPlacement({anchor:box(240,280),wrap:box(232,900),bounds:box(232,1300),width:320,factor:.8}),{left:10,width:320});
+  // A strip that starts left of the visible area (bounds already clipped to the viewport) cannot drag the toast with it.
+  assert.deepEqual(toastPlacement({anchor:box(10,60),wrap:box(-80,600),bounds:box(0,1280),width:320,factor:1}),{left:88,width:320});
+  // Near the right edge it is pulled back inside.
+  assert.deepEqual(toastPlacement({anchor:box(1260,1290),wrap:box(700,1300),bounds:box(232,1300),width:320,factor:1}),{left:272,width:320});
+  // Without an anchor it sits over the middle of the strip.
+  assert.deepEqual(toastPlacement({anchor:null,wrap:box(300,1000),bounds:box(232,1300),width:320,factor:1}),{left:190,width:320});
+});
+
+test('in a free area narrower than the toast it shrinks to fit between the margins', () => {
+  const box=(left,right)=>({left,right});
+  assert.deepEqual(toastPlacement({anchor:box(400,440),wrap:box(232,500),bounds:box(232,500),width:320,factor:1}),{left:8,width:252});
+  // At 50% the full 320px toast is only 160px on screen and still fits.
+  assert.deepEqual(toastPlacement({anchor:box(400,440),wrap:box(232,500),bounds:box(232,500),width:320,factor:.5}),{left:200,width:320});
+  assert.equal(toastPlacement({anchor:null,wrap:null,bounds:box(0,800),width:320,factor:1}),null);
 });

@@ -197,7 +197,7 @@ export function renderActionFeed(actor) {
 export function renderResultToast(actor, entryId) {
   const latest = recentEntries(actor)[0];
   if (!latest || !entryId || latest.id !== entryId) return '';
-  return `<aside class="redline-toast redline-panel" data-result-id="${escapeHTML(latest.id)}" aria-label="Результат действия" aria-live="polite">${resultBlock(actor, latest, 'div')}</aside>`;
+  return `<aside class="redline-toast redline-panel" data-result-id="${escapeHTML(latest.id)}" data-result-kind="${escapeHTML(latest.kind ?? '')}" aria-label="Результат действия" aria-live="polite">${resultBlock(actor, latest, 'div')}</aside>`;
 }
 
 function feedbackView(actor) {

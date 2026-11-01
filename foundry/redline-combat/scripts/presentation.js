@@ -54,6 +54,31 @@ export function safeInsets({width, height, controls, sidebar, hotbar, hostBar, n
   return {left:Math.round(safeLeft), right:Math.round(safeRight), top:Math.round(top), bottom:Math.round(Math.min(bottom,h / 3))};
 }
 
+/** Strip controls a result belongs to, most specific first; actions from cards point at the card's cell. */
+const TOAST_ANCHORS = Object.freeze({
+  'weapon-attack':['[data-action="weapon-attack"]'], 'weapon-damage':['[data-action="weapon-damage"]'],
+  'weapon-reload':['[data-action="weapon-reload"]', '[data-cell="weapon"]'], 'weapon-load':['[data-cell="weapon"]'],
+  skill:['[data-cell="skills"]'], initiative:['[data-cell="more"]'], 'death-save':['[data-cell="more"]'],
+});
+export function toastAnchors(kind) {
+  return [...(TOAST_ANCHORS[kind] ?? [])];
+}
+
+/**
+ * The result toast stands centred over its control and stays inside the free area.
+ * anchor, wrap and bounds are screen rectangles (bounds already clipped to the viewport); width and the returned
+ * {left, width} are layout pixels inside the zoomed strip wrapper.
+ */
+export function toastPlacement({anchor, wrap, bounds, width = 320, factor = 1, margin = 8} = {}) {
+  if (!wrap || !bounds) return null;
+  const f = factor > 0 ? factor : 1;
+  const size = Math.floor(Math.max(0, Math.min(width, (bounds.right - bounds.left - 2 * margin) / f)));
+  const center = anchor ? (anchor.left + anchor.right) / 2 : (wrap.left + wrap.right) / 2;
+  const min = (bounds.left + margin - wrap.left) / f;
+  const max = (bounds.right - margin - wrap.left) / f - size;
+  return {left:Math.round(Math.max(min, Math.min((center - wrap.left) / f - size / 2, max))), width:size};
+}
+
 /** Cards open upward into the map gap between the initiative queue and the strip. */
 export function cardMaxHeight({stripTop, queueBottom, viewportHeight} = {}) {
   if (!Number.isFinite(stripTop)) return 0;

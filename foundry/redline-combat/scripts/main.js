@@ -3,13 +3,13 @@ import { renderHUD, renderSkillsPanel, CARD_IDS } from "./view.js";
 import { skillCatalog } from './skills.js';
 import { createActionRunner, ActionRejected, resolveActionSubject } from './actions.js';
 import { weaponCapabilities, equippedWeapons } from './capabilities.js';
-import { safeInsets, cardMaxHeight, chooseDensity, panelSizing, normalizeInterfaceScale, scaleFromDrag, DEFAULT_INTERFACE_SCALE, MIN_INTERFACE_SCALE, MAX_INTERFACE_SCALE } from './presentation.js';
+import { safeInsets, cardMaxHeight, chooseDensity, panelSizing, normalizeInterfaceScale, scaleFromDrag, toastAnchors, toastPlacement, DEFAULT_INTERFACE_SCALE, MIN_INTERFACE_SCALE, MAX_INTERFACE_SCALE } from './presentation.js';
 import { favoriteSkillIds, toggleFavoriteSkill, favoriteStoreWith } from './preferences.js';
 import { captureHUD, animateHUD, animateSkillResults, closeDrawer } from './motion.js';
 import { describeAction, actionEntry, appendAction, projectRecentActions, canReadResultMessage } from './encounter.js';
 
 /** Release this code belongs to; guard.js compares it with the installed version to catch stale cached files. */
-export const CODE_VERSION = '0.5.1';
+export const CODE_VERSION = '0.5.2';
 
 const modulePath = `modules/${MODULE_ID}`;
 const RESULT_TOAST_MS = 12000;
@@ -284,6 +284,20 @@ class RedlineHUD extends Application {
       const strip = stripElement?.getBoundingClientRect();
       const height = cardMaxHeight({stripTop:strip?.top,queueBottom,viewportHeight:window.innerHeight});
       root.style.setProperty('--redline-card-max-height', `${height/sizing.factor}px`);
+      // The result stands over the control that produced it, inside the free area and the viewport.
+      const toast = root.querySelector('.redline-toast');
+      if (toast) {
+        const area = root.querySelector('.redline-interface')?.getBoundingClientRect();
+        const anchor = toastAnchors(toast.dataset.resultKind).map(selector => stripElement?.querySelector(selector)).find(element => element?.getClientRects().length);
+        const place = toastPlacement({
+          anchor:anchor?.getBoundingClientRect(), wrap:root.querySelector('.redline-strip-wrap')?.getBoundingClientRect(),
+          bounds:area && {left:Math.max(0, area.left), right:Math.min(window.innerWidth, area.right)}, factor:sizing.factor,
+        });
+        if (place) {
+          toast.style.setProperty('--redline-toast-left', `${place.left}px`);
+          toast.style.setProperty('--redline-toast-width', `${place.width}px`);
+        }
+      }
     };
     geometry();
     window.addEventListener('resize', () => geometry(), {signal});
