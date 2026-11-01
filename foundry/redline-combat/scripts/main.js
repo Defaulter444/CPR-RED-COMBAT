@@ -8,6 +8,9 @@ import { favoriteSkillIds, toggleFavoriteSkill, favoriteStoreWith } from './pref
 import { captureHUD, animateHUD, animateSkillResults, closeDrawer } from './motion.js';
 import { describeAction, actionEntry, appendAction, projectRecentActions, canReadResultMessage } from './encounter.js';
 
+/** Release this code belongs to; guard.js compares it with the installed version to catch stale cached files. */
+export const CODE_VERSION = '0.5.1';
+
 const modulePath = `modules/${MODULE_ID}`;
 const RESULT_TOAST_MS = 12000;
 let hud = null;
